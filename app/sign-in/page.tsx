@@ -15,14 +15,17 @@ const SignInPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(email, password);
       sessionStorage.setItem('user', true as unknown as string);
-      setEmail('');
-      setPassword('');
-      router.push('/'); 
-
+      if(sessionStorage.getItem('user')) {
+        setEmail('');
+        setPassword('');
+        router.push('/'); 
+      }
+      else{
+        throw new Error('Wrong Email or Password please try again');
+      }
     } catch (error: any) {
-      console.error('Error signing in:', error);
       setError(error.message);  
     }
   };
@@ -78,7 +81,7 @@ const SignInPage: React.FC = () => {
 
         <p className="text-center text-gray-500 mt-4">
           Don't have an account?{' '}
-          <a href="/signup" className="text-blue-500 hover:underline">
+          <a href="/sign-up" className="text-blue-500 hover:underline">
             Sign Up
           </a>
         </p>

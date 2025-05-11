@@ -12,13 +12,13 @@ const SignUpPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try{
-        const res = await createUserWithEmailAndPassword(email, password);
+        await createUserWithEmailAndPassword(email, password);
         sessionStorage.setItem('user', true as unknown as string);
         setEmail('');
         setPassword('');
     }
     catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Error creating user:");
     }
   };
 
@@ -68,7 +68,7 @@ const SignUpPage: React.FC = () => {
         </form>
         <p className="text-center text-gray-500 mt-4">
           Already have an account?{' '}
-          <a href="/login" className="text-blue-500 hover:underline">
+          <a href="/sign-in" className="text-blue-500 hover:underline">
             Log In
           </a>
         </p>
