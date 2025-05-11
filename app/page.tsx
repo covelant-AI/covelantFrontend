@@ -1,9 +1,37 @@
+'use client';
 import Image from "next/image";
+import {useAuthState} from "react-firebase-hooks/auth";
+import { auth } from "@/app/firebase/config";
+import { useRouter } from "next/navigation";
+import { useEffect,useState } from "react";
 
 export default function Home() {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+  const [userSession, setUserSession] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedUser = sessionStorage.getItem('user');
+      setUserSession(storedUser);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!user || !userSession) {
+      router.push('/sign-up');
+    }
+  }, [user, userSession, router]);
+
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <>
+      {userSession ? (
+        <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        <button onClick = {() => {auth.signOut(); sessionStorage.removeItem('user')}}>
+          log out
+        </button>
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -99,5 +127,9 @@ export default function Home() {
         </a>
       </footer>
     </div>
+      ) : (
+        router.push('/sign-up')
+      )}
+    </>
   );
 }
