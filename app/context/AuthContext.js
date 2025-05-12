@@ -11,17 +11,28 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      if (user) {
+        sessionStorage.setItem('userEmail', user.email);
+        setUser(user);
+      } else {
+        sessionStorage.removeItem('userEmail');
+        setUser(null);
+      }
     });
     return () => unsubscribe();
   }, []);
 
   const signIn = () => {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
+    return signInWithPopup(auth, provider).then((result) => {
+      const user = result.user;
+      sessionStorage.setItem('userEmail', user.email);
+      setUser(user);
+    });
   };
 
   const logOut = () => {
+    sessionStorage.clear();
     return signOut(auth);
   };
 

@@ -1,24 +1,47 @@
 'use client';
 import React, { useState } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
-import { auth } from '@/app/firebase/config'; 
+import { auth } from '@/app/firebase/config';
+import { useRouter } from 'next/navigation';
 
 const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-
+  const [role, setRole] = useState<string>('');
   const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try{
-        await createUserWithEmailAndPassword(email, password);
-        sessionStorage.setItem('user', true as unknown as string);
-        setEmail('');
-        setPassword('');
+  const handleSubmit = async (formData: React.FormEvent) => {
+    formData.preventDefault();
+    
+    try {
+      const userCredential = await createUserWithEmailAndPassword(email, password);
+      if (!userCredential) {
+        throw new Error('Failed to create user.');
+      }
+
+      const response = await fetch('/api/createUser', {
+        method: 'POST',
+        headers: new Headers( {
+          'Content-Type': 'application/json',
+          Accept: 'application/json', 
+      }),
+        body: JSON.stringify({ email, role }),
+      });
+
+      const data = await response.json();
+
+    if (data.message === 'Player created' || data.message === 'Coach created') {
+      sessionStorage.setItem('user', 'true');
+      setEmail('');
+      setPassword('');
+      setRole('');
+      router.push('/');
+    } else {
+      throw new Error('Oops! Something went wrong.');
     }
-    catch (error) {
-        console.error("Error creating user:");
+    } catch (error) {
+      throw new Error('Oops! Something went wrong.');
     }
   };
 
@@ -57,6 +80,36 @@ const SignUpPage: React.FC = () => {
               placeholder="Enter your password"
               required
             />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-black font-medium mb-2">I am a:</label>
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="player"
+                  name="role"
+                  value="player"
+                  checked={role === 'player'}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="h-5 w-5 text-blue-500 border-gray-300 focus:ring-2 focus:ring-blue-500"
+                />
+                <label htmlFor="player" className="ml-2 text-black">Player</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="coach"
+                  name="role"
+                  value="coach"
+                  checked={role === 'coach'}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="h-5 w-5 text-blue-500 border-gray-300 focus:ring-2 focus:ring-blue-500"
+                />
+                <label htmlFor="coach" className="ml-2 text-black">Coach</label>
+              </div>
+            </div>
           </div>
 
           <button

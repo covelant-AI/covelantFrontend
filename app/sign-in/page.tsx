@@ -15,9 +15,9 @@ const SignInPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(email, password);
+      const res = await signInWithEmailAndPassword(email, password);
       sessionStorage.setItem('user', true as unknown as string);
-      if(sessionStorage.getItem('user')) {
+      if(res) {
         setEmail('');
         setPassword('');
         router.push('/'); 
