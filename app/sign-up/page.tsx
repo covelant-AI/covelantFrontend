@@ -7,17 +7,31 @@ import { useRouter } from 'next/navigation';
 const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [passwordConfirm, setPasswordConfirm] = useState<string>('');
   const [role, setRole] = useState<string>('');
+  const [error, setError] = useState<string>('')
   const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
 
   const handleSubmit = async (formData: React.FormEvent) => {
     formData.preventDefault();
+
+    if(password !== passwordConfirm){
+      setError('Your password & confirm password do not match');
+      return;
+    }
+
+    if(!role){
+      setError('please select either Player or Coache');
+      return;
+    }
+
+    setError('');
     
     try {
       const userCredential = await createUserWithEmailAndPassword(email, password);
       if (!userCredential) {
-        throw new Error('Failed to create user.');
+        setError('Failed to create user.');
       }
 
       const response = await fetch('/api/createUser', {
@@ -38,95 +52,107 @@ const SignUpPage: React.FC = () => {
       setRole('');
       router.push('/');
     } else {
-      throw new Error('Oops! Something went wrong.');
+      setError('Oops! Something went wrong on our end');
     }
     } catch (error) {
-      throw new Error('Oops! Something went wrong.');
+      setError('Looks like password is too easy to guess, try a more complex password');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">Sign Up</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-black font-medium mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-black font-medium mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-black font-medium mb-2">I am a:</label>
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="player"
-                  name="role"
-                  value="player"
-                  checked={role === 'player'}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="h-5 w-5 text-blue-500 border-gray-300 focus:ring-2 focus:ring-blue-500"
-                />
-                <label htmlFor="player" className="ml-2 text-black">Player</label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="coach"
-                  name="role"
-                  value="coach"
-                  checked={role === 'coach'}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="h-5 w-5 text-blue-500 border-gray-300 focus:ring-2 focus:ring-blue-500"
-                />
-                <label htmlFor="coach" className="ml-2 text-black">Coach</label>
-              </div>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Sign Up
-          </button>
-        </form>
-        <p className="text-center text-gray-500 mt-4">
-          Already have an account?{' '}
-          <a href="/sign-in" className="text-blue-500 hover:underline">
-            Log In
-          </a>
-        </p>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8" style={{ backgroundImage: "url('/images/bg-signIn.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+  <div className="bg-[#F9F9F9] p-8 rounded-3xl shadow-lg w-full max-w-md">
+    <img src="/icons/signUp.svg" alt="Sign Up Icon" className="mx-auto h-20" />
+    <h2 className="text-3xl font-semibold text-center text-gray-900 my-4">Sign Up</h2>
+    {/* Error message */}
+        {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+    <form onSubmit={handleSubmit} className='py-3'>
+      <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
+        <img src="/icons/mail.svg" alt="Email Icon" className="w-6 h-6 mx-3 opacity-80" />
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 border-0 focus:outline-none text-black  font-semibold"
+          placeholder="E-mail"
+          required
+        />
       </div>
-    </div>
+
+      <div className="my-4 flex items-center bg-[#F0F0F0] rounded-xl">
+        <img src="/icons/lock.svg" alt="Password Icon" className="w-6 h-6 mx-3 opacity-35" />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 border-0 focus:outline-none text-black  font-semibold"
+          placeholder="Password"
+          required
+        />
+      </div>
+
+      <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
+        <img src="/icons/lock.svg" alt="Password Icon" className="w-6 h-6 mx-3 opacity-35" />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={passwordConfirm}
+          onChange={(e) => setPasswordConfirm(e.target.value)}
+          className="w-full p-3 border-0 focus:outline-none text-black font-semibold"
+          placeholder="Confirm password"
+          required
+        />
+      </div>
+
+      <div className="pt-2 pb-8 ">
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="player"
+              name="role"
+              value="player"
+              checked={role === 'player'}
+              onChange={(e) => setRole(e.target.value)}
+              className="h-5 w-5 text-gray-500 border-gray-300 "
+            />
+            <label htmlFor="player" className="ml-2 text-sm text-black font-semibold">I am a Player</label>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="coach"
+              name="role"
+              value="coach"
+              checked={role === 'coach'}
+              onChange={(e) => setRole(e.target.value)}
+              className="h-5 w-5 text-blue-500 border-gray-300"
+            />
+            <label htmlFor="coach" className="ml-2 text-sm text-black font-semibold">I am a Coach</label>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-center text-gray-500 my-4">
+        Already have an account?{' '}
+        <a href="/sign-in" className="text-teal-500 font-normal hover:underline">
+          Log In
+        </a>
+      </p>
+
+      <button
+        type="submit"
+        className="w-full py-3 bg-[#42B6B1] text-white text-xl font-normal rounded-xl hover:bg-teal-600">
+        Sign Up
+      </button>
+    </form>
+  </div>
+</div>
   );
 };
 

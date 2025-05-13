@@ -21,7 +21,7 @@ export default function Home() {
 
       
       const data = await response.json();
-      console.log('User Data:', data);
+
       if (data.data) {
         setUserData(data); 
       } else {

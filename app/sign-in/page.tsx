@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 const SignInPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>('');
 
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
   const router = useRouter();
@@ -23,68 +23,68 @@ const SignInPage: React.FC = () => {
         router.push('/'); 
       }
       else{
-        throw new Error('Wrong Email or Password please try again');
+        setError('Incorrect email or password');
       }
-    } catch (error: any) {
-      setError(error.message);  
+    } catch (error: any) { 
+      setError('Something went wrong, please try again later');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8" style={{ backgroundImage: "url('/images/bg-signIn.png')", backgroundSize: 'cover', backgroundPosition: 'center'}}> 
+      <div className="bg-[#F9F9F9] p-8 rounded-3xl shadow-lg w-full max-w-md">
+        <img src="/icons/signUp.svg" alt="Sign Up Icon" className="mx-auto h-20" />
         <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">Sign In</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Email Input */}
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-              Email
-            </label>
+
+        <form onSubmit={handleSubmit} className='py-3'>
+          <div className={`mb-6 flex items-center bg-[#F0F0F0] rounded-xl ${
+                  error ? 'border-red-500 border-1' : ''}`}
+          >
+            <img src="/icons/mail.svg" alt="Email Icon" className="w-6 h-6 mx-3 opacity-80 " />
             <input
               type="email"
               id="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
-              placeholder="Enter your email"
+              className="w-full p-3 border-0 focus:outline-none text-black font-semibold"
+              placeholder="E-mail"
               required
             />
           </div>
 
-          {/* Password Input */}
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-              Password
-            </label>
+          <div className={`my-4 flex items-center bg-[#F0F0F0] rounded-xl ${
+                  error ? 'border-red-500 border-1' : ''}`}>
+            <img src="/icons/lock.svg" alt="Password Icon" className="w-6 h-6 mx-3 opacity-35"/>
             <input
               type="password"
               id="password"
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
-              placeholder="Enter your password"
+              className="w-full p-3 border-0 focus:outline-none text-black  font-semibold"
+              placeholder="Password"
               required
             />
           </div>
 
           {/* Error message */}
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
-          {/* Sign In Button */}
+
+          <p className="text-center text-gray-500 my-4">
+            don't have an account?{' '}
+            <a href="/sign-up" className="text-teal-500 font-normal hover:underline">
+              Sign Up
+            </a>
+          </p>
+
           <button
             type="submit"
-            className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Sign In
+            className="w-full py-3 bg-[#42B6B1] text-white text-xl font-normal rounded-xl hover:bg-teal-600">
+            Sign in
           </button>
         </form>
-
-        <p className="text-center text-gray-500 mt-4">
-          Don't have an account?{' '}
-          <a href="/sign-up" className="text-blue-500 hover:underline">
-            Sign Up
-          </a>
-        </p>
       </div>
     </div>
   );
