@@ -2,6 +2,8 @@
 import SignUpPage from './sign-up/page';
 import { useAuth } from './context/AuthContext';
 import { useEffect, useState } from 'react';
+import NavBar from '@/components/Navbar'
+import HeroSection from '@/components/HeroSection'
 
 export default function Home() {
   const { user, logOut } = useAuth();
@@ -18,7 +20,6 @@ export default function Home() {
           Accept: 'application/json',
         }),
       });
-
       
       const data = await response.json();
 
@@ -44,14 +45,9 @@ export default function Home() {
 
   return (
     <>
-      <div>
-        <h1 className="text-3xl font-bold text-center mt-10">Welcome to the Home Page</h1>
-        <button onClick={logOut}>Sign out</button>
-        <div>
-          <p>User Data:</p>
-        </div>
-        <p className="text-center mt-5">This is a protected route. You are logged in!</p>
-      </div>
+      <NavBar/>
+      <HeroSection/>
+      <button onClick={logOut}>Sign out</button>
     </>
   );
 }

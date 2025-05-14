@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Figtree } from "next/font/google";
+import { Geist, Geist_Mono, Cairo } from "next/font/google";
 
 export const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -10,7 +10,7 @@ export const geistMono = Geist_Mono({
     subsets: ["latin"],
   });
   
-export const figtree = Figtree({
-    variable: '--font-figtree',
+export const cairo = Cairo({
+    variable: '--font-cairo',
     subsets: ['latin'],
   }) 

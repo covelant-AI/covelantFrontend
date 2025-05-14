@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { geistSans, geistMono, figtree } from "../lib/fonts";
+import { geistSans, geistMono, cairo } from "../lib/fonts";
 import {AuthProvider} from "./context/AuthContext";
 import "./globals.css";
 
@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <AuthProvider>
       <body
-        className={`${geistSans.variable} ${geistMono.variable}  ${figtree.variable} antialiased`}>
+        className={`${geistSans.variable} ${geistMono.variable}  ${cairo.variable} antialiased bg-[#FBFBFB]`}>
         {children}
       </body>
       </AuthProvider>
