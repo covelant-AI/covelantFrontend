@@ -69,9 +69,9 @@ export default function NavBar(): JSX.Element {
                 />
             </button>
             {showMenu && (
-              <div className="absolute right-0 mt-4 w-34 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+              <div className="absolute right-0 mt-4 w-34 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 hover:bg-red-100 transition-colors duration-300">
                 <button
-                  className="flex items-center px-4 py-1 text-red-600 hover:bg-gray-100 w-full font-semibold text-sm hover:cursor-pointer"
+                  className="flex items-center px-4 py-1 text-red-600 w-full font-semibold text-sm hover:cursor-pointer"
                   onClick={logOut}
                   type="button"
                 >
