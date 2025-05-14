@@ -1,7 +1,36 @@
+'use client'
 import Image from 'next/image'
+import { useEffect } from 'react';
+import { useAuth } from '../app/context/AuthContext';
 import RadialBlurBg from '@/components/UI/RadialBlur'
 
 export default function HeroSection(){
+    const { user } = useAuth();
+
+    const getUserData = async () => {
+    try {
+      const email =  user.email
+      
+      const response = await fetch(`/api/getUser?email=${encodeURIComponent(email)}`, {
+        method: 'GET',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }),
+      });
+      
+      const data = await response.json();
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      getUserData();
+    }
+  }, [user]);
+
     return(
         <div className="relative overflow-hidden flex justify-between items-center px-20 xl:px-40 pt-60 pb-8 bg-[#F9F9F9] border-[#E7E7E7]">
           <RadialBlurBg 
@@ -14,18 +43,18 @@ export default function HeroSection(){
             />
 
           <div className="flex flex-col items-start space-x-2 z-10">
-            {/* right hand side */}
-            <div className=" pb-4 ">
+            {/* left hand side */}
+            <div className="pb-4">
                 <p className="font-semibold text-[#3E3E3E] text-md">Your Actions</p>
             </div>
-                <button className="flex items-center bg-[#42B6B1] text-white py-2 px-7 rounded-lg font-semibold">
+                <button className="flex items-center bg-[#42B6B1] text-white py-2 px-7 rounded-lg font-semibold mb-2">
                   <Image className="w-5 h-5 mr-4" src="./icons/upload.svg" width={50} height={50} alt="Upload Icon" />
                   Upload Match
                 </button>
             </div>
 
 
-         {/* Left hand side */}
+         {/* right hand side */}
         <div className="flex flex-col z-10">
             <div className="pb-2">
                 <p className="font-semibold text-[#3E3E3E] text-md">Your Athletes</p>
