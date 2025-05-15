@@ -55,19 +55,21 @@ export default function NavBar(): JSX.Element {
             <div className="text-sm text-gray-500">Coach</div>
           </div>
           <div className="pl-4 relative" ref={menuRef}>
-            <button
-              onClick={() => setShowMenu((prev) => !prev)}
-              aria-label="Settings"
-              type="button"
-            >
-              <img
-                  className={`w-6 h-6 rounded-xl object-cover hover:cursor-pointer transition-transform duration-300 ${
-                    rotated ? "rotate-90" : ""}`}
-                  src="./icons/Settings.svg"
-                  alt="Settings Icon"
-                  onClick={() => setRotated((prev) => !prev)}
-                />
-            </button>
+            <div className="pl-[12px] pt-[12px] w-12 h-12 bg-white rounded-md">
+              <button
+                onClick={() => setShowMenu((prev) => !prev)}
+                aria-label="Settings"
+                type="button"
+                >
+                <img
+                    className={`w-6 h-6 rounded-xl object-cover hover:cursor-pointer transition-transform duration-300 ${
+                      rotated ? "rotate-90" : ""}`}
+                      src="./icons/settings.svg"
+                      alt="Settings Icon"
+                      onClick={() => setRotated((prev) => !prev)}
+                      />
+              </button>
+            </div>
             {showMenu && (
               <div className="absolute right-0 mt-4 w-34 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 hover:bg-red-100 transition-colors duration-300">
                 <button
