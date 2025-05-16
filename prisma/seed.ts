@@ -30,6 +30,12 @@ async function main(){
                     lastName: 'vader',
                     email: 'iamyourfather@covelant.com',
                     avatar: "/testImages/player3.jpg"
+                },
+                {
+                    firstName: 'aragorn',
+                    lastName: 'son of arathorn',
+                    email: 'forFrodo@covelant.com',
+                    avatar: "/testImages/test.jpg"
                 }
             ]
             }
