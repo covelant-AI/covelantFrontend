@@ -49,6 +49,7 @@ async function main(){
             team: 'team2',
             firstName: "Master",
             lastName: "Coach",
+            avatar: "/testImages/test.jpg",
             players:{}
         }
     })
