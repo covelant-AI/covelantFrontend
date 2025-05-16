@@ -3,6 +3,7 @@ import SignInPage from './sign-in/page';
 import { useAuth } from './context/AuthContext';
 import NavBar from '@/components/Navbar'
 import HeroSection from '@/components/HeroSection'
+import HomeDashboard from '@/components/HomeDashboard';
 
 export default function Home() {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ export default function Home() {
     <>
       <NavBar/>
       <HeroSection/>
+      <HomeDashboard/>
     </>
   );
 }
