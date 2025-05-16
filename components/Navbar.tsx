@@ -9,7 +9,45 @@ export default function NavBar(): JSX.Element {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { logOut } = useAuth();
+  const { logOut, user } = useAuth();
+
+  interface UserData {
+    avatar?: string;
+    firstName?: string;
+    lastName?: string;
+    team?: string;
+  }
+
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  
+    const getUserData = async (): Promise<void> => {
+      try {
+        const email = user.email;
+      
+        await fetch(`/api/getUser?email=${encodeURIComponent(email)}`, {
+          method: 'GET',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          }),
+        }).then((response) => response.json())
+        .then((result)=> {
+          if(result.error){
+            console.error('Error fetching user data:', result.error);
+          }
+          setUserData(()=> result.data);
+        })
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    useEffect(() => {
+      if (user) {
+        getUserData()
+      }
+    }, [user]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | MouseEvent & { target: Node }) {
@@ -47,12 +85,16 @@ export default function NavBar(): JSX.Element {
         <div className="relative flex flex-row items-center space-x-4">
           <img
             className="w-12 h-12 rounded-xl object-cover"
-            src="./images/test.jpg"
+            src={userData?.avatar}
             alt="User Image"
           />
           <div>
-            <div className="font-semibold text-xl">George Daniels</div>
-            <div className="text-sm text-gray-500">Coach</div>
+            <div className="font-semibold text-xl">
+                {userData?.firstName ?? "Loading..."} {userData?.lastName ?? ""}
+              </div>
+              <div className="text-sm text-gray-500">
+                {userData?.team ? "Coach" : "Athlete"}
+              </div>
           </div>
           <div className="pl-4 relative" ref={menuRef}>
             <div className="pl-[12px] pt-[12px] w-12 h-12 bg-white rounded-md">

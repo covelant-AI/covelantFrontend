@@ -1,35 +1,8 @@
 'use client'
 import Image from 'next/image'
-import { useEffect } from 'react';
-import { useAuth } from '../app/context/AuthContext';
 import RadialBlurBg from '@/components/UI/RadialBlur'
 
 export default function HeroSection(){
-    const { user } = useAuth();
-
-    const getUserData = async () => {
-    try {
-      const email =  user.email
-      
-      const response = await fetch(`/api/getUser?email=${encodeURIComponent(email)}`, {
-        method: 'GET',
-        headers: new Headers({
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        }),
-      });
-      
-      const data = await response.json();
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      getUserData();
-    }
-  }, [user]);
 
     return(
         <div className="relative overflow-hidden flex justify-between items-center px-20 xl:px-40 pt-60 pb-8 bg-[#F9F9F9] border-[#E7E7E7]">

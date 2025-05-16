@@ -13,16 +13,19 @@ model Player {
   firstName  String?
   lastName   String?
   email      String
-  isCoache   Boolean @default(false)
-  coached    Coache?  @relation(fields: [coachId], references: [id])
+  avatar     String?
+  coached    Coach?  @relation(fields: [coachId], references: [id])
   coachId    Int?
 }
 
-model Coache {
-  id       Int     @id @default(autoincrement())
-  email    String
-  team     String?
-  players  Player[]  
+model Coach {
+  id         Int     @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  avatar     String?
+  email      String
+  team       String?
+  players    Player[]  
 }
 
 

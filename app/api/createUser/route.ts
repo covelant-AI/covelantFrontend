@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Player created' });
     } 
     else if (role === 'coach') {
-      await prisma.coache.create({
+      await prisma.coach.create({
         data: {
           email,
         },
