@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const email = emailParam;
 
   try {
-    const coach = await prisma.coache.findFirst({
+    const coach = await prisma.coach.findFirst({
       where: { email: String(email) },
     });
 
@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
         where: { email: String(email) }, 
       }
     );
+
       return NextResponse.json({ data: player, message: 'Player Data' });
     }
 
