@@ -49,7 +49,7 @@ export default function HeroSection(){
     }, [user]);
 
     return(
-        <div className="relative overflow-hidden flex justify-between items-center px-20 xl:px-40 pt-60 pb-8 bg-[#F9F9F9] border-[#E7E7E7]">
+        <div className="relative overflow-hidden flex justify-between items-center px-20 xl:px-60 pt-60 pb-8 bg-[#F9F9F9] border-[#E7E7E7]">
           <RadialBlurBg 
               background={'radial-gradient(50% 50% at 50% 50%,rgba(8, 113, 151, 0.1) 61%,rgba(0, 180, 174, 0.12) 78%,rgba(176, 198, 255, 0) 100%)'}
               width={"auto"} 

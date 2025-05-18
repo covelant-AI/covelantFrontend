@@ -68,7 +68,7 @@ export default function NavBar(): JSX.Element {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 px-20 xl:px-40 py-2 flex items-center justify-between backdrop-blur-lg border border-[#F9F9F9]/20 rounded-b-xl pt-6">
+    <nav className="fixed top-0 left-0 w-full z-50 px-20 xl:px-60 py-2 flex items-center justify-between backdrop-blur-lg border border-[#F9F9F9]/20 rounded-b-xl pt-6">
       {/* Logo */}
       <Link href="/" passHref>
         <Image
