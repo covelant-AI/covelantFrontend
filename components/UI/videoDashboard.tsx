@@ -16,8 +16,7 @@ const matches: Match[] = [
 
 export default function VideoDashboard() {
     const { type } = useAuth();
-
-
+    
     return (
         <div className="col-span-1 lg:col-span-9 rounded-2xl shadow p-1 flex flex-col gap-2 bg-[#F8F8F8] my-5 justify-center">
 

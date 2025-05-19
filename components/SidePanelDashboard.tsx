@@ -16,12 +16,12 @@ export default function SidePanelDashboard() {
                         />
                         <h3 className="text-xl font-semibold text-gray-800">Alexis <br/> <span className='font-bold'>Lebrun</span></h3>
                     </span>
-                <div className="flex items-center gap-1 justify-between pt-8 text-xl">
-                  <span className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-10 h-10 rounded-full">✓</span>
-                  <span className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-10 h-10 rounded-full">✓</span>
-                  <span className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-10 h-10 rounded-full">✓</span>
-                  <span className="flex items-center justify-center text-white bg-[#FF4545] w-10 lg:w-10 h-10 rounded-full">✕</span>
-                  <span className="flex items-center justify-center text-white bg-[#FF4545] w-10 lg:w-10 h-10 rounded-full">✕</span>
+                <div className="flex items-center gap-2 justify-between pt-8 text-xl">
+                  <span className="flex items-center justify-center text-white bg-[#C6C6C6] w-10 lg:w-9 h-9 rounded-full">?</span>
+                  <span className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-9 h-9 rounded-full">✓</span>
+                  <span className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-9 h-9 rounded-full">✓</span>
+                  <span className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-9 h-9 rounded-full">✓</span>
+                  <span className="flex items-center justify-center text-white bg-[#FF4545] w-10 lg:w-9 h-9 rounded-full">✕</span>
                 </div>
         
                 </div>
