@@ -8,11 +8,10 @@ export async function GET(req: NextRequest) {
   const email = emailParam;
   
   try {
-
   const player = await prisma.player.findFirst({
     where: {  email: String(email)  },
     include: {
-      coached: true, // include coach data if any
+      coached: true, 
     },
   });
 

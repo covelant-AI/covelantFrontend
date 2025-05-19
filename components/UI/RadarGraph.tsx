@@ -61,7 +61,7 @@ const renderCustomizedLabel = (props: any) => {
       />
       <text
         x={valueBoxX + 15}
-        y={valueBoxY + 12}
+        y={valueBoxY + 13}
         textAnchor="middle"
         dominantBaseline="middle"
         fontWeight="bold"
@@ -92,7 +92,7 @@ export default class RadarGraph extends PureComponent {
           dataKey="A"
           stroke="#42B6B1"
           fill="#42B6B1"
-          fillOpacity={0.7}
+          fillOpacity={0.5}
         />
       </RadarChart>
     </ResponsiveContainer>

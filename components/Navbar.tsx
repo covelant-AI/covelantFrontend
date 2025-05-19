@@ -9,7 +9,7 @@ export default function NavBar(): JSX.Element {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { logOut, user } = useAuth();
+  const { logOut, user, type, avatar, firstName, lastName } = useAuth();
 
   interface UserData {
     avatar?: string;
@@ -110,15 +110,15 @@ export default function NavBar(): JSX.Element {
             <>
               <img
                 className="w-12 h-12 rounded-xl object-cover"
-                src={userData.avatar}
+                src={avatar}
                 alt="User Image"
               />
               <div>
                 <div className="font-semibold text-xl">
-                  {userData.firstName} {userData.lastName}
+                  {firstName} {lastName}
                 </div>
                 <div className="text-sm text-gray-500">
-                  {userData.team ? "Coach" : "Athlete"}
+                  {type}
                 </div>
               </div>
               <div className="pl-4 relative" ref={menuRef}>

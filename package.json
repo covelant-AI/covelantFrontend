@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate": "prisma migrate dev",
-    "dbreset": "npx prisma migrate reset"
+    "migrate": "npx prisma generate && npx prisma migrate reset"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"

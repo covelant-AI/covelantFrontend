@@ -10,6 +10,8 @@ export async function POST(req: NextRequest) {
       await prisma.player.create({
         data: {
           email,
+          firstName: data.firstName,
+          lastName: data.lastName,
         },
       })
       return NextResponse.json({ message: 'Player created' });
@@ -18,6 +20,8 @@ export async function POST(req: NextRequest) {
       await prisma.coach.create({
         data: {
           email,
+          firstName: data.firstName,
+          lastName: data.lastName,
         },
       });
       return NextResponse.json({ message: 'Coach created' });

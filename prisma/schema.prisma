@@ -9,24 +9,63 @@ datasource db {
 }
 
 model Player {
-  id         Int     @id @default(autoincrement())
-  firstName  String?
-  lastName   String?
-  email      String
-  avatar     String?
-  coached    Coach?  @relation(fields: [coachId], references: [id])
-  coachId    Int?
+  id            Int           @id @default(autoincrement())
+  firstName     String?
+  lastName      String?
+  email         String
+  avatar        String?
+  coached       Coach?        @relation(fields: [coachId], references: [id])
+  coachId       Int?
+
+  playerMatches PlayerMatch[]
 }
 
 model Coach {
-  id         Int     @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   firstName  String
   lastName   String
   avatar     String?
   email      String
   team       String?
-  players    Player[]  
+  players    Player[]
 }
+
+model Match {
+  id           Int           @id @default(autoincrement())
+  videoUrl     String?
+  imageUrl     String?
+  date         DateTime
+  videoType    String
+  playerMatches PlayerMatch[]
+}
+
+/// This model stores opponents who are NOT registered players.
+model Opponent {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+
+  playerMatches PlayerMatch[]
+}
+
+/// PlayerMatch now links either to a Player or an Opponent (but not both).
+model PlayerMatch {
+  id        Int       @id @default(autoincrement())
+  matchId   Int
+  result    String   
+  match     Match     @relation(fields: [matchId], references: [id])
+
+  // Nullable foreign keys for player or opponent
+  playerId   Int?     
+  player     Player?   @relation(fields: [playerId], references: [id])
+
+  opponentId Int?     
+  opponent   Opponent? @relation(fields: [opponentId], references: [id])
+
+  @@unique([matchId, playerId, opponentId])
+}
+
+
 
 
 
