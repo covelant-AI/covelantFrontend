@@ -17,8 +17,8 @@ type PlayerMatchResult = {
 }
 
 export async function GET(req: NextRequest) {
-const url = new URL(req.url);
-  const emailParam = url.searchParams.get('email');
+    const url = new URL(req.url);
+    const emailParam = url.searchParams.get('email');
   
   if (!emailParam) {
     return NextResponse.json({ message: 'Email is required' }, { status: 400 });
@@ -58,10 +58,12 @@ const url = new URL(req.url);
         videoType: pm.match.videoType,
       },
     }))
-    
+
     return NextResponse.json({ success: true, data: results }, { status: 200 })
   } catch (error) {
     console.error('Error fetching player matches:', error)
     return NextResponse.json({ message: 'Internal server error', error }, { status: 500 })
   }
 }
+
+

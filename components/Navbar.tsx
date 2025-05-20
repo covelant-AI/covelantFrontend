@@ -75,7 +75,7 @@ export default function NavBar(): JSX.Element {
           src="/images/logoBlack.png"
           alt="Covalent Logo"
           width={170}
-          height={40}
+          height={60}
           className="cursor-pointer"
         />
       </Link>

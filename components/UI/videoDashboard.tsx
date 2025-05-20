@@ -1,4 +1,6 @@
 import { useAuth } from '@/app/context/AuthContext';
+import { Player } from '@/generated/prisma';
+import { useEffect, useState, MouseEvent, useRef } from 'react'
 
 type Match = {
   id: number
@@ -14,8 +16,76 @@ const matches: Match[] = [
   { id: 5, title: 'Alexis Lebrun vs Xiang Peng',    imageUrl: '/testImages/match.png' },
 ]
 
-export default function VideoDashboard() {
-    const { type } = useAuth();
+
+interface Props {
+  activePlayer: Player | null;
+  setActivePlayer: (player: Player) => void;
+}
+
+  export default function VideoDashboard({ activePlayer, setActivePlayer }: Props) {
+      const { type, user } = useAuth();
+      const [showMenu, setShowMenu] = useState<boolean>(false);
+      const menuRef = useRef<HTMLDivElement>(null);
+
+      const defaultPlayer: Player = {
+      id: 1,
+      firstName: 'My First',
+      lastName: 'Player',
+      email: 'savejhonconnor@covelant.com',
+      avatar: '/testImages/player1.jpg',
+      coachId: 1,
+    };
+    const [selectedPlayer, setSelectedPlayer] = useState<Player[]>([defaultPlayer]);
+
+
+
+     const getUserData = async (): Promise<void> => {
+          try {
+            const email = user.email;
+    
+            await fetch(`/api/getConnection?email=${encodeURIComponent(email)}`, {
+              method: 'GET',
+              headers: new Headers({
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              }),
+            }).then((response) => response.json())
+            .then((result)=> {
+              if(result.error){
+                console.error('Error fetching user data:', result.error);
+              }
+              setSelectedPlayer(() => result.connection);
+              setActivePlayer(result.connection[0]);
+            })
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+          }
+        };
+        
+        useEffect(() => {
+          if (type === "coach") {getUserData()}
+        }, [user, type])
+
+        useEffect(() => {
+           function handleClickOutside(event: MouseEvent | MouseEvent & { target: Node }) {
+             if (
+               menuRef.current &&
+               !menuRef.current.contains(event.target as Node)
+             ) {
+               setShowMenu(false);
+             }
+           }
+           document.addEventListener("mousedown", handleClickOutside as unknown as EventListener);
+           return () => {
+             document.removeEventListener(
+               "mousedown",
+               handleClickOutside as unknown as EventListener
+             );
+           };
+         }, []);
+
+        const toggleMenu = () => {setShowMenu((prev) => !prev);};
+    
     
     return (
         <div className="col-span-1 lg:col-span-9 rounded-2xl shadow p-1 flex flex-col gap-2 bg-[#F8F8F8] my-5 justify-center">
@@ -43,17 +113,54 @@ export default function VideoDashboard() {
 
         {/* Filters / controls */}
         <div className="flex flex-wrap items-center justify-between gap-4 px-4">
+
+
           {/* Player selector */}
-          {type == "coach" ? 
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full text-lg">
-            <img
-              src="/testImages/test.jpg"
-              alt="Alexis"
-              className="w-6 h-6 rounded-full"
-            />
-            <span className="text-gray-700">Alexis Lebrun</span>
-            <span className="text-gray-500">▼</span>
-          </button> : <></>}
+           <div className="relative" ref={menuRef}>
+            {type === "coach" && (
+              <button
+                onClick={toggleMenu}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full text-lg cursor-pointer hover:bg-gray-200"
+              >
+                <img
+                  src={activePlayer?.avatar}
+                  alt="Avatar"
+                  className="w-7 h-7 rounded-full object-cover"
+                />
+                <span className="text-gray-700">
+                  {activePlayer?.firstName} {activePlayer?.lastName}
+                </span>
+                <span className="text-gray-500">▼</span>
+              </button>
+            )}
+
+            {showMenu && (
+              <div className="absolute bottom-full mb-2 z-10 w-64 bg-white border border-gray-300 rounded-lg shadow-lg">
+                <div className="p-4 font-bold text-gray-700 text-xl">Players</div>
+                <ul className=" text-sm text-gray-600">
+                  {selectedPlayer.map((player) => (
+                    <li
+                      key={player.id}
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => {
+                      setActivePlayer(player);
+                      setShowMenu(false); 
+                    }}
+                    >
+                      <img
+                        src={player.avatar}
+                        alt="Avatar"
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <span className='font-normal text-gray-700 text-md'>
+                        {player.firstName} {player.lastName}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
           <div className='flex items-center gap-6'>
           {/* Win rate */}

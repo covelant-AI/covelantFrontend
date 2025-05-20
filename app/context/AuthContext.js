@@ -23,6 +23,7 @@ export function AuthProvider({ children }) {
         // Determine user type here:
         const userType = await fetchUserType(user.email);
         setType(userType);
+        console.log(userType);
       } else {
         sessionStorage.removeItem('userEmail');
         setAvatar(null);

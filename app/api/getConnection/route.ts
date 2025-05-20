@@ -30,12 +30,12 @@ export async function GET(req: NextRequest) {
     },
   });
   
-
+  console.log("MADE IT TO THE END");
   if (coach) {
     if (coach.players.length > 0) {
         return NextResponse.json({ message: 'found connection', connection: coach.players}, { status: 200 });
     } else {
-      return NextResponse.json({ message: 'no connection'}, { status: 200 });
+        return NextResponse.json({ message: 'no connection'}, { status: 200 });
     }
     } 
   } catch (error) {
