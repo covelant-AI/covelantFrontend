@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react'
 import RadarGraph from './UI/RadarGraph'
 import { useAuth } from '@/app/context/AuthContext';
-import { Player } from '@/generated/prisma';
-
-interface Props {
-  activePlayer: Player | null;
-}
+import { Props } from '@/util/interfaces';
 
 
 export default function SidePanelDashboard({ activePlayer }: Props) {
@@ -42,7 +38,7 @@ export default function SidePanelDashboard({ activePlayer }: Props) {
 
   useEffect(() => {
     getMatchOutcome()
-  }, [activePlayer?.email]) //not good enough but it works fow now
+  }, [activePlayer?.email]) 
 
 
     return (
@@ -76,9 +72,7 @@ export default function SidePanelDashboard({ activePlayer }: Props) {
                       <button className="text-gray-600 px-4 py-2 text-xl">Tier</button>
                   </span>
                 </div>
-                
                 : // Coach condition ------------------------------------------------------------------------------------------------------------
-
                 <div className='bg-gray-100 w-full rounded-2xl p-1'>
                   <div className="flex flex-col w-full gap-4 bg-[#FFFFFF] p-4 rounded-2xl">
                       <span className='flex flex-row items-center gap-4'>
