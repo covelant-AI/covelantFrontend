@@ -11,12 +11,14 @@ export function AuthProvider({ children }) {
   const [avatar, setAvatar] = useState(null); 
   const [firstName, setName] = useState(null);
   const [lastName, setLastName] = useState(null);
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         sessionStorage.setItem('userEmail', user.email);
         setUser(user);
+         setLoading(false)
 
         // Determine user type here:
         const userType = await fetchUserType(user.email);
@@ -79,7 +81,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, type, avatar, signIn, logOut, firstName, lastName }}>
+    <AuthContext.Provider value={{ user, type, avatar, signIn, logOut, firstName, lastName, loading }}>
       {children}
     </AuthContext.Provider>
   );

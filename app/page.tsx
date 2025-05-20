@@ -4,13 +4,13 @@ import { useAuth } from './context/AuthContext';
 import NavBar from '@/components/Navbar'
 import HeroSection from '@/components/HeroSection'
 import HomeDashboard from '@/components/HomeDashboard';
+import Loading from './loading';
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth()
 
-  if (!user) {
-    return <SignInPage />;
-  }
+  if (loading) return <Loading />
+  if (!user) return <SignInPage />
 
   return (
     <>
