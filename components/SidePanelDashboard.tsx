@@ -105,7 +105,7 @@ export default function SidePanelDashboard({ activePlayer }: Props) {
                 {/* Radar chart placeholder */}
                 <div className="w-full rounded-lg bg-[#FFFFFF]">
                   <div className="w-full h-60 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 p-4">
-                    <RadarGraph />
+                    <RadarGraph activePlayer={activePlayer}/>
                   </div>
                 </div>
                 </div>

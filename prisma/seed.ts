@@ -2,6 +2,25 @@ import { PrismaClient } from "../generated/prisma";
 
 const prisma = new PrismaClient();
 
+function getRandomStatValue(): number {
+  return Math.floor(Math.random() * 101); // 0 to 100
+}
+
+async function seedPlayerStats(playerId: number) {
+  const statSubjects = ["SRV", "RSV", "FRH", "BCH", "RLY"];
+
+  const statEntries = statSubjects.map((subject) => ({
+    subject,
+    value: getRandomStatValue(),
+    playerId,
+  }));
+
+  await prisma.playerStat.createMany({
+    data: statEntries,
+  });
+}
+
+
 async function main() {
   // Upsert coaches and players as before
   const coach1 = await prisma.coach.upsert({
@@ -60,6 +79,12 @@ async function main() {
 
   // Extract players from coach1 for use
   const players = coach1.players;
+
+  
+  // 🌟 NEW: Seed stats for each player
+  for (const player of players) {
+    await seedPlayerStats(player.id);
+  }
 
   // Utility: create or find opponent by name
   async function findOrCreateOpponent(firstName: string, lastName: string) {
