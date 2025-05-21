@@ -14,6 +14,15 @@ interface RadarGraphProps {
   activePlayer?: Player;
 }
 
+// Default stat values if no activePlayer is provided
+const DEFAULT_STATS = [
+  { subject: "SRV", A: 0, color: "#42B6B1" },
+  { subject: "RSV", A: 0, color: "#42B6B1" },
+  { subject: "FRH", A: 0, color: "#F24B3E" },
+  { subject: "BRH", A: 0, color: "#F08C2B" },
+  { subject: "RLY", A: 0, color: "#42B6B1" },
+];
+
 export default class RadarGraph extends PureComponent<RadarGraphProps> {
   renderCustomizedLabel = (props: {
     payload: any;
@@ -97,8 +106,36 @@ export default class RadarGraph extends PureComponent<RadarGraphProps> {
       this.props.activePlayer?.stats?.map((s) => ({
         subject: s.subject,
         A: s.value,
-      })) || [];
+      })) ||
+      DEFAULT_STATS.map((s) => ({
+        subject: s.subject,
+        A: s.A,
+      }));
 
+      console.log("StatData", statData.length);
+
+  if(statData.length === 0) {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <RadarChart cx="50%" cy="50%" outerRadius="74%" data={DEFAULT_STATS}>
+          <PolarGrid />
+          <PolarAngleAxis
+            dataKey="subject"
+            tick={this.renderCustomizedLabel}
+            tickLine={false}
+          />
+          <Radar
+            name="Player"
+            dataKey="A"
+            stroke="#42B6B1"
+            fill="#42B6B1"
+            fillOpacity={0.5}
+          />
+        </RadarChart>
+      </ResponsiveContainer>
+    );
+  }
+  else{
     return (
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart cx="50%" cy="50%" outerRadius="74%" data={statData}>
@@ -119,4 +156,6 @@ export default class RadarGraph extends PureComponent<RadarGraphProps> {
       </ResponsiveContainer>
     );
   }
-}
+  }
+  }
+

@@ -10,6 +10,6 @@ export const defaultPlayer= {
       firstName: 'My First',
       lastName: 'Player',
       email: 'savejhonconnor@covelant.com',
-      avatar: '/testImages/player1.jpg',
+      avatar: '/images/default-avatar.png',
       coachId: 1,
     };

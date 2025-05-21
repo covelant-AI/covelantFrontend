@@ -27,13 +27,12 @@ export async function GET(req: NextRequest) {
         },
       });
 
+      const playerStats = [{ ...player, stats }]
+
       return NextResponse.json(
         {
           message: 'found player with stats',
-          player: {
-            ...player,
-            stats,
-          },
+          connection: playerStats,
         },
         { status: 200 }
       );
@@ -47,7 +46,9 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    let playersWithStats: { stats: { subject: string; value: number; }[]; email: string; id: number; firstName: string | null; lastName: string | null; avatar: string | null; coachId: number | null; }[] = [];
+    let playersWithStats: { stats: { subject: string; value: number; }[]; 
+    email: string; id: number; firstName: string | null; lastName: string | null; avatar: string | null; coachId: number | null; }[] = [];
+
     if (coach) {
       playersWithStats = await Promise.all(
         coach.players.map(async (player) => {
@@ -61,9 +62,7 @@ export async function GET(req: NextRequest) {
           return { ...player, stats };
         })
       );
-    }
 
-    if (coach) {
       return NextResponse.json(
         {
           message: coach.players.length > 0 ? 'found connection' : 'no connection',
@@ -72,6 +71,9 @@ export async function GET(req: NextRequest) {
         { status: 200 }
       );
     }
+
+
+
 
     return NextResponse.json({ message: 'no user found' }, { status: 404 });
   } catch (error) {

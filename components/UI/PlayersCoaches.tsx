@@ -35,8 +35,7 @@ export default function PlayersCoaches(){
           }
           return result.connection
         })
-
-        setcoachData(()=> result);
+        setcoachData(()=> result[0].coached);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }

@@ -76,6 +76,17 @@ async function main() {
       players: {},
     },
   });
+  
+  const player1 = await prisma.player.upsert({
+    where: { id: 5 },
+    update: {},
+    create: {
+            firstName: "aragorn",
+            lastName: "son of arathorn",
+            email: "lonely@covelant.com",
+            avatar: "/testImages/test.jpg",
+          },
+  });
 
   // Extract players from coach1 for use
   const players = coach1.players;
@@ -210,7 +221,7 @@ async function main() {
     });
   }
 
-  console.log({ coach1, coach2 });
+  console.log({ coach1, coach2, player1 });
 }
 
 main()

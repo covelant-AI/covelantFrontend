@@ -34,6 +34,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                console.error('Error fetching user data:', result.error);
              }
              setSelectedPlayer(() => result.connection);
+             console.log('Selected players:', result.connection);
              setActivePlayer(result.connection[0]);
            })
          } catch (error) {
@@ -42,7 +43,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
        };
        
        useEffect(() => {
-         if (type === "coach") {getUserData()}
+          getUserData()
        }, [user, type])
 
         useEffect(() => {
@@ -64,7 +65,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
          }, []);
 
         const toggleMenu = () => {setShowMenu((prev) => !prev);};
-    
+        
     
     return (
         <div className="col-span-1 lg:col-span-9 rounded-2xl shadow p-1 flex flex-col gap-2 bg-[#F8F8F8] my-5 justify-center">

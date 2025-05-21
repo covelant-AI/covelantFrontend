@@ -11,8 +11,8 @@ export default function SidePanelDashboard({ activePlayer }: Props) {
   const getMatchOutcome = async (): Promise<void> => { 
     try {
         const email = activePlayer?.email;
+        
         if(!email) {
-          console.error('No email found for the active player');
           return;
         }
 
@@ -39,7 +39,6 @@ export default function SidePanelDashboard({ activePlayer }: Props) {
   useEffect(() => {
     getMatchOutcome()
   }, [activePlayer?.email]) 
-
 
     return (
         <div className="col-span-3 flex justify-center">
@@ -77,18 +76,22 @@ export default function SidePanelDashboard({ activePlayer }: Props) {
                   <div className="flex flex-col w-full gap-4 bg-[#FFFFFF] p-4 rounded-2xl">
                       <span className='flex flex-row items-center gap-4'>
                           <img
-                            src={activePlayer?.avatar ?? '/images/test.jpg'}
+                            src={activePlayer?.avatar ?? '/images/default-avatar.png'}
                             alt="Alexis Lebrun"
                             className="w-19 h-19 rounded-full object-cover"
                           />
-                          <h3 className="text-xl font-semibold text-gray-800">{activePlayer?.firstName}<br/> <span className='font-bold'>{activePlayer?.lastName}</span></h3>
+                          <h3 className="text-xl font-semibold text-gray-800">{activePlayer?.firstName ?? 'No Player'}<br/> <span className='font-bold'>{activePlayer?.lastName ?? 'selected'}</span></h3>
                       </span>
                   <div className="flex items-center gap-2 justify-between pt-8 text-xl">
                     <span className="flex items-center justify-center text-white bg-[#C6C6C6] w-10 lg:w-9 h-9 rounded-full">?</span>
-                    {winOutcome?.map((outcome) =>
-                      outcome.result == "win"
-                        ? <span key={outcome.id} className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-9 h-9 rounded-full">✓</span>
-                        : <span key={outcome.id} className="flex items-center justify-center text-white bg-[#FF4545] w-10 lg:w-9 h-9 rounded-full">✕</span>
+                    {activePlayer ? (
+                      winOutcome?.map((outcome) =>
+                        outcome.result == "win"
+                          ? <span key={outcome.id} className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-9 h-9 rounded-full">✓</span>
+                          : <span key={outcome.id} className="flex items-center justify-center text-white bg-[#FF4545] w-10 lg:w-9 h-9 rounded-full">✕</span>
+                      )
+                    ) : (
+                      <span className="flex items-center justify-center text-black"></span>
                     )}
                   </div>    
                 </div>
