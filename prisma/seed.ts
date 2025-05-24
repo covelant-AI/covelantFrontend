@@ -6,6 +6,21 @@ function getRandomStatValue(): number {
   return Math.floor(Math.random() * 101); // 0 to 100
 }
 
+function getRandomResult(): "win" | "loss" | "draw" {
+  const results = ["win", "loss", "draw"];
+  return results[Math.floor(Math.random() * results.length)] as "win" | "loss" | "draw";
+}
+
+function getRandomType(): "tournament" | "friendly" | "training" | "league" {
+  const types = ["tournament", "friendly", "training", "league"];
+  return types[Math.floor(Math.random() * types.length)] as "tournament" | "friendly" | "training" | "league";
+}
+
+function getRandomCountry(): string {
+  const countries = ["USA", "Japan", "Germany", "Brazil", "Kenya", "India", "France", "Canada"];
+  return countries[Math.floor(Math.random() * countries.length)];
+}
+
 async function seedPlayerStats(playerId: number) {
   const statSubjects = ["SRV", "RSV", "FRH", "BCH", "RLY"];
 
@@ -39,24 +54,28 @@ async function main() {
             lastName: "genesis",
             email: "savejhonconnor@covelant.com",
             avatar: "/testImages/player1.jpg",
+            winRate: 0.75,
           },
           {
             firstName: "Avatar",
             lastName: "Aang",
             email: "mycagabages@covelant.com",
             avatar: "/testImages/player2.jpg",
+            winRate: 0.85,
           },
           {
             firstName: "darth",
             lastName: "vader",
             email: "iamyourfather@covelant.com",
             avatar: "/testImages/player3.jpg",
+            winRate: 0.65,
           },
           {
             firstName: "aragorn",
             lastName: "son of arathorn",
             email: "forFrodo@covelant.com",
             avatar: "/testImages/test.jpg",
+            winRate: 0.55,
           },
         ],
       },
@@ -85,6 +104,7 @@ async function main() {
             lastName: "son of arathorn",
             email: "lonely@covelant.com",
             avatar: "/testImages/test.jpg",
+            winRate: 0.55,
           },
   });
 
@@ -131,7 +151,8 @@ async function main() {
           videoUrl,
           imageUrl,
           date: new Date(Date.now() - i * 1000 * 60 * 60 * 24), // spaced days
-          videoType: "tournament",
+          videoType: getRandomType(),
+          location: getRandomCountry(),
         },
       });
 
@@ -169,7 +190,8 @@ async function main() {
         videoUrl,
         imageUrl,
         date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-        videoType: "friendly",
+        videoType: getRandomType(),
+        location: getRandomCountry(),
       },
     });
 
@@ -200,7 +222,8 @@ async function main() {
         videoUrl,
         imageUrl,
         date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
-        videoType: "friendly",
+        videoType: getRandomType(),
+        location: getRandomCountry(),
       },
     });
 

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import RadarGraph from './UI/RadarGraph'
 import { useAuth } from '@/app/context/AuthContext';
-import { Props } from '@/util/interfaces';
+import { sidePanelDashboardProps } from '@/util/interfaces';
+import { defaultPlayer } from '@/util/interfaces'
 
 
-export default function SidePanelDashboard({ activePlayer }: Props) {
+export default function SidePanelDashboard({ activePlayer }: sidePanelDashboardProps) {
   const { avatar, firstName, lastName, type } = useAuth();
   const [winOutcome, setWinOutcome] = useState<Array<any> | null>([]);
 

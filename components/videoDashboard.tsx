@@ -145,19 +145,21 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
           {/* Win rate */}
           <div className="flex items-baseline gap-2 bg-white border border-gray-300 rounded-full px-4 py-1">
             <span className="text-lg text-gray-600">Win Rate</span>
-            <span className="text-lg font-bold text-green-600">71%</span>
+            <span className="text-lg font-bold text-green-600">
+              {activePlayer && activePlayer.winRate != null ? `${(activePlayer.winRate * 100)}%` : '100%'}
+            </span>
           </div>
 
-          {/* Sort */}
+          {/* Sort
           <button className="flex items-center gap-1 px-3 py-1 bg-white border border-gray-300 rounded-full text-lg text-gray-700">
             Filter ↕
           </button>
 
-          {/* Time filter */}
+          Time filter
           <button className="flex items-center gap-1 px-3 py-1 bg-white border border-gray-300 rounded-full text-lg text-gray-700">
             <span>Last month</span>
             <span className="text-gray-500">▼</span>
-          </button>
+          </button> */}
           </div>
         </div>
       </div>

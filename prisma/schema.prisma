@@ -16,7 +16,7 @@ model Player {
   avatar        String?
   coached       Coach?        @relation(fields: [coachId], references: [id])
   coachId       Int?
-
+  winRate       Float?
   playerMatches PlayerMatch[]
   stats         PlayerStat[]   
 }
@@ -44,6 +44,9 @@ model Match {
   id           Int           @id @default(autoincrement())
   videoUrl     String?
   imageUrl     String?
+  type         String?
+  result       String?
+  location     String?
   date         DateTime
   videoType    String
   playerMatches PlayerMatch[]

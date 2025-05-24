@@ -3,6 +3,7 @@ export type Player = {
   firstName: string;
   lastName: string;
   email: string;
+  winRate: number;
   avatar: string;
   coachId: number;
 };
