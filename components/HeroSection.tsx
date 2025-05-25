@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import RadialBlurBg from '@/components/UI/RadialBlur'
 import ConnectionBox from './UI/ConnectionsBox'
+import Link from 'next/link'
 
 export default function HeroSection(){
 
@@ -20,11 +21,13 @@ export default function HeroSection(){
             <div className="pb-4">
                 <p className="font-semibold text-[#3E3E3E] text-md">Your Actions</p>
             </div>
+            <Link href="/upload-match">
                 <button className="flex items-center bg-[#42B6B1] text-white py-2 px-7 rounded-lg font-semibold mb-2 
-                cursor-pointer hover:bg-teal-600 transition-colors duration-300">
+                cursor-pointer hover:bg-teal-600 transition-colors duration-300 active:scale-95 transition-transform">
                   <Image className="w-5 h-5 mr-4" src="./icons/upload.svg" width={50} height={50} alt="Upload Icon" />
                   Upload Match
                 </button>
+              </Link>
             </div>
 
           <ConnectionBox/>

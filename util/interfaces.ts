@@ -19,3 +19,7 @@ export const defaultPlayer= {
       winRate: 1,
       coachId: 1,
     };
+
+export interface UploadVideoProps {
+  onVideoUpload: (videoURL: string, videoThumbnail: string) => void;
+}

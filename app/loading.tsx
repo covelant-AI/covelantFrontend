@@ -4,6 +4,7 @@ import SignInPage from './sign-in/page';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import RadialBlurBg from '@/components/UI/RadialBlur';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 
 export default function Loading() {
@@ -22,6 +23,11 @@ export default function Loading() {
   }
 
   return (
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 2.4 }}
+    >
     <div className="flex flex-col items-center justify-center h-screen bg-white max-h-screen pt-10">
       <Image
         src="/images/logoBlack.png"
@@ -52,6 +58,6 @@ export default function Loading() {
         left="5vh"
       />
     </div>
-
+    </motion.div>
   )
 }
