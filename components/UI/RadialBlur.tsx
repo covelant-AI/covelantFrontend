@@ -12,7 +12,7 @@ export interface RadialBlurBgProps {
 export default function RadialBlurBg({ width, height, rotate, top, left, bottom, right, background }: RadialBlurBgProps) {
     return (
         <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-1"
         style={{
           background: background,
           width: width,

@@ -152,7 +152,7 @@ async function main() {
           imageUrl,
           date: new Date(Date.now() - i * 1000 * 60 * 60 * 24), // spaced days
           videoType: getRandomType(),
-          location: getRandomCountry(),
+          fieldType: getRandomCountry(),
         },
       });
 
@@ -191,7 +191,7 @@ async function main() {
         imageUrl,
         date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
         videoType: getRandomType(),
-        location: getRandomCountry(),
+        fieldType: getRandomCountry(),
       },
     });
 
@@ -223,7 +223,7 @@ async function main() {
         imageUrl,
         date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
         videoType: getRandomType(),
-        location: getRandomCountry(),
+        fieldType: getRandomCountry(),
       },
     });
 

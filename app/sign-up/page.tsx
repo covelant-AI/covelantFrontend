@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 
 const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
   const [role, setRole] = useState<string>('');
@@ -33,14 +35,14 @@ const SignUpPage: React.FC = () => {
       if (!userCredential) {
         setError('Failed to create user.');
       }
-
+      const avatar = '/images/default-avatar.png'; // Default avatar URL
       const response = await fetch('/api/createUser', {
         method: 'POST',
         headers: new Headers( {
           'Content-Type': 'application/json',
           Accept: 'application/json', 
       }),
-        body: JSON.stringify({ email, role }),
+        body: JSON.stringify({ email, role, firstName, lastName, avatar }),
       });
 
       const data = await response.json();
@@ -50,6 +52,8 @@ const SignUpPage: React.FC = () => {
       setEmail('');
       setPassword('');
       setRole('');
+      setFirstName('');
+      setLastName('');
       router.push('/');
     } else {
       setError('Oops! Something went wrong on our end');
@@ -67,6 +71,32 @@ const SignUpPage: React.FC = () => {
     {/* Error message */}
         {error && <div className="text-red-500 text-center mb-4">{error}</div>}
     <form onSubmit={handleSubmit} className='py-3'>
+      <span className="flex flex-row gap-4">
+        <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
+          <input
+          type="firstName"
+          id="firstName"
+          name="firstName"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          className="w-full p-3 border-0 focus:outline-none text-black  font-semibold"
+          placeholder="first Name"
+          required
+        />
+        </div>
+        <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
+          <input
+          type="lastName"
+          id="lastName"
+          name="lastName"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          className="w-full p-3 border-0 focus:outline-none text-black  font-semibold"
+          placeholder="last Name"
+          required
+        />
+        </div>
+      </span>
       <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
         <img src="/icons/mail.svg" alt="Email Icon" className="w-6 h-6 mx-3 opacity-80" />
         <input

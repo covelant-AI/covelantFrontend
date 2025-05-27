@@ -1,10 +1,73 @@
 'use client';
+import { useState,useCallback, SetStateAction, useEffect } from 'react'
 import Image from "next/image";
 import Link from "next/link";
 import UploadVideo from "@/components/UI/uploadVideo";
 import MatchData from "@/components/UI/MatchData";
+import { User } from '@/util/interfaces'
+import { useRouter } from 'next/navigation';
+
 
 export default function UploadMatchPage() {
+  const router = useRouter();
+
+    const [matchInfo, setMatchInfo] = useState<{
+    playerOne: User | null
+    playerTwo: User | null
+    matchType: string
+    fieldType: string
+    date: string
+  }>({
+    playerOne: null,
+    playerTwo: null,
+    matchType: '',
+    fieldType: '',
+    date: '',
+  })
+  const [videoURL, setVideoURL] = useState<string | null>(null)
+  const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null)
+
+  
+  const handleMatchDataChange = useCallback((data: SetStateAction<{ playerOne: User | null; playerTwo: User | null; matchType: string; fieldType: string; date: string; }>) => {
+    setMatchInfo(data)
+  }, [])
+
+  function handleSubmit(){
+    if (!videoURL || !videoThumbnail) {
+      alert("Please upload a video before proceeding.");
+      return;
+    }
+
+    if (!matchInfo.playerOne || !matchInfo.playerTwo || !matchInfo.date || !matchInfo.fieldType || !matchInfo.matchType) {
+      alert("Please fill in all match data fields.");
+      return;
+    }
+
+    const matchData = {
+      ...matchInfo,
+      videoURL,
+      thumbnail: videoThumbnail,
+    };
+
+    fetch('/api/creatematch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(matchData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+       if (!data.success) {
+        alert('Failed to create match. Please try again.');
+      } 
+        router.push('/analysing');
+      })
+      .catch((error) => {
+        console.error('Error creating match:', error);
+        alert('Failed to create match. Please try again.');
+      });
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-20 py-10">
@@ -31,16 +94,16 @@ export default function UploadMatchPage() {
         {/* Upload Section */}
         <UploadVideo
           onVideoUpload={(url, thumbnail) => {
-            console.log("Video URL:", url);
-            console.log("Thumbnail:", thumbnail);
+            setVideoURL(url);
+            setVideoThumbnail(thumbnail);
           }}
         />
 
         {/* Match Data Section */}
-        <MatchData/>
+        <MatchData onDataChange={handleMatchDataChange} />
       </div>
       {/* Next Button */}
-        <button className="bg-[#4DBAB5] mt-6 text-xl px-20 py-2 rounded-xl cursor-pointer 
+        <button onClick={handleSubmit} className="bg-[#4DBAB5] mt-6 text-xl px-20 py-2 rounded-xl cursor-pointer 
         hover:bg-teal-600 transition-colors duration-300 active:scale-95 transition-transform">
           Next
         </button>

@@ -9,6 +9,23 @@ export interface sidePanelDashboardProps {
   activePlayer: Player | null;
 }
 
+export type MatchDataProps = {
+  onDataChange: (data: {
+    playerOne: User | null
+    playerTwo: User | null
+    matchType: string
+    fieldType: string
+    date: string
+  }) => void
+}
+
+
+export type User = {
+  firstName: string | undefined
+  lastName: string | undefined
+  avatar: any
+  id: number
+}
 
 export const defaultPlayer= {
       id: 1,

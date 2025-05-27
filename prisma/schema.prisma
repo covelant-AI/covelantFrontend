@@ -46,7 +46,7 @@ model Match {
   imageUrl     String?
   type         String?
   result       String?
-  location     String?
+  fieldType     String?
   date         DateTime
   videoType    String
   playerMatches PlayerMatch[]
