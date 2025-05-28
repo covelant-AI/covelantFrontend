@@ -1,20 +1,26 @@
 'use client';
+import { motion } from "framer-motion";
 import SignInPage from './sign-in/page';
 import { useAuth } from './context/AuthContext';
 import NavBar from '@/components/Navbar'
 import HeroSection from '@/components/HeroSection'
+import HomeDashboard from '@/components/HomeDashboard';
+import Loading from './loading';
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth()
 
-  if (!user) {
-    return <SignInPage />;
-  }
+  if (loading) return <Loading />
+  if (!user) return <SignInPage />
 
   return (
-    <>
-      <NavBar/>
-      <HeroSection/>
-    </>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 2.2, ease: "easeOut" }}>
+      <NavBar />
+      <HeroSection />
+      <HomeDashboard />
+    </motion.div>
   );
 }

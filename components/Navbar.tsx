@@ -9,7 +9,7 @@ export default function NavBar(): JSX.Element {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { logOut, user } = useAuth();
+  const { logOut, user, type, avatar, firstName, lastName } = useAuth();
 
   interface UserData {
     avatar?: string;
@@ -68,14 +68,14 @@ export default function NavBar(): JSX.Element {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 px-20 xl:px-40 py-2 flex items-center justify-between backdrop-blur-lg border border-[#F9F9F9]/20 rounded-b-xl pt-6">
+    <nav className="fixed top-0 left-0 w-full z-50 px-20 xl:px-60 py-2 flex items-center justify-between backdrop-blur-lg border border-[#F9F9F9]/20 rounded-b-xl pt-6">
       {/* Logo */}
       <Link href="/" passHref>
         <Image
           src="/images/logoBlack.png"
           alt="Covalent Logo"
           width={170}
-          height={40}
+          height={60}
           className="cursor-pointer"
         />
       </Link>
@@ -110,15 +110,15 @@ export default function NavBar(): JSX.Element {
             <>
               <img
                 className="w-12 h-12 rounded-xl object-cover"
-                src={userData.avatar}
+                src={avatar}
                 alt="User Image"
               />
               <div>
                 <div className="font-semibold text-xl">
-                  {userData.firstName} {userData.lastName}
+                  {firstName} {lastName}
                 </div>
                 <div className="text-sm text-gray-500">
-                  {userData.team ? "Coach" : "Athlete"}
+                  {type}
                 </div>
               </div>
               <div className="pl-4 relative" ref={menuRef}>
@@ -139,9 +139,26 @@ export default function NavBar(): JSX.Element {
                   </button>
                 </div>
                 {showMenu && (
-                  <div className="absolute right-0 mt-4 w-34 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 hover:bg-red-100 transition-colors duration-300">
+                  <div className="absolute flex flex-col right-0 mt-4 w-34 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                    <Link href='/edit-profile'>
                     <button
-                      className="flex items-center px-4 py-1 text-red-600 w-full font-semibold text-sm hover:cursor-pointer"
+                      className="flex items-center px-2 py-1 text-rblack w-full font-semibold text-sm hover:cursor-pointer 
+                      hover:bg-gray-200 transition-colors duration-300 active:bg-gray-400 transition-colors duration-300"
+                      type="button"
+                      >
+                      <Image
+                        src="/images/default-avatar.png"
+                        alt="Edit Profile Icon"
+                        width={30}
+                        height={30}
+                        className="mx-2"
+                        />
+                      Edit Profile
+                    </button>
+                    </Link>
+                    <button
+                      className="flex items-center px-4 py-1 text-red-600 w-full font-semibold text-sm hover:cursor-pointer 
+                      hover:bg-red-100 transition-colors duration-300  active:bg-red-400 transition-colors duration-300"
                       onClick={logOut}
                       type="button"
                     >

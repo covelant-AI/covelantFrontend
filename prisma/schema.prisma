@@ -9,24 +9,81 @@ datasource db {
 }
 
 model Player {
-  id         Int     @id @default(autoincrement())
-  firstName  String?
-  lastName   String?
-  email      String
-  avatar     String?
-  coached    Coach?  @relation(fields: [coachId], references: [id])
-  coachId    Int?
+  id            Int           @id @default(autoincrement())
+  firstName     String?
+  lastName      String?
+  email         String
+  avatar        String?
+  age           String?
+  dominantHand  String?       @default("Right Handed")
+  height        Int?          @default(180)
+  Tier          String?       @default("Professional")
+  coached       Coach?        @relation(fields: [coachId], references: [id])
+  coachId       Int?
+  winRate       Float?
+  playerMatches PlayerMatch[]
+  stats         PlayerStat[]   
+}
+
+
+model PlayerStat {
+  id        Int     @id @default(autoincrement())
+  subject   String  // e.g., "SRV", "RSV", etc.
+  value     Int     // e.g., 83, 72, etc. (formerly "A")
+  playerId  Int
+  player    Player  @relation(fields: [playerId], references: [id])
 }
 
 model Coach {
-  id         Int     @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   firstName  String
   lastName   String
   avatar     String?
   email      String
   team       String?
-  players    Player[]  
+  age        String?
+  players    Player[]
 }
+
+model Match {
+  id           Int           @id @default(autoincrement())
+  videoUrl     String?
+  imageUrl     String?
+  type         String?
+  result       String?
+  fieldType     String?
+  date         DateTime
+  videoType    String
+  playerMatches PlayerMatch[]
+}
+
+/// This model stores opponents who are NOT registered players.
+model Opponent {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+
+  playerMatches PlayerMatch[]
+}
+
+/// PlayerMatch now links either to a Player or an Opponent (but not both).
+model PlayerMatch {
+  id        Int       @id @default(autoincrement())
+  matchId   Int
+  result    String   
+  match     Match     @relation(fields: [matchId], references: [id])
+
+  // Nullable foreign keys for player or opponent
+  playerId   Int?     
+  player     Player?   @relation(fields: [playerId], references: [id])
+
+  opponentId Int?     
+  opponent   Opponent? @relation(fields: [opponentId], references: [id])
+
+  @@unique([matchId, playerId, opponentId])
+}
+
+
 
 
 
