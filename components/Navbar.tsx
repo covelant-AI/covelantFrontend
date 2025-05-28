@@ -139,9 +139,26 @@ export default function NavBar(): JSX.Element {
                   </button>
                 </div>
                 {showMenu && (
-                  <div className="absolute right-0 mt-4 w-34 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 hover:bg-red-100 transition-colors duration-300">
+                  <div className="absolute flex flex-col right-0 mt-4 w-34 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                    <Link href='/edit-profile'>
                     <button
-                      className="flex items-center px-4 py-1 text-red-600 w-full font-semibold text-sm hover:cursor-pointer"
+                      className="flex items-center px-2 py-1 text-rblack w-full font-semibold text-sm hover:cursor-pointer 
+                      hover:bg-gray-200 transition-colors duration-300 active:bg-gray-400 transition-colors duration-300"
+                      type="button"
+                      >
+                      <Image
+                        src="/images/default-avatar.png"
+                        alt="Edit Profile Icon"
+                        width={30}
+                        height={30}
+                        className="mx-2"
+                        />
+                      Edit Profile
+                    </button>
+                    </Link>
+                    <button
+                      className="flex items-center px-4 py-1 text-red-600 w-full font-semibold text-sm hover:cursor-pointer 
+                      hover:bg-red-100 transition-colors duration-300  active:bg-red-400 transition-colors duration-300"
                       onClick={logOut}
                       type="button"
                     >

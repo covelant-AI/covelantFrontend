@@ -14,8 +14,7 @@ export default function Home() {
   if (!user) return <SignInPage />
 
   return (
-    <>
-      <motion.div
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 2.2, ease: "easeOut" }}>
@@ -23,6 +22,5 @@ export default function Home() {
       <HeroSection />
       <HomeDashboard />
     </motion.div>
-    </>
   );
 }

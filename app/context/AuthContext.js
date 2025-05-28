@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, updatePassword } from 'firebase/auth';
 import { auth } from '../firebase/config';
 
 const AuthContext = createContext();
@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  // Dummy function: replace this with your logic/backend call
+ 
   async function fetchUserType(email) {
     try {
       const result = await fetch(`/api/getUser?email=${encodeURIComponent(email)}`, {
@@ -75,14 +75,27 @@ export function AuthProvider({ children }) {
     });
   };
 
+
   const logOut = () => {
     sessionStorage.clear();
     setType(null);
     return signOut(auth);
   };
 
+  const updateUserPassword = () => {
+    const user = auth.currentUser;
+    const newPassword = getASecureRandomPassword();
+
+    const response = updatePassword(user, newPassword).then(() => {
+      return "email updated Successfully"
+    }).catch((error) => {
+      return error
+    });
+
+    return response
+  }
   return (
-    <AuthContext.Provider value={{ user, type, avatar, signIn, logOut, firstName, lastName, loading }}>
+    <AuthContext.Provider value={{ user, type, avatar, signIn, logOut, firstName, lastName, loading, updateUserPassword }}>
       {children}
     </AuthContext.Provider>
   );

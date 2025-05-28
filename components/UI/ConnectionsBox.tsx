@@ -4,7 +4,7 @@ import CoachesPlayers from "./CoachesPlayers";
 import PlayersCoaches from "./PlayersCoaches";
 
 export default function ConnectionBox(){
-    const {type} = useAuth();;
+    const {type} = useAuth();
 
     return (
         <div className="flex flex-col z-10">

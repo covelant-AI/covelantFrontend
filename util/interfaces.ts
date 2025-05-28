@@ -19,6 +19,16 @@ export type MatchDataProps = {
   }) => void
 }
 
+export type UserData = {
+  id: number
+  firstName?: string
+  lastName?: string
+  email: string
+  avatar?: string
+  age?: string
+  dominantHand?: string
+}
+
 
 export type User = {
   firstName: string | undefined

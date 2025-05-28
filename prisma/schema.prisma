@@ -14,6 +14,10 @@ model Player {
   lastName      String?
   email         String
   avatar        String?
+  age           String?
+  dominantHand  String?       @default("Right Handed")
+  height        Int?          @default(180)
+  Tier          String?       @default("Professional")
   coached       Coach?        @relation(fields: [coachId], references: [id])
   coachId       Int?
   winRate       Float?
@@ -37,6 +41,7 @@ model Coach {
   avatar     String?
   email      String
   team       String?
+  age        String?
   players    Player[]
 }
 
