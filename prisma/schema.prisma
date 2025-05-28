@@ -25,15 +25,6 @@ model Player {
   stats         PlayerStat[]   
 }
 
-
-model PlayerStat {
-  id        Int     @id @default(autoincrement())
-  subject   String  // e.g., "SRV", "RSV", etc.
-  value     Int     // e.g., 83, 72, etc. (formerly "A")
-  playerId  Int
-  player    Player  @relation(fields: [playerId], references: [id])
-}
-
 model Coach {
   id         Int       @id @default(autoincrement())
   firstName  String
@@ -43,6 +34,14 @@ model Coach {
   team       String?
   age        String?
   players    Player[]
+}
+
+model PlayerStat {
+  id        Int     @id @default(autoincrement())
+  subject   String  // e.g., "SRV", "RSV", etc.
+  value     Int     // e.g., 83, 72, etc. (formerly "A")
+  playerId  Int
+  player    Player  @relation(fields: [playerId], references: [id])
 }
 
 model Match {

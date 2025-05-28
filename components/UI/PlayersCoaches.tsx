@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useAuth } from '@/app/context/AuthContext';
+import Link from 'next/link'
 
 export default function PlayersCoaches(){
     const {user} = useAuth();
@@ -69,11 +70,12 @@ return(
             </div>
         </div>
         }
-
-        <button className="flex items-center justify-center w-12 h-12 bg-white border border-[#E7E7E7] text-black rounded-xl
-                             cursor-pointer hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
-           ...
-        </button>
+        <Link href='/invite'>
+          <button className="flex items-center justify-center w-12 h-12 bg-white border border-[#E7E7E7] text-black rounded-xl
+                               cursor-pointer hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
+             +
+          </button>
+        </Link>
     </div>
     )
 }

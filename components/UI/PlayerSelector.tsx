@@ -111,8 +111,7 @@ export const PlayerSelector: React.FC<{
       </div>
 
       {searchOpen && !selected && (
-      <div className="absolute -top-10 left-0 right-0 bg-gray-100 h-full rounded-xl mt-1 z-10 pb-20 mt-10">
-              {/* search input with magnifier icon */}
+      <div className="absolute -top-10 left-0 right-0 bg-gray-100 h-full rounded-xl mt-1 z-10 pb-20 mt-11 mx-1">
               <div className="flex items-center px-2 py-2 bg-white border-b border-gray-200 rounded-lg">
               <Image
                 src="/icons/search.svg"

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useAuth } from '@/app/context/AuthContext';
+import Link from 'next/link'
 
 export default function CoachesPlayers(){
     const {user} = useAuth();
@@ -85,22 +86,24 @@ export default function CoachesPlayers(){
                     )}
                   </button>
             </div>
-            <button className="flex items-center justify-center w-12 h-12 bg-white border border-[#E7E7E7] text-black rounded-xl
-                             cursor-pointer hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
-                <svg 
-                className="w-5 h-5 stroke-current"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4v16m8-8H4"
-                    />
-                </svg>
-            </button>
+            <Link href='/invite'>
+              <button className="flex items-center justify-center w-12 h-12 bg-white border border-[#E7E7E7] text-black rounded-xl
+                               cursor-pointer hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
+                  <svg 
+                  className="w-5 h-5 stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4v16m8-8H4"
+                        />
+                  </svg>
+              </button>
+            </Link>
             </>}
           </div> 
     )

@@ -7,6 +7,7 @@ import SecuritySettings from '@/components/SecuritySettings'
 import RadialBlurBg from '@/components/UI/RadialBlur'
 import AccountPreferences from '@/components/AccountPreferences'
 import SubscriptionSettings from '@/components/SubscriptionSettings'
+import AccessSettings from '@/components/AccessSettings'
 
 export default function EditProfile(){
     const [activePage, setActivePage] = useState('Profile Settings')
@@ -21,6 +22,7 @@ export default function EditProfile(){
               {activePage === 'Profile Settings' && <ProfileSettings />}
               {activePage === 'Security Settings' && <SecuritySettings />}
               {activePage === 'Account Preferences' && <AccountPreferences/>}
+              {activePage === 'Role & Access' && <AccessSettings/>}
               {activePage === 'Subscription & Billing' && <SubscriptionSettings/>} 
             </main>
           </div>
