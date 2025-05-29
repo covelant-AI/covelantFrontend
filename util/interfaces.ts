@@ -47,6 +47,14 @@ export const defaultUserData = {
   dominantHand: "Right Handed"
 }
 
+export interface profile {
+  email: string;
+  firstName: string;
+  lastName: string;
+  avatar: string;
+  type: string;
+}
+
 
 export type User = {
   firstName: string | undefined

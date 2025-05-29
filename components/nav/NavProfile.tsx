@@ -4,18 +4,20 @@ import Link from "next/link";
 import { useAuth } from '@/app/context/AuthContext';
 import { useState, useRef, useEffect, MouseEvent } from "react";
 import {UserData, defaultUserData} from '@/util/interfaces'
+import {profile} from "@/util/interfaces"
 
 export default function NavProfile(){
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
+  const [profile, setProfile] = useState<profile>()
   const [userData, setUserData] = useState<UserData>(defaultUserData);
-  const { logOut, type, avatar, firstName, lastName } = useAuth();
+  const { logOut} = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
 
   
-  const getUserData = async (userEmail:string): Promise<void> => {
+  const getUserData = async (): Promise<void> => {
     try {
-      const email = userEmail;
+      const email = sessionStorage.getItem('email');
       if(!email) return alert("Email is not in user")
 
       await fetch(`/api/getUser?email=${encodeURIComponent(email)}`, {
@@ -38,10 +40,15 @@ export default function NavProfile(){
   };
 
   useEffect(() => {
-      const userEmail = sessionStorage.getItem('userEmail');
-      if (userEmail) {
-        getUserData(userEmail);
-      }
+    const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
+    const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
+
+    if (values.every((value): value is string => value !== null)) {
+      const [email, firstName, lastName, avatar, type] = values;
+      setProfile({ email, firstName, lastName, avatar, type });
+    }
+    if(profile) getUserData();
+      
   }, []);
 
   useEffect(() => {
@@ -91,15 +98,15 @@ export default function NavProfile(){
             <>
               <img
                 className="w-12 h-12 rounded-xl object-cover"
-                src={avatar || './images/default-avatar.png'}
+                src={profile?.avatar || './images/default-avatar.png'}
                 alt="User Image"
               />
               <div>
                 <div className="font-semibold text-xl">
-                  {firstName} {lastName}
+                  {profile?.firstName} {profile?.lastName}
                 </div>
                 <div className="text-sm text-gray-500">
-                  {type}
+                  {profile?.type}
                 </div>
               </div>
               <div className="pl-4 relative" ref={menuRef}>
