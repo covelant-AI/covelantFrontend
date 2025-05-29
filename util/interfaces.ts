@@ -19,6 +19,14 @@ export type MatchDataProps = {
   }) => void
 }
 
+export interface PlayerData {
+  id?: number;       
+  avatar?: string;
+  firstName?: string;
+  lastName?: string;
+  coaches?: any;   
+}
+
 export type UserData = {
   id: number
   firstName?: string
@@ -70,6 +78,11 @@ export const defaultPlayer: Player = {
   Tier: null,
   winRate: null,
 };
+
+export interface ConnectionSortProps {
+  playerCount: number;
+  safePlayerData: PlayerData[];
+}
 
 export interface UploadVideoProps {
   onVideoUpload: (videoURL: string, videoThumbnail: string) => void;

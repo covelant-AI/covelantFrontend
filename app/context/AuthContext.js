@@ -8,7 +8,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [type, setType] = useState(null);
-  const [avatar, setAvatar] = useState(null); 
+  const [avatar, setAvatar] = useState("./images/default-avatar.png"); 
   const [firstName, setName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [loading, setLoading] = useState(true)
@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
         console.log(userType);
       } else {
         sessionStorage.removeItem('userEmail');
-        setAvatar(null);
+        setAvatar("./images/default-avatar.png");
         setUser(null);
         setType(null);
       }
