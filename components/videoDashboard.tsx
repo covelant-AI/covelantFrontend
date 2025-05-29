@@ -34,7 +34,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                console.error('Error fetching user data:', result.error);
              }
              setSelectedPlayer(() => result.connection);
-             console.log('Selected players:', result.connection);
+
              setActivePlayer(result.connection[0]);
            })
          } catch (error) {

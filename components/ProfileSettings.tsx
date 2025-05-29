@@ -74,7 +74,6 @@ export default function ProfileSettings() {
         }
     
         const data = await response.json()
-        console.log('Update success:', data)
       } catch (error) {
         console.error('Error updating user data:', error)
       }

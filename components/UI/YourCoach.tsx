@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from '@/app/context/AuthContext';
 
-export default function CoachList(){
+export default function YourCoach(){
             const {user} = useAuth();
     
             interface CoachData {
@@ -32,7 +32,6 @@ export default function CoachList(){
               }),
             }).then((response) => response.json())
             .then((result)=> {
-              console.log( result.connection[0].coached)
               if(result.error){
                 console.error('Error fetching user data:', result.error);
               }
@@ -59,7 +58,6 @@ export default function CoachList(){
           <div
             className="flex flex-wrap gap-4 max-w-[520px] p-4 justify-center max-h-[320px] overflow-y-auto"
           >
-
               <div key={coachData[0].id} className="flex flex-col items-center w-20">
                 <div className="w-20 h-20 rounded-lg bg-cyan-200 overflow-hidden mb-2">
                   <img
@@ -70,7 +68,6 @@ export default function CoachList(){
                 </div>
                 <div className="text-sm text-center text-gray-700">{coachData[0].coached.firstName} {coachData[0].coached.lastName}</div>
               </div>
-            
           </div>
       </div> 
       }

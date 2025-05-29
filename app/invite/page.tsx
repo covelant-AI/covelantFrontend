@@ -1,34 +1,44 @@
 'use client';
 import NavBar from "@/components/Navbar"
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth } from '@/app/context/AuthContext';
 import { User } from '@/util/interfaces'
-import AthletesList from '@/components/UI/AthletesList'
-import CoachList from '@/components/UI/CoachList'
+import AthletesList from '@/components/AthletesList'
+import CoachesList from '@/components/CoachesList'
 import { PlayerSelector } from '@/components/UI/PlayerSelector'
 import RadialBlurBg from "@/components/UI/RadialBlur";
 
 export default function InvitePage() {
     const [playerOne, setPlayerOne] = useState<User | null>(null)
-    const [refreshKey, setRefreshKey] = useState(0)
     const {type, user} = useAuth();
     const [copied, setCopied] = useState(false)
+    const [invited, setInvited] = useState(false)
     const inviteUrl = 'https://www.covelant.com/sign-up' 
 
     const handleCopy = async () => {
       try {
         await navigator.clipboard.writeText(inviteUrl)
         setCopied(true)
-        setTimeout(() => setCopied(false), 2000) // reset after 2s
+        setTimeout(() => setCopied(false), 2000) 
       } catch (err) {
         console.error('Copy failed', err)
         alert('Failed to copy link')
       }
     }
 
+    const handleInvite = async () =>{
+      try{
+        setInvited(true)
+        setTimeout(() => setInvited(false), 2000)
+      }
+      catch(err){
+        alert('failed to invite Athlete')
+      }
+    }
+
     async function handleOnSubmit() {
-        if (!playerOne) return // safeguard
+        if (!playerOne) return 
         try {
           const res = await fetch('/api/addPlayer', {
             method: 'POST',
@@ -36,34 +46,30 @@ export default function InvitePage() {
             body: JSON.stringify({ player: playerOne, email: user.email }),
           })
           if (!res.ok) throw new Error('Failed to add player')
-          setRefreshKey((k) => k + 1)
+
         } catch (error) {
           console.error(error)
           alert('Error inviting player')
         }
     }
 
-     useEffect(() => {
-    // fetchRoster()
-  }, [refreshKey])
-
   return (
     <>
     <NavBar/>
     <RadialBlurBg 
-                background={'radial-gradient(50% 30% at 50% 50%,rgba(8, 113, 151, 0.1) 37%,rgba(0, 180, 174, 0.13) 38%,rgba(176, 198, 255, 0) 100%)'}
-                width={"auto"} 
-                height={"500"} 
-                rotate={"0deg"} 
-                top={'10vh'} 
-                left={'5vh'}
-                />
+        background={'radial-gradient(50% 30% at 50% 50%,rgba(8, 113, 151, 0.1) 37%,rgba(0, 180, 174, 0.13) 38%,rgba(176, 198, 255, 0) 100%)'}
+        width={"auto"} 
+        height={"500"} 
+        rotate={"0deg"} 
+        top={'10vh'} 
+        left={'5vh'}
+        />
     <div className=" pt-40 min-h-screen bg-gray-100 flex flex-col items-center pt-24 space-y-10 px-4 z-10">
       {/* Title */}
       {type == "coach"? 
-      <div className="text-2xl font-bold text-gray-900">Your Athletes</div> 
+      <div className="text-4xl font-bold text-gray-900">Your Athletes</div> 
       : 
-      <div className="text-2xl font-bold text-gray-900">Your Coaches</div>
+      <div className="text-4xl font-bold text-gray-900">Your Coaches</div>
       }
 
       {/* Invitation Section */}
@@ -93,7 +99,10 @@ export default function InvitePage() {
       <div className="flex flex-row justify-center mt-6">
         <button
           disabled={!playerOne}
-          onClick={handleOnSubmit}
+          onClick={() => {
+            handleInvite()
+            handleOnSubmit()
+          }}
           className={`border rounded-xl px-4 py-2 flex flex-row items-center transition
             ${playerOne
               ? 'bg-white text-black border-[#9ED8D5] hover:bg-teal-50 cursor-pointer'
@@ -109,17 +118,11 @@ export default function InvitePage() {
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          Invite
+          <span>{invited? "Athlete Invited": "Invite" }</span>
         </button>
-
         </div>
       </div>
-
-      {type == 'coach'? 
-      <AthletesList/>
-      :
-      <CoachList/>
-      }
+      {type == 'coach'? <AthletesList/>:<CoachesList/>}
     </div>
     </>
   )

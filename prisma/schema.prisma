@@ -9,31 +9,32 @@ datasource db {
 }
 
 model Player {
-  id            Int           @id @default(autoincrement())
-  firstName     String?
-  lastName      String?
-  email         String
-  avatar        String?
-  age           String?
-  dominantHand  String?       @default("Right Handed")
-  height        Int?          @default(180)
-  Tier          String?       @default("Professional")
-  coached       Coach?        @relation(fields: [coachId], references: [id])
-  coachId       Int?
-  winRate       Float?
+  id           Int      @id @default(autoincrement())
+  firstName    String?
+  lastName     String?
+  email        String
+  avatar       String?
+  age          String?
+  dominantHand String?  @default("Right Handed")
+  height       Int?     @default(180)
+  Tier         String?  @default("Professional")
+  winRate      Float?
   playerMatches PlayerMatch[]
-  stats         PlayerStat[]   
+  stats        PlayerStat[]
+
+  coaches      Coach[]  @relation("CoachPlayers")
 }
 
 model Coach {
-  id         Int       @id @default(autoincrement())
-  firstName  String
-  lastName   String
-  avatar     String?
-  email      String
-  team       String?
-  age        String?
-  players    Player[]
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  avatar    String?
+  email     String
+  team      String?
+  age       String?
+
+  players   Player[] @relation("CoachPlayers")
 }
 
 model PlayerStat {

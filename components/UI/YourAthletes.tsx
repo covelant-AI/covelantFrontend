@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from '@/app/context/AuthContext';
 
-export default function AthletesList(){
+export default function YourAthletes(){
             const {user} = useAuth();
     
             interface PlayerData {

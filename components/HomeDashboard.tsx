@@ -2,11 +2,11 @@ import React from 'react'
 import VideoDashboard from './videoDashboard'
 import SidePanelDashboard from './SidePanelDashboard'
 import {Player} from '@/util/types'
-import { defaultPlayer } from '@/util/interfaces'
+import { defaultPlayer1 } from '@/util/interfaces'
 import { useState } from 'react'
 
 export default function HomeDashboard() {
-  const [activePlayer, setActivePlayer] = useState<Player>(defaultPlayer);
+  const [activePlayer, setActivePlayer] = useState<Player>(defaultPlayer1);
 
   return (
     <div className="py-6 grid grid-cols-1 lg:grid-cols-12 gap-0.5 bg-[#FFFFFF]  

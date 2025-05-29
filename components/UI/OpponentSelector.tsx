@@ -87,7 +87,6 @@ export const OpponentSelector: React.FC<{
       const data = await res.json()
       
       if (data?.opponent) {
-        console.log('Opponent created:', data.opponent)
         handleSelect(data.opponent)
       } else {
         setShowCreateForm(false)
