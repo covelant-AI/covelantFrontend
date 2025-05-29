@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react'
-import NavBar from '@/components/Navbar'
+import NavBar from '@/components/nav/Navbar'
 import Sidebar from '@/components/Sidebar'
 import ProfileSettings from '@/components/ProfileSettings'
 import SecuritySettings from '@/components/SecuritySettings'

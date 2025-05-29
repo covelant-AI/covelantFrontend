@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from './context/AuthContext';
 import SignInPage from './sign-in/page';
 import Loading from './loading';
-import NavBar from '@/components/Navbar'
+import NavBar from '@/components/nav/Navbar'
 import HeroSection from '@/components/HeroSection'
 import HomeDashboard from '@/components/HomeDashboard';
 
@@ -20,7 +20,7 @@ export default function Home() {
       transition={{ duration: 2.2, ease: "easeOut" }}>
       <NavBar />
       <HeroSection />
-      {/* <HomeDashboard /> */}
+      <HomeDashboard />
     </motion.div>
   );
 }

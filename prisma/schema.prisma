@@ -14,7 +14,7 @@ model Player {
   lastName     String?
   email        String
   avatar       String?
-  age          String?
+  age          Int?
   dominantHand String?  @default("Right Handed")
   height       Int?     @default(180)
   Tier         String?  @default("Professional")

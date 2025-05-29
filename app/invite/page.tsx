@@ -1,5 +1,5 @@
 'use client';
-import NavBar from "@/components/Navbar"
+import NavBar from "@/components/nav/Navbar"
 import Image from 'next/image'
 import { useState } from 'react'
 import { useAuth } from '@/app/context/AuthContext';

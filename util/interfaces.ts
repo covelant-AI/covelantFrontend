@@ -42,7 +42,7 @@ export const defaultUserData = {
   firstName: "Jhon",
   lastName: "Doe",
   email: "TeamCovelant@covelant.com",
-  avatar: "./images/default-avatar.png",
+  avatar: "/images/default-avatar.png",
   age: 21,
   dominantHand: "Right Handed"
 }
@@ -56,13 +56,17 @@ export type User = {
 }
 
 export const defaultPlayer1 = {
-  id: 0,
-  firstName: '',
-  lastName: '',
-  email: '',
-  winRate: 0,
-  avatar: '/images/default-avatar.png',
-  coachId: 0
+  id: 1,
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john.doe@example.com',
+  winRate: 0.5,
+  avatar: '/avatars/default.png',
+  coachId: 1,
+  age: 25,
+  dominantHand: 'right',
+  height: 180,
+  Tier: 'Beginner',
 };
 
 

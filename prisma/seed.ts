@@ -75,7 +75,7 @@ async function main() {
             lastName: "son of arathorn",
             email: "forFrodo@covelant.com",
             avatar: "/testImages/test.jpg",
-            winRate: 0.55,
+            winRate: 0.57,
           },
         ],
       },
@@ -100,11 +100,11 @@ async function main() {
     where: { id: 5 },
     update: {},
     create: {
-            firstName: "aragorn",
-            lastName: "son of arathorn",
-            email: "lonely@covelant.com",
+            firstName: "single",
+            lastName: "player",
+            email: "single@covelant.com",
             avatar: "/testImages/test.jpg",
-            winRate: 0.55,
+            winRate: 0.50,
           },
   });
 

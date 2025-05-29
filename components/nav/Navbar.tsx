@@ -1,10 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { JSX } from "react";
 import NavProfile from "@/components/nav/NavProfile"
 
-
-export default function NavBar(): JSX.Element {
+export default function NavBar() {
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 px-20 xl:px-60 py-2 flex items-center justify-between backdrop-blur-lg border border-[#F9F9F9]/20 rounded-b-xl pt-6">

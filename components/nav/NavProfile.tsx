@@ -2,21 +2,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from '@/app/context/AuthContext';
-import { useState, useRef, useEffect, MouseEvent, JSX } from "react";
+import { useState, useRef, useEffect, MouseEvent } from "react";
 import {UserData, defaultUserData} from '@/util/interfaces'
 
 export default function NavProfile(){
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
   const [userData, setUserData] = useState<UserData>(defaultUserData);
-  const { logOut, user, type, avatar, firstName, lastName } = useAuth();
+  const { logOut, type, avatar, firstName, lastName } = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
 
   
-  const getUserData = async (): Promise<void> => {
+  const getUserData = async (userEmail:string): Promise<void> => {
     try {
-      const email = user.email;
-    
+      const email = userEmail;
+      if(!email) return alert("Email is not in user")
+
       await fetch(`/api/getUser?email=${encodeURIComponent(email)}`, {
         method: 'GET',
         headers: new Headers({
@@ -26,11 +27,9 @@ export default function NavProfile(){
       })
       .then((response) => response.json())
       .then((result)=> {
-
         if(result.error){
           console.error('Error fetching user data:', result.error);
         }
-        
         setUserData(()=> result.data);
       })
     } catch (error) {
@@ -39,10 +38,11 @@ export default function NavProfile(){
   };
 
   useEffect(() => {
-    if (user) {
-      getUserData()
-    }
-  }, [user]);
+      const userEmail = sessionStorage.getItem('userEmail');
+      if (userEmail) {
+        getUserData(userEmail);
+      }
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | MouseEvent & { target: Node }) {
@@ -91,7 +91,7 @@ export default function NavProfile(){
             <>
               <img
                 className="w-12 h-12 rounded-xl object-cover"
-                src={avatar}
+                src={avatar || './images/default-avatar.png'}
                 alt="User Image"
               />
               <div>

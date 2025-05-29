@@ -6,7 +6,7 @@ import { defaultPlayer1 } from '@/util/interfaces'
 import { useState } from 'react'
 
 export default function HomeDashboard() {
-  const [activePlayer, setActivePlayer] = useState<Player>(defaultPlayer1);
+  const [activePlayer, setActivePlayer] = useState<Player | null>(defaultPlayer1);
 
   return (
     <div className="py-6 grid grid-cols-1 lg:grid-cols-12 gap-0.5 bg-[#FFFFFF]  

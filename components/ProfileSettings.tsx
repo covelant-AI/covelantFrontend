@@ -12,7 +12,7 @@ export default function ProfileSettings() {
     firstName: '',
     lastName: '',
     dominantHand: 'Right Handed',
-    age: '',
+    age: 20,
     height: '',
     email: '',
   })
