@@ -22,7 +22,7 @@ export default function HeroSection(){
             </div>
             <Link href="/upload-match">
                 <button className="flex items-center bg-[#42B6B1] text-white py-2 px-7 rounded-lg font-semibold mb-2 
-                cursor-pointer hover:bg-teal-600 transition-colors duration-300 active:scale-95 transition-transform">
+                cursor-pointer hover:bg-teal-600 transition-colors duration-100 active:scale-95 transition-transform">
                   <Image className="w-5 h-5 mr-4" src="./icons/upload.svg" width={50} height={50} alt="Upload Icon" />
                   Upload Match
                 </button>

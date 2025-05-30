@@ -81,7 +81,7 @@ export const PlayerSelector: React.FC<{
           <div className="absolute bottom-2 flex items-center text-black bg-gray-400 bg-opacity-50 rounded px-2">
             <button
               onClick={clearSelection}
-              className="text-red hover:text-gray-300 text-xl cursor-pointer pb-1"
+              className="text-red hover:text-gray-300 text-xl cursor-pointer pb-1 active:scale-[0.9]"
             >
               ×
             </button>
@@ -90,7 +90,7 @@ export const PlayerSelector: React.FC<{
         ) : (
           <>
             <button className="flex items-center justify-center w-12 h-12 bg-white border border-[#E7E7E7] 
-            text-black rounded-xl hover:bg-[#42B6B1] hover:text-black transition-colors duration-300 cursor-pointer">
+            text-black rounded-xl hover:bg-[#42B6B1] hover:text-black transition-colors duration-300 cursor-pointer active:scale-[0.9]">
               <svg
                 className="w-5 h-5 stroke-current "
                 xmlns="http://www.w3.org/2000/svg"

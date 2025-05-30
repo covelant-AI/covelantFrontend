@@ -113,7 +113,7 @@ return (
           <div className="absolute bottom-2 flex items-center text-black bg-gray-400 bg-opacity-50 rounded px-2">
             <button
               onClick={clearSelection}
-              className="text-red hover:text-gray-300 text-xl cursor-pointer pb-1"
+              className="text-red hover:text-gray-300 text-xl cursor-pointer pb-1 active:scale-[0.9]"
             >
               ×
             </button>
@@ -125,7 +125,8 @@ return (
             // NEW: Two buttons side by side
             <div className="flex flex-col gap-4 w-full px-4 justify-center">
               <button
-                className="flex items-center justify-center px-4 py-2 bg-white border border-[#E7E7E7] text-black rounded-xl hover:bg-[#42B6B1] hover:text-black transition-colors duration-300 cursor-pointer"
+                className="flex items-center justify-center px-4 py-2 bg-white border border-[#E7E7E7] 
+                text-black rounded-xl hover:bg-[#42B6B1] hover:text-black transition-colors duration-300 cursor-pointer active:scale-[0.9]"
                 onClick={(e) => {
                   e.stopPropagation()
                   setSearchOpen(true)
@@ -135,7 +136,8 @@ return (
                 Search Opponent
               </button>
               <button
-                className="flex items-center justify-center px-4 py-2 bg-white border border-[#E7E7E7] text-black rounded-xl hover:bg-[#42B6B1] hover:text-black transition-colors duration-300 cursor-pointer"
+                className="flex items-center justify-center px-4 py-2 bg-white border border-[#E7E7E7] text-black 
+                rounded-xl hover:bg-[#42B6B1] hover:text-black transition-colors duration-300 cursor-pointer active:scale-[0.9]"
                 onClick={(e) => {
                   e.stopPropagation()
                   setShowCreateForm(true)
@@ -173,13 +175,13 @@ return (
               <div className="flex justify-between">
                 <button
                   type="submit"
-                  className="bg-[#4DBAB5] text-white px-2 py-1 rounded text-sm hover:bg-teal-600"
+                  className="bg-[#4DBAB5] text-white px-2 py-1 scale-[0.8] rounded text-sm hover:bg-teal-600 cursor-pointer active:scale-[0.75]"
                 >
                   Add Opponent
                 </button>
                 <button
                   type="button"
-                  className="text-gray-600 px-4 py-2 rounded  hover:bg-gray-200"
+                  className="text-gray-600 px-4 py-2 rounded scale-[0.8] hover:bg-gray-200 cursor-pointer active:scale-[0.75]"
                   onClick={() => {
                     setShowCreateForm(false)
                     setNewFirstName('')

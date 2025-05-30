@@ -4,6 +4,7 @@ import Link from 'next/link'
 import {PlayerData} from "@/util/interfaces"
 import { useState, useEffect } from "react";
 import {profile} from "@/util/interfaces"
+import Image from 'next/image'
 
 export default function ConnectionBox(){
   const {user} = useAuth();  
@@ -63,13 +64,18 @@ export default function ConnectionBox(){
       </div>
       <div className="flex items-center justify-center space-x-2 bg-[#F9F9F9] border border-[#E7E7E7] p-2 rounded-2xl">
       {playerCount === 0 ? 
-      <Link href="/invite">
-        <div className="flex items-center justify-between px-4 py-1 gap-10 cursor-pointer">
-          <div>
-            <div className="font-bold text-gray-900">No {profile?.type == "player"? "coach": "players"} invited</div>
-            <div className="font-semibold text-gray-500 text-sm">Add your {profile?.type == "player"? "coach": "players"} →</div>
+      <>
+        <div className="flex items-center justify-between px-1 py-1 gap-6">
+          <div className='p-2 rounded-xl bg-[#42B6B1]'>
+            <Image className="w-7 h-7 bg-[#42B6B1] justify-center" src="/images/default-avatar.png" width={50} height={50} alt="Upload Icon" />
           </div>
-          <div className="w-10 h-10 flex items-center justify-center border-2 border-[#E7E7E7] rounded-xl bg-white hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
+          <div>
+            <div className="font-bold text-gray-900">Add a New {profile?.type == "player"? "Coach": "Players"}!</div>
+            <div className="font-semibold text-gray-500 text-sm">Add your {profile?.type == "player"? "Coaches": "Players"} will appear here →</div>
+          </div>
+          <Link href="/invite">
+          <div className="active:scale-[0.9] w-10 h-10 flex items-center justify-center border-2 border-[#E7E7E7] rounded-xl bg-white hover:bg-[#42B6B1] 
+           cursor-pointer hover:text-white transition-colors duration-300">
             <svg 
             className="w-5 h-5 stroke-black"
             xmlns="http://www.w3.org/2000/svg"
@@ -84,8 +90,9 @@ export default function ConnectionBox(){
                 />
             </svg>
           </div>
+          </Link>
         </div>
-      </Link>: <>
+      </>: <>
       <div className="flex items-center space-x-2">
             {(playerCount < 3 ? safePlayerData : safePlayerData.slice(0, 3)).map((player) => (
               <div key={player.id} className="w-12 h-12 rounded-xl overflow-hidden">
@@ -107,9 +114,9 @@ export default function ConnectionBox(){
       </div>
       <Link href='/invite'>
         <button className="flex items-center justify-center w-12 h-12 bg-white border border-[#E7E7E7] text-black rounded-xl
-                         cursor-pointer hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
+                         cursor-pointer hover:bg-[#42B6B1] hover:text-white transition-colors duration-300 active:scale-[0.9]">
             <svg 
-            className="w-5 h-5 stroke-current"
+            className="w-7 h-7 stroke-current"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

@@ -145,8 +145,8 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
             matches.map((m) => (
               <div
                 key={m.id}
-                className="relative rounded-lg overflow-hidden h-50 bg-[#F8F8F8] border-2 border-[#F8F8F8] 
-                           hover:scale-[1.05] transition duration-300">
+                className="relative rounded-2xl overflow-hidden h-50 bg-[#F8F8F8] border-2 border-[#F8F8F8] 
+                           hover:scale-[1.05] transition duration-100">
                 <img
                   src={m.imageUrl}
                   alt={m.title}

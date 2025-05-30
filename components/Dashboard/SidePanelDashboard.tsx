@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import RadarGraph from '../UI/RadarGraph'
 import { sidePanelDashboardProps } from '@/util/interfaces';
 import {profile} from "@/util/interfaces"
+import { QuestionMarkCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function SidePanelDashboard({ activePlayer }: sidePanelDashboardProps) {
   const [winOutcome, setWinOutcome] = useState<Array<any> | null>([]);
   const [profile, setProfile] = useState<profile>()
+   const [showExplanation, setShowExplanation] = useState(false)
 
 
   const getMatchOutcome = async (): Promise<void> => { 
@@ -109,14 +111,63 @@ export default function SidePanelDashboard({ activePlayer }: sidePanelDashboardP
                 </div>
                 }
                 
-
                 {/* Radar chart placeholder */}
-                <div className="w-full rounded-lg bg-[#FFFFFF]">
+                <div className="w-full rounded-lg bg-[#FFFFFF] relative">
+                  
+                  {/* Help button in the top-right */}
+                  <button
+                    onClick={() => setShowExplanation((v) => !v)}
+                    className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full z-10"
+                    aria-label="Show explanation"
+                  >
+                    <QuestionMarkCircleIcon className="h-6 w-6 text-gray-500" />
+                  </button>
+
                   <div className="w-full h-60 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 p-4">
-                    <RadarGraph activePlayer={activePlayer}/>
+                    <RadarGraph activePlayer={activePlayer} />
                   </div>
-                </div>
+
+                  {showExplanation && (
+                    <div
+                      className="absolute bottom-1 right-70 z-10 w-72 bg-white rounded-2xl shadow-lg p-4"
+                    >
+                      {/* Close button */}
+                      <button
+                        onClick={() => setShowExplanation(false)}
+                        className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full"
+                        aria-label="Close explanation"
+                      >
+                        <XMarkIcon className="h-5 w-5 text-gray-700" />
+                      </button>
+                  
+                      {/* Header */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <QuestionMarkCircleIcon className="h-6 w-6 text-gray-600" />
+                        <h3 className="text-lg font-semibold text-gray-600">Explanation</h3>
+                      </div>
+                  
+                      {/* Content */}
+                      <ul className="space-y-4 text-sm text-gray-800">
+                        <li className='flex flex-row justify-center items-center p-2'>
+                          <span className="font-bold text-lg mr-4">SRV:</span> Serve Quality, Measures effectiveness &amp; variation
+                        </li>
+                        <li className='flex flex-row justify-center items-center p-2'>
+                          <span className="font-bold text-lg mr-4">RTN:</span> Return Game, Ability to handle opponent&apos;s serves
+                        </li>
+                        <li className='flex flex-row justify-center items-center p-2'>
+                          <span className="font-bold text-lg mr-4">FHD:</span> Forehand Attack, Aggressiveness &amp; winners via forehand
+                        </li>
+                        <li className='flex flex-row justify-center items-center p-2'>
+                          <span className="font-bold text-lg mr-4">BHD:</span> Backhand Attack, Aggressiveness &amp; versatility via backhand
+                        </li>
+                        <li className='flex flex-row justify-center items-center p-2'>
+                          <span className="font-bold text-lg mr-4">RLY:</span> Rally Endurance, Performance in longer rallies
+                        </li>
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
+            </div>
     )
 }
