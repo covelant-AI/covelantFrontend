@@ -3,66 +3,59 @@ import { useAuth } from '@/app/context/AuthContext';
 import Link from 'next/link'
 import {PlayerData} from "@/util/interfaces"
 import { useState, useEffect } from "react";
+import {profile} from "@/util/interfaces"
 
 export default function ConnectionBox(){
-  const {user,type} = useAuth();  
+  const {user} = useAuth();  
+  const [profile, setProfile] = useState<profile>()
 
-  const [playerData, setPlayerData] = useState<PlayerData[]>([]);
-  const [loading, setLoading] = useState(true);  
+  const [playerData, setPlayerData] = useState<PlayerData[]>([]); 
   const safePlayerData = Array.isArray(playerData) ? playerData : [];
   const playerCount = safePlayerData.length;
 
-  const getUserData = async (): Promise<void> => {
-    if (!user?.email || !type) return;
-    setLoading(true);  
-    try {
-      const email = user.email;
-      await fetch(`/api/getConnection?email=${encodeURIComponent(email)}`, {
-        method: 'GET',
-        headers: new Headers({
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          type: type,
-        }),
-      }).then((response) => response.json())
-      .then((result)=> {
-        if(result.error){
-          alert('Error fetching user data:');
-        }
-        if(type=="coach"){
-            setPlayerData(()=> result.connection);
-          }
-          else{
-            setPlayerData(()=>result.connection[0].coaches)
-          }
-      })
-    } catch (error) {
-      alert('Error fetching user data');
-    } finally {
-      setLoading(false); 
-    }
-  };
 
   useEffect(() => {
-    if (!user || !type) {
-      setLoading(false); 
-      return;
-    }
-    getUserData();
-  }, [user, type]);
+    const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
+    const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center p-10 text-gray-600">
-        Loading...
-      </div>
-    );
-  }
+    if (values.every((value): value is string => value !== null)) {
+      const [email, firstName, lastName, avatar, type] = values;
+      setProfile({ email, firstName, lastName, avatar, type });
+    }
+  }, [user]) 
+
+
+  useEffect(() => {
+    if (!profile?.type) return
+
+    const getUserData = async () => {
+      try {
+        const res = await fetch(
+          `/api/getConnection?email=${encodeURIComponent(profile.email)}`,
+          {
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json', type: profile.type },
+          }
+        )
+        const result = await res.json()
+        if (result.error) throw new Error(result.error)
+
+        if (profile.type === 'coach') {
+          setPlayerData(result.connection)
+        } else {
+          setPlayerData(result.connection[0].coaches)
+        }
+      } catch (err) {
+        alert('Error fetching user data:')
+      }
+    }
+
+    getUserData()
+  }, [profile?.type, profile?.email])
   
   return (
     <div className="flex flex-col  z-10">
       <div className="pb-2 items-start">
-          {type == "player" ? 
+          {profile?.type == "player" ? 
           <p className="font-semibold text-[#3E3E3E] text-md pl-2">Your Coach</p> 
           : 
           <p className="font-semibold text-[#3E3E3E] text-md pl-2">Your Players</p>
@@ -73,8 +66,8 @@ export default function ConnectionBox(){
       <Link href="/invite">
         <div className="flex items-center justify-between px-4 py-1 gap-10 cursor-pointer">
           <div>
-            <div className="font-bold text-gray-900">No {type == "player"? "coach": "players"} invited</div>
-            <div className="font-semibold text-gray-500 text-sm">Add your coach →</div>
+            <div className="font-bold text-gray-900">No {profile?.type == "player"? "coach": "players"} invited</div>
+            <div className="font-semibold text-gray-500 text-sm">Add your {profile?.type == "player"? "coach": "players"} →</div>
           </div>
           <div className="w-10 h-10 flex items-center justify-center border-2 border-[#E7E7E7] rounded-xl bg-white hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
             <svg 

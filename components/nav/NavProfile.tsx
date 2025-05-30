@@ -47,8 +47,7 @@ export default function NavProfile(){
       const [email, firstName, lastName, avatar, type] = values;
       setProfile({ email, firstName, lastName, avatar, type });
     }
-    if(profile) getUserData();
-      
+    if(profile) getUserData();   
   }, []);
 
   useEffect(() => {

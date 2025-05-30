@@ -89,7 +89,7 @@ async function main() {
     create: {
       email: "coach2@covelant.com",
       team: "team2",
-      firstName: "Master",
+      firstName: "Lonely",
       lastName: "Coach",
       avatar: "/testImages/test.jpg",
       players: {},
