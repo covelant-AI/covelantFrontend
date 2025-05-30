@@ -65,11 +65,11 @@ export type User = {
 
 export const defaultPlayer1 = {
   id: 1,
-  firstName: 'John',
-  lastName: 'Doe',
+  firstName: 'No Player',
+  lastName: 'Selected',
   email: 'john.doe@example.com',
   winRate: 0.5,
-  avatar: '/avatars/default.png',
+  avatar: '/images/default-avatar.png',
   coachId: 1,
   age: 25,
   dominantHand: 'right',
@@ -79,7 +79,7 @@ export const defaultPlayer1 = {
 
 
 export const defaultPlayer: Player = {
-  id: 0,
+  id: 1010101010101010101010101010,
   firstName: null,
   lastName: null,
   email: '',

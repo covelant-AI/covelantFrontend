@@ -1,102 +1,166 @@
-import React, { useEffect, useState } from 'react'
-import { useAuth } from '@/app/context/AuthContext'
-import { UserData } from '@/util/interfaces'
+import React, { useEffect, useRef, useState } from 'react'
+import { profile as ProfileType } from '@/util/interfaces'
 
 export default function ProfileSettings() {
-  const { user, type } = useAuth()
-  const [userData, setUserData] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [profile, setProfile] = useState<ProfileType | null>(null)
 
-  // Form state: controlled inputs
+  // Extend form to include avatar
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
     dominantHand: 'Right Handed',
     age: 20,
-    height: '',
+    height: 180,
     email: '',
+    avatar: '/images/default-avatar.png',
   })
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // 1. Load session profile ONCE on mount
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user?.email) return
+    const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
+    const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
 
-      try {
-        const response = await fetch(`/api/getUser?email=${encodeURIComponent(user.email)}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        })
-        const result = await response.json()
-        if (result.error) throw new Error('Failed to fetch user data')
+    if (values.every((value): value is string => value !== null)) {
+      const [email, firstName, lastName, avatar, type] = values;
+      setProfile({ email, firstName, lastName, avatar, type });
+    } else {
+      setLoading(false)
+    }
+  }, [])
 
-        setUserData(result.data)
+  // 2. Once we have a profile.email, fetch the rest of the user data
+  useEffect(() => {
+    if (!profile?.email) return
 
-        // Initialize form state from fetched user data
+    setLoading(true)
+    fetch(`/api/getUser?email=${encodeURIComponent(profile.email)}`, {
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((r) => r.json())
+      .then((result) => {
+        if (result.error) throw new Error(result.error)
         setForm({
           firstName: result.data.firstName || '',
           lastName: result.data.lastName || '',
           dominantHand: result.data.dominantHand || 'Right Handed',
-          age: result.data.age || '',
-          height: result.data.height || '',
+          age: Number(result.data.age) || 0,
+          height: Number(result.data.height) || 0,
           email: result.data.email || '',
+          avatar: result.data.avatar || '/images/default-avatar.png',
         })
-      } catch (error) {
-        console.error('Error fetching user data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false))
+  }, [profile?.email])
 
-    fetchUserData()
-  }, [user?.email])
-
-  // Handle input changes to update form state
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-    const handleSave = async () => {
-      try {
-        const response = await fetch('/api/updateUser', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ...form, type }),  
-        })
-    
-        if (!response.ok) {
-          throw new Error('Failed to update user data')
-        }
-    
-        const data = await response.json()
-      } catch (error) {
-        console.error('Error updating user data:', error)
-      }
+  // Build payload including type right before sending
+  const handleSave = async () => {
+    if (!profile?.type) {
+      console.error('Missing profile.type, cannot save')
+      return
     }
+
+    const payload = { ...form, type: profile.type }
+    try {
+      const response = await fetch('/api/updateUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!response.ok) throw new Error('Failed to update user data')
+      // hard reload on success
+      window.location.reload()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  // Delete picture handler
+  const handleDeletePicture = () => {
+    // update form under the hood, then call handleSave
+    setForm((prev) => ({ ...prev, avatar: '/images/default-avatar.png' }))
+    // we can call handleSave immediately with the same payload pattern:
+    if (profile?.type) {
+      const payload = { ...form, avatar: '/images/default-avatar.png', type: profile.type }
+      fetch('/api/updateUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error()
+          window.location.reload()
+        })
+        .catch(console.error)
+    }
+  }
+
+  // Change picture handler (opens file picker)
+  const handleChangePicture = () => {
+    fileInputRef.current?.click()
+  }
+
+  // When file selected
+  const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const file = e.target.files?.[0]
+    if (!file || !profile?.type) return
+    const localUrl = URL.createObjectURL(file)
+    // preview & save
+    setForm((prev) => ({ ...prev, avatar: localUrl }))
+    const payload = { ...form, avatar: localUrl, type: profile.type }
+    fetch('/api/updateUser', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error()
+        window.location.reload()
+      })
+      .catch(console.error)
+  }
 
   if (loading) return <p className="text-center mt-10">Loading...</p>
 
   return (
     <div className="px-20 py-4 max-w-2xl mx-auto flex flex-col gap-4 text-sm text-gray-700">
+      {/* hidden file input */}
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        ref={fileInputRef}
+        onChange={handleFileSelected}
+      />
+
       {/* Profile picture and buttons */}
       <div className="col-span-1 flex flex-row justify-center items-center space-x-4">
         <div className="w-24 h-24 rounded-full overflow-hidden shadow-lg">
           <img
-            src={userData?.avatar || './images/default-avatar.png'}
+            src={form.avatar || '/images/default-avatar.png'}
             alt="Profile"
             className="object-cover w-full h-full"
           />
         </div>
         <div className="flex space-x-4">
-          <button className="bg-[#42B6B1] text-white px-4 py-1 rounded-md hover:bg-teal-600 transition cursor-pointer">
+          <button
+            onClick={handleChangePicture}
+            className="bg-[#42B6B1] text-white px-4 py-1 rounded-md hover:bg-teal-600 transition"
+          >
             Change Picture
           </button>
-          <button className="border border-gray-100 bg-[#F9F9F9] text-red-500 font-semibold px-4 py-1 rounded-md cursor-pointer hover:bg-red-50 transition">
+          <button
+            onClick={handleDeletePicture}
+            className="border border-gray-100 bg-[#F9F9F9] text-red-500 font-semibold px-4 py-1 rounded-md hover:bg-red-50 transition"
+          >
             Delete Picture
           </button>
         </div>
@@ -166,7 +230,7 @@ export default function ProfileSettings() {
           </span>
         </div>
 
-        {type==="player"? <div className="grid grid-cols-2 gap-4">
+        {profile?.type==="player"? <div className="grid grid-cols-2 gap-4">
           <span>
             <div className="mb-1">
               <label className="text-right pr-2 text-gray-400">Dominant Hand</label>

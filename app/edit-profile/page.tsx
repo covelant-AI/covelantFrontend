@@ -1,13 +1,13 @@
 'use client';
 import { useState } from 'react'
 import NavBar from '@/components/nav/Navbar'
-import Sidebar from '@/components/Sidebar'
-import ProfileSettings from '@/components/ProfileSettings'
-import SecuritySettings from '@/components/SecuritySettings'
+import Sidebar from '@/components/EditPage/Sidebar'
+import ProfileSettings from '@/components/EditPage/ProfileSettings'
+import SecuritySettings from '@/components/EditPage/SecuritySettings'
+import AccountPreferences from '@/components/EditPage/AccountPreferences'
+import AccessSettings from '@/components/EditPage/AccessSettings'
+import SubscriptionSettings from '@/components/EditPage/SubscriptionSettings'
 import RadialBlurBg from '@/components/UI/RadialBlur'
-import AccountPreferences from '@/components/AccountPreferences'
-import SubscriptionSettings from '@/components/SubscriptionSettings'
-import AccessSettings from '@/components/AccessSettings'
 
 export default function EditProfile(){
     const [activePage, setActivePage] = useState('Profile Settings')

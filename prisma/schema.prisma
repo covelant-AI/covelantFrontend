@@ -19,8 +19,11 @@ model Player {
   height       Int?     @default(180)
   Tier         String?  @default("Professional")
   winRate      Float?
-  playerMatches PlayerMatch[]
   stats        PlayerStat[]
+
+  // break out the two “slots” of PlayerMatch
+  playerMatchesFirst  PlayerMatch[] @relation("PlayerMatch_First")
+  playerMatchesSecond PlayerMatch[] @relation("PlayerMatch_Second")
 
   coaches      Coach[]  @relation("CoachPlayers")
 }
@@ -39,48 +42,52 @@ model Coach {
 
 model PlayerStat {
   id        Int     @id @default(autoincrement())
-  subject   String  // e.g., "SRV", "RSV", etc.
-  value     Int     // e.g., 83, 72, etc. (formerly "A")
+  subject   String
+  value     Int
   playerId  Int
   player    Player  @relation(fields: [playerId], references: [id])
 }
 
 model Match {
-  id           Int           @id @default(autoincrement())
-  videoUrl     String?
-  imageUrl     String?
-  type         String?
-  result       String?
+  id            Int           @id @default(autoincrement())
+  videoUrl      String?
+  imageUrl      String?
+  type          String?
+  result        String?
   fieldType     String?
-  date         DateTime
-  videoType    String
+  date          DateTime
+  videoType     String
   playerMatches PlayerMatch[]
 }
 
-/// This model stores opponents who are NOT registered players.
 model Opponent {
-  id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
-
+  id            Int           @id @default(autoincrement())
+  firstName     String
+  lastName      String
   playerMatches PlayerMatch[]
 }
 
-/// PlayerMatch now links either to a Player or an Opponent (but not both).
 model PlayerMatch {
-  id        Int       @id @default(autoincrement())
-  matchId   Int
-  result    String   
-  match     Match     @relation(fields: [matchId], references: [id])
+  id           Int       @id @default(autoincrement())
+  matchId      Int
+  result       String
+  match        Match     @relation(fields: [matchId], references: [id])
 
-  // Nullable foreign keys for player or opponent
-  playerId   Int?     
-  player     Player?   @relation(fields: [playerId], references: [id])
+  // First player slot
+  playerId     Int?
+  player       Player?   @relation("PlayerMatch_First", fields: [playerId], references: [id])
 
-  opponentId Int?     
-  opponent   Opponent? @relation(fields: [opponentId], references: [id])
+  // Second player slot (for player-vs-player)
+  playerTwoId  Int?
+  playerTwo    Player?   @relation("PlayerMatch_Second", fields: [playerTwoId], references: [id])
 
-  @@unique([matchId, playerId, opponentId])
+  // Opponent slot (for player-vs-opponent)
+  opponentId   Int?
+  opponent     Opponent? @relation(fields: [opponentId], references: [id])
+
+  /// Enforce uniqueness per “mode”:
+  @@unique([matchId, playerId, playerTwoId])   // no two identical P-vs-P rows
+  @@unique([matchId, playerId, opponentId])    // no two identical P-vs-O rows
 }
 
 

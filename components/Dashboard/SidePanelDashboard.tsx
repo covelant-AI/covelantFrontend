@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react'
-import RadarGraph from './UI/RadarGraph'
-import { useAuth } from '@/app/context/AuthContext';
+import RadarGraph from '../UI/RadarGraph'
 import { sidePanelDashboardProps } from '@/util/interfaces';
+import {profile} from "@/util/interfaces"
 
 export default function SidePanelDashboard({ activePlayer }: sidePanelDashboardProps) {
-  const { avatar, firstName, lastName, type } = useAuth();
   const [winOutcome, setWinOutcome] = useState<Array<any> | null>([]);
+  const [profile, setProfile] = useState<profile>()
+
 
   const getMatchOutcome = async (): Promise<void> => { 
     try {
         const email = activePlayer?.email;
-        
         if(!email) {
           return;
         }
-
         await fetch(`/api/getMatchOutcome?email=${encodeURIComponent(email)}`, {
           method: 'GET',
           headers: new Headers({
@@ -34,25 +33,32 @@ export default function SidePanelDashboard({ activePlayer }: sidePanelDashboardP
       }
       
   };
-
+  
   useEffect(() => {
-    getMatchOutcome()
-  }, [activePlayer?.email]) 
+    const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
+    const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
+    
+    if (values.every((value): value is string => value !== null)) {
+      const [email, firstName, lastName, avatar, type] = values;
+      setProfile({ email, firstName, lastName, avatar, type });
+    }
+      getMatchOutcome()
+    }, [activePlayer?.email]) 
 
     return (
         <div className="col-span-3 flex justify-center">
                 <div className="bg-white rounded-2xl py-6 px-2 flex flex-col items-center gap-4 w-[60%] lg:w-[120%] xl:w-[90%]">
            
                 {/* Profile + status icons */}
-                {type == "player" ? <div className='bg-gray-100 w-full rounded-2xl p-1'>
+                {profile?.type == "player" ? <div className='bg-gray-100 w-full rounded-2xl p-1'>
                   <div className="flex flex-col w-full gap-4 bg-[#FFFFFF] p-4 rounded-2xl">
                       <span className='flex flex-row items-center gap-4'>
                           <img
-                            src={avatar}
+                            src={profile?.avatar}
                             alt="Profile picture"
                             className="w-19 h-19 rounded-full object-cover"
                           />
-                          <h3 className="text-xl font-semibold text-gray-800">{firstName}<br/> <span className='font-bold'>{lastName}</span></h3>
+                          <h3 className="text-xl font-semibold text-gray-800">{profile?.firstName}<br/> <span className='font-bold'>{profile?.lastName}</span></h3>
                       </span>
                   <div className="flex items-center gap-2 justify-between pt-8 text-xl">
                     <span className="flex items-center justify-center text-white bg-[#C6C6C6] w-10 lg:w-9 h-9 rounded-full">?</span>

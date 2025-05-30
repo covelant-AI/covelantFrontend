@@ -8,36 +8,45 @@ function getRandomStatValue(): number {
 
 function getRandomResult(): "win" | "loss" | "draw" {
   const results = ["win", "loss", "draw"];
-  return results[Math.floor(Math.random() * results.length)] as "win" | "loss" | "draw";
+  return results[Math.floor(Math.random() * results.length)] as
+    | "win"
+    | "loss"
+    | "draw";
 }
 
 function getRandomType(): "tournament" | "friendly" | "training" | "league" {
   const types = ["tournament", "friendly", "training", "league"];
-  return types[Math.floor(Math.random() * types.length)] as "tournament" | "friendly" | "training" | "league";
+  return types[
+    Math.floor(Math.random() * types.length)
+  ] as "tournament" | "friendly" | "training" | "league";
 }
 
 function getRandomCountry(): string {
-  const countries = ["USA", "Japan", "Germany", "Brazil", "Kenya", "India", "France", "Canada"];
+  const countries = [
+    "USA",
+    "Japan",
+    "Germany",
+    "Brazil",
+    "Kenya",
+    "India",
+    "France",
+    "Canada",
+  ];
   return countries[Math.floor(Math.random() * countries.length)];
 }
 
 async function seedPlayerStats(playerId: number) {
   const statSubjects = ["SRV", "RSV", "FRH", "BCH", "RLY"];
-
   const statEntries = statSubjects.map((subject) => ({
     subject,
     value: getRandomStatValue(),
     playerId,
   }));
-
-  await prisma.playerStat.createMany({
-    data: statEntries,
-  });
+  await prisma.playerStat.createMany({ data: statEntries });
 }
 
-
 async function main() {
-  // Upsert coaches and players as before
+  // Upsert coaches and their players
   const coach1 = await prisma.coach.upsert({
     where: { id: 1 },
     update: {},
@@ -95,97 +104,86 @@ async function main() {
       players: {},
     },
   });
-  
+
   const player1 = await prisma.player.upsert({
     where: { id: 5 },
     update: {},
     create: {
-            firstName: "single",
-            lastName: "player",
-            email: "single@covelant.com",
-            avatar: "/testImages/test.jpg",
-            winRate: 0.50,
-          },
+      firstName: "single",
+      lastName: "player",
+      email: "single@covelant.com",
+      avatar: "/testImages/test.jpg",
+      winRate: 0.5,
+    },
   });
 
-  // Extract players from coach1 for use
   const players = coach1.players;
 
-  
-  // 🌟 NEW: Seed stats for each player
-  for (const player of players) {
-    await seedPlayerStats(player.id);
+  // Seed stats for each player
+  for (const p of players) {
+    await seedPlayerStats(p.id);
   }
 
-  // Utility: create or find opponent by name
+  // Helper: find or create an opponent
   async function findOrCreateOpponent(firstName: string, lastName: string) {
-    let opponent = await prisma.opponent.findFirst({
+    let opp = await prisma.opponent.findFirst({
       where: { firstName, lastName },
     });
-    if (!opponent) {
-      opponent = await prisma.opponent.create({
+    if (!opp) {
+      opp = await prisma.opponent.create({
         data: { firstName, lastName },
       });
     }
-    return opponent;
+    return opp;
   }
 
-  // Video location constant
   const videoUrl = "/testVideo/test.mp4";
   const imageUrl = "/testImages/test.jpg";
 
-  // Create a few matches with mixed opponents:
-  // For each player create 4 matches:
-  // - 2 vs other players
-  // - 2 vs opponents (some known, some unknown)
+  // Create matches:
+  //  • 2 vs players (each match => two rows with playerId+playerTwoId)
+  //  • 1 vs a known opponent
+  //  • 1 vs an unknown opponent
   for (const player of players) {
-    // Matches vs other players
+    // --- Player vs Player ---
     for (let i = 0; i < 2; i++) {
-      // Pick an opponent player different from current
       const opponentPlayer =
-        players.find((p) => p.id !== player.id) || players[0]; // fallback first player if none
+        players.find((p) => p.id !== player.id) || players[0];
 
-      // Create a match
       const match = await prisma.match.create({
         data: {
           videoUrl,
           imageUrl,
-          date: new Date(Date.now() - i * 1000 * 60 * 60 * 24), // spaced days
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000),
           videoType: getRandomType(),
           fieldType: getRandomCountry(),
         },
       });
 
-      // Create PlayerMatch entries for both players, results opposite
       await prisma.playerMatch.createMany({
         data: [
           {
             matchId: match.id,
             playerId: player.id,
-            result: "win",
+            playerTwoId: opponentPlayer.id,
+            result: getRandomResult(),
           },
           {
             matchId: match.id,
             playerId: opponentPlayer.id,
-            result: "loss",
+            playerTwoId: player.id,
+            result: getRandomResult(),
           },
         ],
       });
     }
 
-    // Matches vs opponents (known and unknown)
-    const knownOpponentName = { firstName: "Known", lastName: "Opponent" };
-    const unknownOpponentName = { firstName: "Unknown", lastName: "Opponent" };
-
-    // Create known opponent in DB (once)
+    // --- Player vs Known Opponent ---
     const knownOpponent = await findOrCreateOpponent(
-      knownOpponentName.firstName,
-      knownOpponentName.lastName
+      "Known",
+      "Opponent"
     );
-
-    // Create two matches vs opponents: one known, one unknown
-    // Known opponent match
-    const knownOpponentMatch = await prisma.match.create({
+    const knownMatch = await prisma.match.create({
       data: {
         videoUrl,
         imageUrl,
@@ -194,30 +192,21 @@ async function main() {
         fieldType: getRandomCountry(),
       },
     });
-
     await prisma.playerMatch.create({
       data: {
-        matchId: knownOpponentMatch.id,
+        matchId: knownMatch.id,
         playerId: player.id,
-        result: "loss",
-      },
-    });
-
-    await prisma.playerMatch.create({
-      data: {
-        matchId: knownOpponentMatch.id,
         opponentId: knownOpponent.id,
-        result: "win",
+        result: getRandomResult(),
       },
     });
 
-    // Unknown opponent match
+    // --- Player vs Unknown Opponent ---
     const unknownOpponent = await findOrCreateOpponent(
-      unknownOpponentName.firstName,
-      unknownOpponentName.lastName
+      "Unknown",
+      "Opponent"
     );
-
-    const unknownOpponentMatch = await prisma.match.create({
+    const unknownMatch = await prisma.match.create({
       data: {
         videoUrl,
         imageUrl,
@@ -226,20 +215,12 @@ async function main() {
         fieldType: getRandomCountry(),
       },
     });
-
     await prisma.playerMatch.create({
       data: {
-        matchId: unknownOpponentMatch.id,
+        matchId: unknownMatch.id,
         playerId: player.id,
-        result: "win",
-      },
-    });
-
-    await prisma.playerMatch.create({
-      data: {
-        matchId: unknownOpponentMatch.id,
         opponentId: unknownOpponent.id,
-        result: "loss",
+        result: getRandomResult(),
       },
     });
   }

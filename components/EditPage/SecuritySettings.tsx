@@ -37,7 +37,6 @@ export default function SecuritySettings() {
       setNewPassword('')
       setRepeatPassword('')
     } catch (error: any) {
-      console.error(error)
       if (error.code === 'auth/wrong-password') {
         alert('Your current password is not correct')
       } else {

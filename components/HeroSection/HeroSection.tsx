@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import RadialBlurBg from '@/components/UI/RadialBlur'
-import ConnectionBox from './UI/ConnectionsBox'
+import ConnectionBox from './ConnectionsBox'
 import Link from 'next/link'
 
 export default function HeroSection(){

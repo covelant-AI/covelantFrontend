@@ -1,18 +1,20 @@
 'use client';
 import NavBar from "@/components/nav/Navbar"
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/app/context/AuthContext';
 import { User } from '@/util/interfaces'
 import AthletesList from '@/components/AthletesList'
 import CoachesList from '@/components/CoachesList'
 import { PlayerSelector } from '@/components/UI/PlayerSelector'
 import RadialBlurBg from "@/components/UI/RadialBlur";
+import {profile} from "@/util/interfaces"
 
 export default function InvitePage() {
     const [playerOne, setPlayerOne] = useState<User | null>(null)
-    const {type, user} = useAuth();
+    const {user} = useAuth();
     const [copied, setCopied] = useState(false)
+    const [profile, setProfile] = useState<profile>()
     const [invited, setInvited] = useState(false)
     const inviteUrl = 'https://www.covelant.com/sign-up' 
 
@@ -43,7 +45,7 @@ export default function InvitePage() {
           const res = await fetch('/api/addPlayer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ player: playerOne, email: user.email }),
+            body: JSON.stringify({ player: playerOne, email: profile?.email }),
           })
           if (!res.ok) throw new Error('Failed to add player')
 
@@ -52,7 +54,16 @@ export default function InvitePage() {
           alert('Error inviting player')
         }
     }
-
+    
+      useEffect(() => {
+        const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
+        const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
+    
+        if (values.every((value): value is string => value !== null)) {
+          const [email, firstName, lastName, avatar, type] = values;
+          setProfile({ email, firstName, lastName, avatar, type });
+        }
+      }, []);
   return (
     <>
     <NavBar/>
@@ -66,7 +77,7 @@ export default function InvitePage() {
         />
     <div className=" pt-40 min-h-screen bg-gray-100 flex flex-col items-center pt-24 space-y-10 px-4 z-10">
       {/* Title */}
-      {type == "coach"? 
+      {profile?.type == "coach"? 
       <div className="text-4xl font-bold text-gray-900">Your Athletes</div> 
       : 
       <div className="text-4xl font-bold text-gray-900">Your Coaches</div>
@@ -122,7 +133,7 @@ export default function InvitePage() {
         </button>
         </div>
       </div>
-      {type == 'coach'? <AthletesList/>:<CoachesList/>}
+      {profile?.type == 'coach'? <AthletesList/>:<CoachesList/>}
     </div>
     </>
   )

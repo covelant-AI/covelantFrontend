@@ -62,7 +62,7 @@ export default function ConnectionBox(){
           }
       </div>
       <div className="flex items-center justify-center space-x-2 bg-[#F9F9F9] border border-[#E7E7E7] p-2 rounded-2xl">
-      {playerCount == 0 ? 
+      {playerCount === 0 ? 
       <Link href="/invite">
         <div className="flex items-center justify-between px-4 py-1 gap-10 cursor-pointer">
           <div>
