@@ -74,7 +74,6 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
        
         (async () => {
           try {
-             console.log(activePlayer.id)
             const res = await fetch(`/api/getMatches?playerId=${activePlayer.id}`);
             const data = await res.json();
 

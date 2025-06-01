@@ -18,7 +18,10 @@ export default function YourAthletes(){
             
         const getUserData = async (): Promise<void> => {
           try {
-            const email = user.email;
+            const email = user?.email;
+            if(!email){
+              return console.log("ERROR")
+            }
     
             await fetch(`/api/getConnection?email=${encodeURIComponent(email)}`, {
               method: 'GET',
@@ -54,7 +57,7 @@ export default function YourAthletes(){
           <div
             className="flex flex-wrap gap-4 max-w-[520px] p-4 justify-center max-h-[320px] overflow-y-auto"
           >
-            {safePlayerData.map((player) => ( // Example with 20 images
+            {safePlayerData.map((player) => ( 
               <div key={player.id} className="flex flex-col items-center w-20">
                 <div className="w-20 h-20 rounded-lg bg-cyan-200 overflow-hidden mb-2">
                   <img

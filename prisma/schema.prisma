@@ -18,7 +18,7 @@ model Player {
   dominantHand String?  @default("Right Handed")
   height       Int?     @default(180)
   Tier         String?  @default("Professional")
-  winRate      Float?
+  winRate      Float?   @default(1)
   stats        PlayerStat[]
 
   // break out the two “slots” of PlayerMatch
@@ -26,6 +26,8 @@ model Player {
   playerMatchesSecond PlayerMatch[] @relation("PlayerMatch_Second")
 
   coaches      Coach[]  @relation("CoachPlayers")
+
+  overallStats OverallStats?  // relation field without attributes
 }
 
 model Coach {
@@ -46,6 +48,21 @@ model PlayerStat {
   value     Int
   playerId  Int
   player    Player  @relation(fields: [playerId], references: [id])
+
+  @@index([playerId])
+}
+
+model OverallStats {
+  id               Int     @id @default(autoincrement())
+  wins             Int     @default(0)
+  losses           Int     @default(0)
+  setsWon          Int     @default(0)
+  setsLost         Int     @default(0)
+  totalMatches     Int     @default(0)
+  avgMatchDuration Float   @default(0)
+
+  playerId         Int     @unique
+  player           Player  @relation(fields: [playerId], references: [id])
 }
 
 model Match {

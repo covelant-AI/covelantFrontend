@@ -94,16 +94,22 @@ export default function ConnectionBox(){
         </div>
       </>: <>
       <div className="flex items-center space-x-2">
-            {(playerCount < 3 ? safePlayerData : safePlayerData.slice(0, 3)).map((player) => (
-              <div key={player.id} className="w-12 h-12 rounded-xl overflow-hidden">
-                <img
-                  src={player.avatar || "images/test.jpg"}
-                  alt={`${player.firstName} ${player.lastName}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-            <button className='cursor-pointer mr-6'>
+          {(playerCount < 3 ? safePlayerData : safePlayerData.slice(0, 3)).map((player) => (
+            <Link key={player.id} href={`/profile/${player.id}`}>
+              <button className='cursor-pointer'>
+                <div key={player.id} className="w-12 h-12 rounded-xl overflow-hidden  active:scale-[0.9] hover:scale-[1.05]">
+                  <img
+                    src={player.avatar || "images/test.jpg"}
+                    alt={`${player.firstName} ${player.lastName}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </button>
+            </Link>
+          ))}
+
+          <Link href="/your-connection">
+            <button className='cursor-pointer mr-6 active:scale-[0.9]'>
               {playerCount  - 3 > 0 ? (
                 <div className="w-12 h-12 flex justify-center items-center bg-white border 
                 border-[#E7E7E7] font-semibold text-black rounded-xl text-md hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
@@ -111,6 +117,7 @@ export default function ConnectionBox(){
                 </div>
               ) : null}
             </button>
+          </Link>
       </div>
       <Link href='/invite'>
         <button className="flex items-center justify-center w-12 h-12 bg-white border border-[#E7E7E7] text-black rounded-xl
