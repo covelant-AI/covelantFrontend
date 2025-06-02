@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { profile as ProfileType } from '@/util/interfaces'
+import { storage, ref, uploadBytesResumable, getDownloadURL } from '@/app/firebase/config';
+
 
 export default function ProfileSettings() {
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<ProfileType | null>(null)
+  
 
   // Extend form to include avatar
   const [form, setForm] = useState({
@@ -15,6 +18,7 @@ export default function ProfileSettings() {
     email: '',
     avatar: '/images/default-avatar.png',
   })
+  const [initialForm, setInitialForm] = useState(form);
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -41,8 +45,8 @@ export default function ProfileSettings() {
     })
       .then((r) => r.json())
       .then((result) => {
-        if (result.error) throw new Error(result.error)
-        setForm({
+        if (result.error) throw new Error(result.error);
+        const loadedForm = {
           firstName: result.data.firstName || '',
           lastName: result.data.lastName || '',
           dominantHand: result.data.dominantHand || 'Right Handed',
@@ -50,11 +54,26 @@ export default function ProfileSettings() {
           height: Number(result.data.height) || 0,
           email: result.data.email || '',
           avatar: result.data.avatar || '/images/default-avatar.png',
-        })
+        };
+        setForm(loadedForm);
+        setInitialForm(loadedForm);
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false))
   }, [profile?.email])
+
+    const isFormChanged = () => {
+    if (!initialForm) return false;
+    return (
+      form.firstName !== initialForm.firstName ||
+      form.lastName !== initialForm.lastName ||
+      form.dominantHand !== initialForm.dominantHand ||
+      form.age !== initialForm.age ||
+      form.height !== initialForm.height ||
+      form.avatar !== initialForm.avatar
+    );
+  };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -109,24 +128,39 @@ export default function ProfileSettings() {
   }
 
   // When file selected
-  const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const file = e.target.files?.[0]
-    if (!file || !profile?.type) return
-    const localUrl = URL.createObjectURL(file)
-    // preview & save
-    setForm((prev) => ({ ...prev, avatar: localUrl }))
-    const payload = { ...form, avatar: localUrl, type: profile.type }
-    fetch('/api/updateUser', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error()
-        window.location.reload()
-      })
-      .catch(console.error)
-  }
+  const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile?.type) return;
+
+    // Optional: Preview local avatar immediately
+    const localUrl = URL.createObjectURL(file);
+    setForm((prev) => ({ ...prev, avatar: localUrl }));
+
+    try {
+      // Upload avatar to Firebase Storage
+      const avatarRef = ref(storage, `avatars/${profile.email}_${Date.now()}_${file.name}`);
+      const uploadTask = uploadBytesResumable(avatarRef, file);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Optionally, you can add upload progress UI here
+        },
+        (error) => {
+          console.error('Avatar upload failed:', error);
+          alert('Failed to upload avatar image');
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          // Update form with the Firebase avatar URL
+          setForm((prev) => ({ ...prev, avatar: downloadURL }));
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   if (loading) return <p className="text-center mt-10">Loading...</p>
 
@@ -269,10 +303,14 @@ export default function ProfileSettings() {
       <div className="col-span-2 flex justify-center mt-6">
         <button
           onClick={handleSave}
-          className="bg-[#42B6B1] text-white rounded-md px-20 py-2 font-semibold hover:bg-teal-600 transition cursor-pointer"
-        >
+          disabled={!isFormChanged()}
+          className={`rounded-md px-20 py-2 font-semibold transition
+            ${isFormChanged()
+              ? 'bg-[#42B6B1] text-white hover:bg-teal-600  cursor-pointer'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>
           Save
         </button>
+
       </div>
     </div>
   )

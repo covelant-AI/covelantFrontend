@@ -45,7 +45,7 @@ export default function AthletesList(){
         const res = await fetch('/api/addPlayer', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ player: clickedPlayer, email: user.email }),
+          body: JSON.stringify({ player: clickedPlayer, email: user?.email }),
         })
     
         if (!res.ok) throw new Error('Failed to add player')

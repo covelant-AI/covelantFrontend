@@ -1,5 +1,6 @@
 import { PrismaClient } from '../../../generated/prisma';  
 import { NextRequest, NextResponse } from 'next/server';
+import {storage, ref} from '@/app/firebase/config'
 
 const prisma = new PrismaClient();
 
@@ -23,6 +24,8 @@ export async function POST(req: NextRequest) {
         videoType: "unknown" // or set based on data if available
       },
     });
+
+    // const videoRef = ref(storage, videoURL)
 
     // Find or create PlayerOne (always a Player)
     let playerOneRecord = await prisma.player.findFirst({

@@ -45,7 +45,7 @@ export default function CoachesList(){
         const res = await fetch('/api/addCoach', {
           method: 'POST',
           headers: new Headers( { 'Content-Type': 'application/json' }),
-          body: JSON.stringify({ coach: clickedPlayer, email: user.email }),
+          body: JSON.stringify({ coach: clickedPlayer, email: user?.email }),
         })
     
         if (!res.ok) throw new Error('Failed to add player')

@@ -1,6 +1,7 @@
 'use client';
 import React, { useRef, useState } from "react";
 import Image from "next/image";
+import { storage, ref, uploadBytesResumable, getDownloadURL } from "@/app/firebase/config";
 
 interface UploadVideoProps {
   onVideoUpload: (videoURL: string, videoThumbnail: string) => void;
@@ -13,53 +14,71 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null);
 
-  const simulateUpload = () => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setUploadProgress(progress);
-      if (progress >= 100) clearInterval(interval);
-    }, 200);
+  const extractThumbnail = (videoFile: File, url: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.src = url;
+      video.crossOrigin = "anonymous";
+      video.muted = true;
+      video.playsInline = true;
+    
+      video.addEventListener("loadedmetadata", () => {
+        video.currentTime = 0.1;
+      });
+    
+      video.addEventListener("seeked", () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageUrl = canvas.toDataURL("image/jpeg");
+          resolve(imageUrl);
+        } else {
+          resolve("");
+        }
+      });
+    });
   };
-
-const extractThumbnail = (videoFile: File, url: string) => {
-  const video = document.createElement("video");
-  video.src = url;
-  video.crossOrigin = "anonymous";
-  video.muted = true;
-  video.playsInline = true;
-
-  // Wait until video metadata is loaded (duration, dimensions)
-  video.addEventListener("loadedmetadata", () => {
-    // Seek to 0.1 seconds to ensure we get a non-black frame
-    video.currentTime = 0.1;
-  });
-
-  video.addEventListener("seeked", () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    if (ctx) {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageUrl = canvas.toDataURL("image/jpeg");
-      setVideoThumbnail(imageUrl);
-      onVideoUpload(url, imageUrl); // Send to parent
-    }
-  });
-};
-
-  const handleVideoFile = (file: File) => {
+  
+  const handleVideoFile = async (file: File) => {
     if (file && file.type.startsWith("video/")) {
-      const url = URL.createObjectURL(file);
-      setVideoURL(url);
+      const localUrl = URL.createObjectURL(file);
+      setVideoURL(localUrl);
       setUploadProgress(0);
-      simulateUpload();
-      extractThumbnail(file, url);
+    
+      // Extract thumbnail first
+      const thumbnailDataUrl = await extractThumbnail(file, localUrl);
+      setVideoThumbnail(thumbnailDataUrl);
+    
+      // Upload video to Firebase Storage
+      const videoRef = ref(storage, "videos/" + file.name);
+      const uploadTask = uploadBytesResumable(videoRef, file);
+    
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error("Error uploading video:", error);
+          alert("Upload failed: " + error.message);
+        },
+        async () => {
+          const uploadedVideoURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setVideoURL(uploadedVideoURL);
+        
+          // Call onVideoUpload once both are ready
+          onVideoUpload(uploadedVideoURL, thumbnailDataUrl);
+        }
+      );
     } else {
       alert("Please upload a valid video file.");
     }
   };
+
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -109,7 +128,7 @@ const extractThumbnail = (videoFile: File, url: string) => {
                 ></div>
               </div>
               <p className="text-sm text-white text-center">
-                Uploading... {uploadProgress}%
+                Uploading... {uploadProgress.toFixed(0)}%
               </p>
             </div>
           )}
@@ -126,3 +145,4 @@ const extractThumbnail = (videoFile: File, url: string) => {
     </div>
   );
 }
+

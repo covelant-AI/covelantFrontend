@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     }
 
   const { type, firstName, lastName, dominantHand, age, height, email, avatar } = await req.json();
-    console.log(type, email)
+
   if (!type && !email) {
      return NextResponse.json({ message: 'Missing required fields: type or email' });
   }

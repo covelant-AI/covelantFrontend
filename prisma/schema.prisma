@@ -37,7 +37,7 @@ model Coach {
   avatar    String?
   email     String
   team      String?
-  age       String?
+  age       Int?
 
   players   Player[] @relation("CoachPlayers")
 }
@@ -72,6 +72,7 @@ model Match {
   type          String?
   result        String?
   fieldType     String?
+  status        String?
   date          DateTime
   videoType     String
   playerMatches PlayerMatch[]

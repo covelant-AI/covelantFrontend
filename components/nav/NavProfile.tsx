@@ -97,7 +97,7 @@ export default function NavProfile(){
             <>
               <img
                 className="w-12 h-12 rounded-xl object-cover"
-                src={profile?.avatar || './images/default-avatar.png'}
+                src={profile?.avatar || '/images/default-avatar.png'}
                 alt="User Image"
               />
               <div>
@@ -119,7 +119,7 @@ export default function NavProfile(){
                       className={`w-6 h-6 rounded-xl object-cover hover:cursor-pointer transition-transform duration-300 ${
                         rotated ? "rotate-90" : ""
                       }`}
-                      src="./icons/settings.svg"
+                      src="/icons/settings.svg"
                       alt="Settings Icon"
                       onClick={() => setRotated((prev) => !prev)}
                     />

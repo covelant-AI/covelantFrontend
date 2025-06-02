@@ -22,7 +22,8 @@ export default function YourCoach(){
 
         const getUserData = async (): Promise<void> => {
           try {
-            const email = user.email;
+            const email = user?.email;
+            if(!email) return console.log("whoops")
     
             await fetch(`/api/getConnection?email=${encodeURIComponent(email)}`, {
               method: 'GET',
