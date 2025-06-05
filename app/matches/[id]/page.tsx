@@ -1,0 +1,88 @@
+'use client';
+import { useEffect, useState } from "react";
+import { ref, getDownloadURL } from "firebase/storage";
+import { storage } from "@/app/firebase/config";
+import CustomVideoPlayer from "@/components/UI/CustomVideoPlayer"
+
+interface ProfilePageProps {
+  params: { id: string };
+}
+
+
+
+export default function Matches({ params }: ProfilePageProps) {
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoStart, setVideoStart] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+    const [currentVideoTime, setCurrentVideoTime] = useState<number>(0);
+
+  async function getVideoData(){
+    const { id } = params;
+
+    const videoData: any = await fetch(`/api/getMatchVideo?id=${encodeURIComponent(id)}`, {
+          method: 'GET',
+        })
+      .then((r) => r.json())
+      .then((result) => {
+        console.log(result)
+        if(result.success) return result.data
+        console.log("no video was sent back")
+      });
+      setVideoStart(videoData.date)
+    const videoRef = ref(storage, videoData.videoUrl);
+
+     // 2) Ask for its download URL:
+     getDownloadURL(videoRef)
+       .then((url: string) => {
+         setVideoUrl(url);
+         setLoading(false);
+       })
+       .catch((err: Error) => {
+         console.error("Could not get download URL:", err);
+         setError("Failed to load video.");
+         setLoading(false);
+       });
+  }
+
+    const handleTimeUpdate = (timeInSeconds: number) => {
+    setCurrentVideoTime(timeInSeconds);
+  };
+
+
+const timestampedMarkers = [
+  { timestamp: "2025-06-26T00:00:05Z", color: "#A9C3FF" }, //  5 seconds in
+  { timestamp: "2025-06-26T00:00:15Z", color: "#FFDE9C" }, // 15 seconds in
+  { timestamp: "2025-06-26T00:01:00Z"          },         // 60 seconds in (defaults to white)
+  { timestamp: "2025-06-26T00:02:30Z", color: "#A9C3FF" }, //150 seconds in
+];
+
+
+  useEffect(() => {
+    // 1) Build a Storage reference to your video file:
+    //    If your video is at "videos/myMovie.mp4" in Firebase Storage:
+    getVideoData()
+  }, []);
+
+  if (loading) {
+    return <p>Loading video…</p>;
+  }
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  return (
+    <div className="max-width-800, mx-0  my-auto p-1rem bg-white" >
+      <h1>Streaming from Firebase Storage</h1>
+      {/* 3) Once we have the download URL, point the <video> tag at it. */}
+      <CustomVideoPlayer
+        src={videoUrl || ""}
+        markers={timestampedMarkers}
+        videoStartTime={videoStart ?? "2025-06-01T14:30:00Z"}
+        onTimeUpdate={handleTimeUpdate}
+      />
+        <h3>{currentVideoTime}</h3>
+    </div>
+  );
+};
+

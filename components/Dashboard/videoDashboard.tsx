@@ -4,6 +4,7 @@ import { Props, defaultPlayer } from '@/util/interfaces';
 import {Match} from '@/util/types';
 import { useEffect, useState, MouseEvent, useRef } from 'react'
 import {profile} from "@/util/interfaces"
+import Link from 'next/link'
 
 // 1) rename your static list so we can keep it around
 const defaultMatches: Match[] = [
@@ -145,12 +146,14 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
               <div
                 key={m.id}
                 className="relative rounded-2xl overflow-hidden h-50 bg-[#F8F8F8] border-2 border-[#F8F8F8] 
-                           hover:scale-[1.05] transition duration-100">
-                <img
-                  src={m.imageUrl}
-                  alt={m.title}
-                  className="w-full h-full object-cover"
-                />
+                           hover:scale-[1.03] transition duration-100 active:scale-[0.99]">
+                <Link key={m.id} href={`/matches/${m.id}`}>
+                  <img
+                    src={m.imageUrl}
+                    alt={m.title}
+                    className="w-full h-full object-cover"
+                  />
+                </Link>
                 <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-black to-transparent pointer-events-none" />
                 <div className="absolute bottom-2 left-2 text-gray-300 text-xs font-semibold px-2 py-1 rounded">
                   {m.title}

@@ -78,6 +78,7 @@ model Match {
   playerMatches PlayerMatch[]
 }
 
+
 model Opponent {
   id            Int           @id @default(autoincrement())
   firstName     String

@@ -26,7 +26,8 @@ export const OpponentSelector: React.FC<{
       signal: ctrl.signal,
     })
       .then((res) => res.json())
-      .then((data: User[]) => {
+      .then((data: any) => {
+
         setSuggestions(() => data.data || [])
       })
       .catch((err) => {

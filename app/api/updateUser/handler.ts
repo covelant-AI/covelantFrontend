@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         data: {
           firstName,
           lastName,
-          age,
+          age: Number(age),
           avatar,
         },
       })

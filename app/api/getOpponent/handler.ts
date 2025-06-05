@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
         ],
       }
     }
+  
 
     // Query multiple players (limit 3 results)
     const opponnent = await prisma.opponent.findMany({
@@ -57,15 +58,27 @@ export async function GET(req: NextRequest) {
       take: 3,
     })
 
-    if (opponnent.length === 0) {
-    const player = await prisma.player.findMany({
+
+    let player = await prisma.player.findMany({
       where: nameFilter,
       take: 3,
     })
-    return NextResponse.json({ data: player, message: 'Player Data' })
+
+    const combinedData = [...player, ...opponnent];
+    const uniqueData = [];
+    const seen = new Set();
+
+    for (const item of combinedData) {
+      if (!seen.has(item.id)) { // Check if this item is unique by its 'id'
+        seen.add(item.id);
+        uniqueData.push(item);
+      }
+      if (uniqueData.length === 3) break; // Stop when we have 3 unique items
     }
 
-    return NextResponse.json({ data: opponnent, message: 'opponent Data' })
+    // Return combined response
+    return NextResponse.json({ data: uniqueData, message: 'Player and Opponent Data' });
+
 
   } catch (error) {
     return NextResponse.json(
@@ -74,8 +87,6 @@ export async function GET(req: NextRequest) {
     )
   } 
 }
-
-
 
 
 export async function POST(req: NextRequest) {
