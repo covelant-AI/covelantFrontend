@@ -31,7 +31,7 @@ interface CustomVideoPlayerProps {
    */
   markers: TimestampMarker[];
   /**
-   * (Optional) If you already know the video’s total duration in seconds, pass it here.
+   * (Optional) If you already know the video’s total duration in seconds, pass it here. 
    */
   durationOverride?: number;
   /**

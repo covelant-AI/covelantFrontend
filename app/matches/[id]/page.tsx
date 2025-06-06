@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "@/app/firebase/config";
 import CustomVideoPlayer from "@/components/UI/CustomVideoPlayer"
+import MainTagManager from "@/components/TagManager/MainTagManager"
 
 interface ProfilePageProps {
   params: { id: string };
 }
-
 
 
 export default function Matches({ params }: ProfilePageProps) {
@@ -15,7 +15,7 @@ export default function Matches({ params }: ProfilePageProps) {
   const [videoStart, setVideoStart] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-    const [currentVideoTime, setCurrentVideoTime] = useState<number>(0);
+  const [currentVideoTime, setCurrentVideoTime] = useState<number>(0);
 
   async function getVideoData(){
     const { id } = params;
@@ -80,6 +80,9 @@ const timestampedMarkers = [
         onTimeUpdate={handleTimeUpdate}
       />
         <h3>{currentVideoTime}</h3>
+
+       <MainTagManager/>
+
     </div>
   );
 };

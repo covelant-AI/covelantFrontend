@@ -4,6 +4,7 @@ import { findOrCreateOpponent } from './seeds/03_opponents';
 import { seedPlayerStats } from './seeds/04_stats';
 import { createMatch } from './seeds/05_matches';
 import { seedOverallStats } from './seeds/06_overallStats';
+import { seedMatchEvents } from './seeds/07_matchEvents'
 
 async function main() {
   console.log("Seeding database...");
@@ -31,6 +32,9 @@ async function main() {
   // Seed Opponents and Matches for Player1
   const knownOpponent = await findOrCreateOpponent("Master", "Opponent");
   await createMatch(player1, knownOpponent, videoUrl, imageUrl);
+
+  // ←–– Finally, call the MatchEvent seeder
+  await seedMatchEvents();
 
   console.log("Seeding completed!");
 }

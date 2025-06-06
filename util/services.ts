@@ -38,3 +38,8 @@ export function getRandomInt(min: number, max: number): number {
 export function getRandomAvgDuration(): number {
   return parseFloat((Math.random() * (60 - 10) + 10).toFixed(2));
 }
+
+export function parseTimeToSeconds(ts: string) {
+  const [m, s] = ts.split(":").map((n) => parseInt(n) || 0);
+  return m * 60 + s;
+};
