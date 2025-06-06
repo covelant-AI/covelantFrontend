@@ -51,16 +51,14 @@ export default function Matches({ params }: ProfilePageProps) {
 
 
 const timestampedMarkers = [
-  { timestamp: "2025-06-26T00:00:05Z", color: "#A9C3FF" }, //  5 seconds in
-  { timestamp: "2025-06-26T00:00:15Z", color: "#FFDE9C" }, // 15 seconds in
-  { timestamp: "2025-06-26T00:01:00Z"          },         // 60 seconds in (defaults to white)
-  { timestamp: "2025-06-26T00:02:30Z", color: "#A9C3FF" }, //150 seconds in
+  { timestamp: "2025-06-26T00:00:05Z", color: "#A9C3FF", label: "Ball Speed Spike", lablePath: "/images/lables/lable-error.png"  }, //  5 seconds in
+  { timestamp: "2025-06-26T00:00:15Z", color: "#FFDE9C", label: "unforced Error", lablePath: "/images/lables/lable-check.png"  }, // 15 seconds in
+  { timestamp: "2025-06-26T00:01:00Z", color: "#FFDE9C", label: "max speed", lablePath: "/images/lables/lable-person.png"  },        // 60 seconds in (defaults to white)
+  { timestamp: "2025-06-26T00:02:30Z", color: "#A9C3FF", label: "top spin", lablePath: "/images/lables/lable-time.png"  },         //150 seconds in
 ];
 
 
   useEffect(() => {
-    // 1) Build a Storage reference to your video file:
-    //    If your video is at "videos/myMovie.mp4" in Firebase Storage:
     getVideoData()
   }, []);
 

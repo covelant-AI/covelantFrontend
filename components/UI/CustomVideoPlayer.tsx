@@ -1,12 +1,22 @@
 "use client";
 // /components/CustomVideoPlayer.tsx
-import React, { useRef, useState, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  MouseEvent,
+} from "react";
 
 interface TimestampMarker {
   /** The real‐world timestamp (ISO string) when this tag was created. */
   timestamp: string;
-  /** Optional color for the diamond (any valid CSS color). Defaults to white. */
+  /** Optional color for the diamond (any valid CSS color). Defaults to gray. */
   color?: string;
+  /** Optional label or message to show on hover */
+  label?: string;
+   /** Optional label or message to show on hover */
+  lablePath?:string;
 }
 
 interface CustomVideoPlayerProps {
@@ -14,23 +24,20 @@ interface CustomVideoPlayerProps {
   src: string;
   /**
    * The real‐world Date/Time when this video began (ISO string).
-   * Example: "2025-06-01T14:30:00Z"
    */
   videoStartTime: string;
   /**
-   * An array of timestamped tags. Each one has an ISO timestamp and optional color.
-   * Example: [{ timestamp: "2025-06-01T14:30:15Z", color: "cyan" }, ...]
+   * An array of timestamped tags. Each one has an ISO timestamp, optional color, and optional hover label.
    */
   markers: TimestampMarker[];
   /**
    * (Optional) If you already know the video’s total duration in seconds, pass it here.
-   * Otherwise, the component will read `videoRef.current.duration` once metadata loads.
    */
   durationOverride?: number;
   /**
    * Callback that receives updates whenever the current playback time changes (in seconds).
-   * Parent components can use this to track the video's current time.
    */
+  lablePath?: string;
   onTimeUpdate?: (currentTime: number) => void;
 }
 
@@ -44,11 +51,13 @@ export default function CustomVideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const progressContainerRef = useRef<HTMLDivElement>(null);
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(durationOverride || 0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // 1) When <video> metadata loads, capture the true duration (unless overridden)
   useEffect(() => {
@@ -125,7 +134,7 @@ export default function CustomVideoPlayer({
   };
 
   // 5) Convert each marker’s ISO timestamp → "seconds into the video"
-  const marksWithOffsets = React.useMemo(() => {
+  const marksWithOffsets = useMemo(() => {
     const videoStartMs = Date.parse(videoStartTime);
     if (isNaN(videoStartMs)) {
       console.warn("Invalid videoStartTime:", videoStartTime);
@@ -139,10 +148,46 @@ export default function CustomVideoPlayer({
           return null;
         }
         const offsetSeconds = (markMs - videoStartMs) / 1000;
-        return { offsetSeconds, color: m.color || "gray" };
+        return {
+          offsetSeconds,
+          color: m.color || "gray",
+          label: m.label || `Tag at ${Math.floor(offsetSeconds / 60)}:${String(
+            Math.floor(offsetSeconds % 60)
+          ).padStart(2, "0")}`,
+          lablePath: m.lablePath
+        };
       })
-      .filter((x): x is { offsetSeconds: number; color: string } => x !== null);
+      .filter(
+        (x): x is { offsetSeconds: number; color: string; label: string; lablePath:string } =>
+          x !== null
+      );
   }, [videoStartTime, markers]);
+
+  // 6) Handle mouse movement over the progress container to detect hover near diamonds
+  const onProgressMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!progressContainerRef.current || duration <= 0) {
+      setHoveredIndex(null);
+      return;
+    }
+    const rect = progressContainerRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left; // x within progress bar
+    const barWidth = rect.width;
+
+    // Check each marker’s left position
+    let foundIndex: number | null = null;
+    marksWithOffsets.forEach((m, idx) => {
+      const leftPx = (m.offsetSeconds / duration) * barWidth;
+      // If mouse is within 6px of the diamond’s center
+      if (Math.abs(mouseX - leftPx) <= 6) {
+        foundIndex = idx;
+      }
+    });
+    setHoveredIndex(foundIndex);
+  };
+
+  const onProgressMouseLeave = () => {
+    setHoveredIndex(null);
+  };
 
   return (
     <div className="max-w-[800px] mx-auto">
@@ -184,7 +229,12 @@ export default function CustomVideoPlayer({
         </button>
 
         {/* 2) Progress Bar + Diamond Markers */}
-        <div className="relative flex-1 h-2 flex items-center">
+        <div
+          ref={progressContainerRef}
+          className="relative flex-1 h-2 flex items-center"
+          onMouseMove={onProgressMouseMove}
+          onMouseLeave={onProgressMouseLeave}
+        >
           <input
             type="range"
             ref={progressRef}
@@ -197,22 +247,49 @@ export default function CustomVideoPlayer({
           {marksWithOffsets.map((m, i) => {
             if (duration <= 0) return null;
             if (m.offsetSeconds < 0 || m.offsetSeconds > duration) return null;
-            const leftPct = (m.offsetSeconds / duration) * 100;
             return (
               <div
                 key={i}
-                className="absolute w-[12px] h-[12px] transform rotate-45 pointer-events-none rounded-sm border border-black"
+                className="absolute w-[12px] h-[12px] transform rotate-45 rounded-sm border border-black"
                 style={{
-                  left: `calc(${leftPct}% - 6px)`,
+                  left: `calc(${(m.offsetSeconds / duration) * 100}% - 6px)`,
                   top: "-2px",
                   backgroundColor: m.color,
                 }}
+                // pointer-events none so video bar remains interactive
+                aria-hidden="true"
               />
             );
           })}
+
+          {/* 4) Tooltip */}
+          {hoveredIndex !== null && (
+            <div
+              className="absolute top-7 left-0 transform -translate-x-1/2 bg-white border-2 border-teal-600 rounded-full px-4 py-2 flex items-center space-x-2 shadow-lg"
+              style={{
+                left: `calc(${
+                  (marksWithOffsets[hoveredIndex].offsetSeconds / duration) * 100
+                }% - 0px)`,
+              }}
+            >
+              
+              {/* Example SVG icon; swap `src` with your dynamic path */}
+              <img
+                src={marksWithOffsets[hoveredIndex].lablePath}
+                alt="icon"
+                className="w-4 h-4 flex-shrink-0"
+              />
+
+              {/* Label text */}
+              <span className="text-sm font-medium text-black">
+                {marksWithOffsets[hoveredIndex].label}
+              </span>
+            </div>
+          )}
+
         </div>
 
-        {/* 4) Timestamp (e.g. “0:15 / 1:30”) */}
+        {/* 5) Timestamp (e.g. “0:15 / 1:30”) */}
         <div className="text-black text-xs whitespace-nowrap">
           {Math.floor(currentTime / 60)}:
           {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
@@ -227,14 +304,14 @@ export default function CustomVideoPlayer({
           -webkit-appearance: none;
           width: 12px;
           height: 12px;
-          background-color: #D4EBEA;
+          background-color: #d4ebea;
           border-radius: 50%;
           margin-top: 0px;
         }
         input[type="range"]::-moz-range-thumb {
           width: 14px;
           height: 14px;
-          background-color: #D4EBEA;
+          background-color: #d4ebea;
           border: none;
           border-radius: 50%;
         }
@@ -242,11 +319,9 @@ export default function CustomVideoPlayer({
           background-color: #22c55e; /* Tailwind green-500 */
         }
         input[type="range"]::-moz-range-track {
-          background-color: #D4EBEA; /* Tailwind gray-200-ish */
+          background-color: #d4ebea; /* Tailwind gray-200-ish */
         }
       `}</style>
     </div>
   );
 }
-
-

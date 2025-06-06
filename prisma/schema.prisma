@@ -76,8 +76,15 @@ model Match {
   date          DateTime
   videoType     String
   playerMatches PlayerMatch[]
+
+  // ◀— New relation: “events” attached to this match
+  events        MatchEvent[]
 }
 
+model StatMatch {
+  id        Int    @id @default(autoincrement())
+  condition String?
+}
 
 model Opponent {
   id            Int           @id @default(autoincrement())
@@ -108,6 +115,105 @@ model PlayerMatch {
   @@unique([matchId, playerId, playerTwoId])   // no two identical P-vs-P rows
   @@unique([matchId, playerId, opponentId])    // no two identical P-vs-O rows
 }
+
+/// ◀— New enums:
+
+/// Defines which category this event belongs to.
+enum EventCategory {
+  MATCH
+  TACTIC
+  FOULS
+  PHYSICAL
+  COMMENT
+}
+
+/// “type” values for the MATCH category.
+enum MatchEventType {
+  FIRST_SERVE
+  SECOND_SERVE
+  BREAK_POINT
+  GAME_POINT
+  SET_POINT
+  TIEBREAK
+  START_OF_SET
+}
+
+/// “type” values for the TACTIC category.
+enum TacticEventType {
+  SERVE_VOLLEY
+  BASELINE_RALLY
+  DROP_SHOT
+  NET_PLAY
+  CROSS_COURT_RALLY
+  DOWN_THE_LINE_SHOT
+  OPPONENT_PULLED_WIDE
+}
+
+/// “type” values for the FOULS category.
+enum FoulsEventType {
+  UNFORCED_ERROR
+  FORCED_ERROR
+  DOUBLE_FAULT
+  FOOT_FAULT
+  NET_TOUCH
+  RACKET_VIOLATION
+}
+
+/// “type” values for the PHYSICAL category.
+enum PhysicalEventType {
+  FATIGUE_SIGN
+  SLOW_RECOVERY
+  INJURY_CONCERN
+  GOOD_MOVEMENT
+  POOR_FOOTWORK
+}
+
+/// Shared “condition” for MATCH, TACTIC, FOULS, PHYSICAL categories.
+enum ConditionType {
+  UNDER_PRESSURE
+  CONFIDENT
+  FOCUSED
+  LOST_FOCUS
+  MOMENTUM_SHIFT
+  CLUTCH_PLAY
+  FATIGUE_SIGNS
+}
+
+/// ◀— New model that stores any of the five categories in one table:
+model MatchEvent {
+  id          Int               @id @default(autoincrement())
+  matchId     Int
+  match       Match             @relation(fields: [matchId], references: [id])
+  category    EventCategory
+
+  /// If category = MATCH, this field must be set (else null)
+  matchType   MatchEventType?    @default(NULL)
+
+  /// If category = TACTIC, this field must be set (else null)
+  tacticType  TacticEventType?   @default(NULL)
+
+  /// If category = FOULS, this field must be set (else null)
+  foulType    FoulsEventType?    @default(NULL)
+
+  /// If category = PHYSICAL, this field must be set (else null)
+  physicalType PhysicalEventType? @default(NULL)
+
+  /// If category = COMMENT, store the user’s free‐text comment here
+  commentText String?             @default(NULL)
+
+  /// For MATCH, TACTIC, FOULS, PHYSICAL: store one of the ConditionType values. Null if category = COMMENT
+  condition   ConditionType?      @default(NULL)
+
+  /// The actual clock‐time (in seconds from video start) can be derived at the app layer,
+  /// but if you want to store it directly, you could add:
+  /// eventTimeSeconds Float?
+
+  /// When this event was created (optional)
+  createdAt   DateTime            @default(now())
+
+  @@index([matchId, category])
+}
+
 
 
 
