@@ -99,3 +99,9 @@ export interface ConnectionSortProps {
 export interface UploadVideoProps {
   onVideoUpload: (videoURL: string, videoThumbnail: string) => void;
 }
+
+export interface MainTagManagerProps {
+  videoId: number;
+  timeStamp: number;
+  onAddTag: (tag: any) => void;
+}

@@ -1,75 +1,119 @@
-
 "use client";
-import React, { useState } from "react";
-import {parseTimeToSeconds} from '@/util/services'
-import {MATCH_TYPES, CONDITION_OPTIONS} from "@/util/types"
+import React, { useState, useEffect } from "react";
+import { parseTimeToSeconds,formatSeconds } from "@/util/services";
+import { MATCH_TYPES, CONDITION_OPTIONS } from "@/util/types";
+import { MainTagManagerProps } from "@/util/interfaces";
 
-export default function MatchForm() {
+export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManagerProps) {
   const [matchType, setMatchType] = useState<string>("FIRST_SERVE");
   const [eventTime, setEventTime] = useState<string>("00:00");
   const [condition, setCondition] = useState<string>("");
-  const [conditionTime, setConditionTime] = useState<string>("00:00");
+  const [comment, setComment] = useState<string>(""); 
+
+  useEffect(() => {
+    setEventTime(formatSeconds(timeStamp));  
+  }, [timeStamp]);
 
   const handleAdd = () => {
     const payload = {
+      matchId: videoId,
       category: "MATCH",
       matchType,
       eventTimeSeconds: parseTimeToSeconds(eventTime),
       condition,
-      conditionTimeSeconds: parseTimeToSeconds(conditionTime),
+      comment,
     };
-    console.log("Submit MATCH event:", payload);
+
+      fetch('/api/createTag', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+       if (data.message !== "MatchEvent created") {
+        alert('Failed to create Tag.');
+      } 
+        onAddTag(data.event);
+      })
+      .catch((error) => {
+        console.error('Error creating match:', error);
+        alert('Failed to create match. Please try again.');
+      });
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-3">
-        <select
-          className="border border-gray-300 rounded px-3 py-1 text-sm flex-1"
-          value={matchType}
-          onChange={(e) => setMatchType(e.target.value)}
-        >
-          {MATCH_TYPES.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <input
-          type="text"
-          className="border border-gray-300 rounded px-3 py-1 text-sm w-20 text-center"
-          placeholder="00:00"
-          value={eventTime}
-          onChange={(e) => setEventTime(e.target.value)}
-        />
+    <div className="bg-white p-2 rounded-xl w-full">
+      <div className="flex items-center justify-between p-2">
+        <h3 className="text-black font-semibold text-lg">Manual Tags</h3>
+        <div className="w-4 h-4 bg-radial-[at_50%_50%] from-white-200 via-yellow-400 to-yellow-900 to-300% rounded-sm transform rotate-45 shadow-inner relative">
+        </div>
       </div>
-      <div className="flex items-center gap-3">
-        <select
-          className="border border-gray-300 rounded px-3 py-1 text-sm flex-1"
-          value={condition}
-          onChange={(e) => setCondition(e.target.value)}
-        >
-          {CONDITION_OPTIONS.map((opt: any) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <input
-          type="text"
-          className="border border-gray-300 rounded px-3 py-1 text-sm w-20 text-center"
-          placeholder="00:00"
-          value={conditionTime}
-          onChange={(e) => setConditionTime(e.target.value)}
-        />
-      </div>
-      <div className="flex justify-end">
-        <button
-          onClick={handleAdd}
-          className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md text-sm font-medium transition"
-        >
-          + Add
-        </button>
+
+      <div className="w-full flex gap-6">
+        {/* ─── Left Column: dropdowns + time inputs ─── */}
+        <div className="flex flex-col flex-none gap-4">
+          <div className="flex items-center gap-3">
+            {/* 1) Match type dropdown */}
+            <select
+              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold"
+              value={matchType}
+              onChange={(e) => setMatchType(e.target.value)}
+            >
+              {MATCH_TYPES.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+
+            {/* 2) Event time input (shows video timestamp) */}
+            <input
+              type="text"
+              className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-1 text-sm w-24 h-11 text-center font-bold text-black"
+              placeholder="00:00"
+              value={eventTime}
+              onChange={(e) => setEventTime(e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* 3) Condition dropdown */}
+            <select
+              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold"
+              value={condition}
+              onChange={(e) => setCondition(e.target.value)}
+            >
+              {CONDITION_OPTIONS.map((opt: any) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* ─── Middle Column: comment textarea ─── */}
+        <div className="flex-1">
+          <textarea
+            className="w-full h-26 bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm text-black resize-none"
+            placeholder="Comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+        </div>
+
+        {/* ─── Right Column: + Add button ─── */}
+        <div className="flex flex-col justify-end flex-none">
+          <button
+            onClick={handleAdd}
+            className="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-lg text-sm font-bold transition"
+          >
+            + Add
+          </button>
+        </div>
       </div>
     </div>
   );

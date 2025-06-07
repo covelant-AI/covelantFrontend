@@ -185,6 +185,7 @@ model MatchEvent {
   matchId          Int
   match            Match             @relation(fields: [matchId], references: [id])
   category         EventCategory
+  comment          String?
 
   /// If category = MATCH, this field may be set (else remains null)
   matchType        MatchEventType?

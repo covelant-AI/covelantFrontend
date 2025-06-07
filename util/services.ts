@@ -43,3 +43,10 @@ export function parseTimeToSeconds(ts: string) {
   const [m, s] = ts.split(":").map((n) => parseInt(n) || 0);
   return m * 60 + s;
 };
+
+export function formatSeconds(sec: number): string {
+  const total = Math.floor(sec);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
