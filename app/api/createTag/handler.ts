@@ -1,3 +1,4 @@
+// /app/api/createTag/route.ts
 import { PrismaClient, EventCategory } from '../../../generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
       eventTimeSeconds,
     } = data;
 
-    // Basic validation: matchId and category are required
+    // Basic validation
     if (typeof matchId !== 'number' || !category) {
       return NextResponse.json(
         { message: 'matchId and category are required' },
@@ -29,16 +30,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2) Build the create payload for Prisma based on category
+    // 2) Build the common payload
     const payload: any = {
       matchId,
-      category,
+      category:
+        category === 'note' || category === EventCategory.COMMENT
+          ? EventCategory.COMMENT
+          : category,
       eventTimeSeconds: Number(eventTimeSeconds) || 0,
-      comment: comment || null,
-      condition: condition || null,
     };
 
-    switch (category) {
+    // 3) Branch by category
+    switch (payload.category) {
       case EventCategory.MATCH:
         if (!matchType) {
           return NextResponse.json(
@@ -47,6 +50,7 @@ export async function POST(req: NextRequest) {
           );
         }
         payload.matchType = matchType;
+        payload.condition = condition || null;
         break;
 
       case EventCategory.TACTIC:
@@ -57,6 +61,7 @@ export async function POST(req: NextRequest) {
           );
         }
         payload.tacticType = tacticType;
+        payload.condition = condition || null;
         break;
 
       case EventCategory.FOULS:
@@ -67,6 +72,7 @@ export async function POST(req: NextRequest) {
           );
         }
         payload.foulType = foulType;
+        payload.condition = condition || null;
         break;
 
       case EventCategory.PHYSICAL:
@@ -77,17 +83,23 @@ export async function POST(req: NextRequest) {
           );
         }
         payload.physicalType = physicalType;
+        payload.condition = condition || null;
         break;
-
+          
       case EventCategory.COMMENT:
-        // For COMMENTS, use commentText if provided, otherwise fallback to comment
-        if (!comment && !commentText) {
+        // NOTE/NOCOMMENT tags: no type or condition, only free text
+        // copy the incoming `comment` into both `comment` + `commentText`
+        const noteText = commentText ?? comment;
+        if (!noteText) {
           return NextResponse.json(
-            { message: 'commentText (or comment) is required when category is COMMENT' },
+            { message: 'commentText is required for note tags' },
             { status: 400 }
           );
         }
-        payload.commentText = commentText || comment;
+        payload.comment = noteText;
+        payload.commentText = noteText;
+        // ensure we store an empty string rather than `null`
+        payload.condition = null;
         break;
 
       default:
@@ -97,12 +109,12 @@ export async function POST(req: NextRequest) {
         );
     }
 
-    // 3) Create the MatchEvent in the database
+    // 4) Persist
     const newEvent = await prisma.matchEvent.create({
       data: payload,
     });
 
-    // 4) Return the newly created event
+    // 5) Return
     return NextResponse.json(
       { message: 'MatchEvent created', event: newEvent },
       { status: 201 }

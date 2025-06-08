@@ -46,7 +46,7 @@ export async function seedMatchEvents() {
         category: EventCategory.TACTIC,
         tacticType: TacticEventType.BASELINE_RALLY,
         condition: ConditionType.CONFIDENT,
-        eventTimeSeconds: 25.0,
+        eventTimeSeconds: 14.0,
         comment: "Baseline rally went 15 strokes", // new top‐level comment
       },
     });
@@ -58,7 +58,7 @@ export async function seedMatchEvents() {
         category: EventCategory.FOULS,
         foulType: FoulsEventType.NET_TOUCH,
         condition: ConditionType.UNDER_PRESSURE,
-        eventTimeSeconds: 37.5,
+        eventTimeSeconds: 46.5,
         comment: "Player grazed the net", // new top‐level comment
       },
     });
@@ -70,7 +70,7 @@ export async function seedMatchEvents() {
         category: EventCategory.PHYSICAL,
         physicalType: PhysicalEventType.FATIGUE_SIGN,
         condition: ConditionType.FATIGUE_SIGNS,
-        eventTimeSeconds: 52.2,
+        eventTimeSeconds: 110.2,
         comment: "Noticeable drop in foot speed", // new top‐level comment
       },
     });
@@ -82,7 +82,7 @@ export async function seedMatchEvents() {
         category: EventCategory.COMMENT,
         comment: "Great rally here!",      // new top‐level comment
         commentText: "Great rally here!",  // existing commentText field
-        eventTimeSeconds: 45.0,
+        eventTimeSeconds: 105.0,
       },
     });
   }

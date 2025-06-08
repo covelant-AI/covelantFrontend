@@ -9,25 +9,28 @@ datasource db {
 }
 
 model Player {
-  id           Int      @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   firstName    String?
   lastName     String?
   email        String
   avatar       String?
   age          Int?
-  dominantHand String?  @default("Right Handed")
-  height       Int?     @default(180)
-  Tier         String?  @default("Professional")
-  winRate      Float?   @default(1)
+  dominantHand String?       @default("Right Handed")
+  height       Int?          @default(180)
+  Tier         String?       @default("Professional")
+  winRate      Float?        @default(1)
   stats        PlayerStat[]
 
-  // break out the two “slots” of PlayerMatch
   playerMatchesFirst  PlayerMatch[] @relation("PlayerMatch_First")
   playerMatchesSecond PlayerMatch[] @relation("PlayerMatch_Second")
+  coaches             Coach[]       @relation("CoachPlayers")
+  overallStats        OverallStats?
 
-  coaches      Coach[]  @relation("CoachPlayers")
+  /// NEW: points this player scored
+  scorePoints ScorePoint[]
 
-  overallStats OverallStats?  // relation field without attributes
+  /// NEW: metric readings for this player (only used for player‐specific metrics)
+  matchMetrics MatchMetric[]
 }
 
 model Coach {
@@ -77,8 +80,13 @@ model Match {
   videoType     String
   playerMatches PlayerMatch[]
 
-  // New relation: “events” attached to this match
   events        MatchEvent[]
+
+  /// NEW: all point events for this match
+  scorePoints ScorePoint[]
+
+  /// NEW: all metric events tied to this match
+  matchMetrics MatchMetric[]
 }
 
 model StatMatch {
@@ -91,6 +99,7 @@ model Opponent {
   firstName     String
   lastName      String
   playerMatches PlayerMatch[]
+  scorePoints   ScorePoint[]      // ← back‐relation
 }
 
 model PlayerMatch {
@@ -177,6 +186,58 @@ enum ConditionType {
   MOMENTUM_SHIFT
   CLUTCH_PLAY
   FATIGUE_SIGNS
+}
+
+model ScorePoint {
+  id               Int         @id @default(autoincrement())
+  matchId          Int
+  match            Match       @relation(fields: [matchId], references: [id])
+  playerId         Int?
+  player           Player?     @relation(fields: [playerId], references: [id])
+  opponentId       Int?
+  opponent         Opponent?   @relation(fields: [opponentId], references: [id])
+  setNumber        Int
+  gamePoint         Int        @default(0)
+  matchPoint       Int         @default(0)
+  eventTimeSeconds Int
+  createdAt        DateTime    @default(now())
+  @@index([matchId])
+  @@index([playerId])
+  @@index([opponentId])
+}
+
+model MatchMetric {
+  id               Int        @id @default(autoincrement())
+  matchId          Int
+  match            Match      @relation(fields: [matchId], references: [id])
+
+  /// Which player this metric is for (nullable for match‐wide metrics like longest rally)
+  playerId         Int?       
+  player           Player?    @relation(fields: [playerId], references: [id])
+
+  /// What kind of metric this is
+  metricType       MetricType
+
+  /// Numeric value (e.g. 138.5 for km/h, 52 for seconds…)
+  value            Float
+
+  /// Seconds from the video start when this measurement was taken
+  eventTimeSeconds Int
+
+  createdAt        DateTime   @default(now())
+
+  @@index([matchId])
+  @@index([playerId])
+  @@index([metricType])
+}
+
+/// What kinds of metrics we record
+enum MetricType {
+  BALL_SPEED       // ball speed in km/h
+  PLAYER_SPEED     // player movement speed in km/h
+  LONGEST_RALLY    // rally duration in seconds
+  STRIKES_EFF      // strikes per rally (hits/rally)
+  NOTE
 }
 
 /// New model that stores any of the five categories in one table:

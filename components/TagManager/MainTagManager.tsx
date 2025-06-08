@@ -16,14 +16,14 @@ export default function MainTagManager({
   const [activeTab, setActiveTab] = useState<CategoryKey>("Match");
 
   return (
-    <div className="bg-gray-100 rounded-xl shadow-lg max-w-2xl w-full p-6 z-10 ">
+    <div className="bg-gray-100 rounded-xl shadow-lg max-w-[800px] p-6 z-10 ">
       <div className="flex space-x-4 border-b border-gray-200 pb-2  items-center justify-between">
         {(["Match", "Tactic", "Fouls", "Physical", "Note"] as CategoryKey[]).map(
           (tab, idx) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center text-md font-bold px-4 py-2 border rounded-lg shadow-sm ${
+              className={`flex items-center text-lg font-bold px-8 py-2 border rounded-lg shadow-sm ${
                 activeTab === tab
                   ? "bg-white border-teal-500 text-gray-600"   
                   : "bg-white border-gray-100 text-gray-600 hover:scale-[1.05]"

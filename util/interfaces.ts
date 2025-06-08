@@ -105,3 +105,30 @@ export interface MainTagManagerProps {
   timeStamp: number;
   onAddTag: (tag: any) => void;
 }
+
+interface Opponent {
+  id:number,
+  firstName: string,
+  lastName:string,
+}
+
+interface playerData {
+  id: number,
+  Tier: string,
+  age: number
+  avatar: string,
+  dominantHand: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface MainPreformanceTrackerProps {
+  videoId: number;
+  leftPlayer: playerData;
+  rightPlayer: playerData;
+  live: boolean;
+  matchTime: number;  
+  setInfo?: string;        
+  onFullAnalytics: () => void;
+}

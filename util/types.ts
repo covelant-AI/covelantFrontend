@@ -67,3 +67,19 @@ export const PHYSICAL_TYPES = [
   { value: "GOOD_MOVEMENT", label: "Good Movement" },
   { value: "POOR_FOOTWORK", label: "Poor Footwork" },
 ];
+
+// types.ts
+export interface Scorer {
+  id: number;
+  firstName: string;
+  lastName: string;
+  avatar?: string;
+  type: "PLAYER" | "OPPONENT";
+}
+
+export interface EventRecord {
+  setNumber: number;
+  eventTimeSeconds: number;
+  scorer: Scorer;
+}
+

@@ -13,7 +13,8 @@ export default function NoteForm({ videoId, timeStamp, onAddTag }: MainTagManage
 
   const handleAdd = () => {
     const payload = {
-      category: "NOTE",
+      matchId: videoId,
+      category: "COMMENT",
       commentText: noteText,
       eventTimeSeconds: parseTimeToSeconds(eventTime),
     };

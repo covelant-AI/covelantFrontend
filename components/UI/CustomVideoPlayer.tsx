@@ -43,7 +43,6 @@ interface CustomVideoPlayerProps {
 
 export default function CustomVideoPlayer({
   src,
-  videoStartTime,
   markers,
   durationOverride,
   onTimeUpdate,
@@ -167,7 +166,7 @@ export default function CustomVideoPlayer({
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
   return (
-    <div className="max-w-[800px] mx-auto">
+    <div className="max-w-[800px]">
       {/* VIDEO */}
       <div ref={containerRef} className="relative bg-black rounded-t-2xl overflow-hidden pt-[56.25%]">
         <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-contain" preload="metadata" controls={false} />
