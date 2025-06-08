@@ -16,7 +16,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: 'Invalid match id' }, { status: 400 });
     }
 
-    // Fetch match with participants, score points, and metrics
     const match = await prisma.match.findUnique({
       where: { id: matchId },
       include: {
@@ -44,7 +43,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: 'Match not found' }, { status: 404 });
     }
 
-    // 1) Build participants array
+    // 1) Participants
     const participants = [];
     for (const pm of match.playerMatches) {
       if (pm.player) {
@@ -75,7 +74,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // 2) Score points (now with gamePoint + matchPoint)
+    // 2) Score points (with gamePoint & matchPoint)
     const scorePoints = match.scorePoints.map(sp => ({
       setNumber:        sp.setNumber,
       gamePoint:        sp.gamePoint,
@@ -97,20 +96,46 @@ export async function GET(req: NextRequest) {
           },
     }));
 
-    // 3–6) Metrics by type (unchanged)…
     const ballSpeeds = match.matchMetrics
-      .filter((m) => m.metricType === MetricType.BALL_SPEED)
-      .map((m) => ({
+      .filter(m => m.metricType === MetricType.BALL_SPEED)
+      .map(m => ({
         eventTimeSeconds: m.eventTimeSeconds,
         value: m.value,
       }));
-    // … playerSpeeds, longestRallies, strikesEff as before …
 
+    // player speeds
+    const playerSpeeds = match.matchMetrics
+      .filter(m => m.metricType === MetricType.PLAYER_SPEED)
+      .map(m => ({
+        playerId:         m.playerId!,
+        eventTimeSeconds: m.eventTimeSeconds,
+        value:            m.value,
+      }));
+
+    // longest rallies
+    const longestRallies = match.matchMetrics
+      .filter(m => m.metricType === MetricType.LONGEST_RALLY)
+      .map(m => ({
+        eventTimeSeconds: m.eventTimeSeconds,
+        value:            m.value,
+      }));
+
+    // strikes efficiency
+    const strikesEff = match.matchMetrics
+      .filter(m => m.metricType === MetricType.STRIKES_EFF)
+      .map(m => ({
+        eventTimeSeconds: m.eventTimeSeconds,
+        value:            m.value,
+      }));
+
+    // now include *all* of them in our response:
     const data = {
       participants,
       scorePoints,
       ballSpeeds,
-      // playerSpeeds, longestRallies, strikesEff …
+      playerSpeeds,
+      longestRallies,
+      strikesEff,
     };
 
     return NextResponse.json(
@@ -125,5 +150,6 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
 
 

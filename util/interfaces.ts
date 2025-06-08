@@ -130,5 +130,4 @@ export interface MainPreformanceTrackerProps {
   live: boolean;
   matchTime: number;  
   setInfo?: string;        
-  onFullAnalytics: () => void;
 }

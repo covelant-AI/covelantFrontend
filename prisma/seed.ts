@@ -6,6 +6,7 @@ import { createMatch } from './seeds/05_matches';
 import { seedOverallStats } from './seeds/06_overallStats';
 import { seedMatchEvents } from './seeds/07_matchEvents'
 import { seedScorePoints } from './seeds/08_scorePoints'
+import {seedMatchMetrics} from './seeds/09_seedMatchMetrics'
 
 async function main() {
   console.log("Seeding database...");
@@ -36,8 +37,8 @@ async function main() {
 
   // ←–– Finally, call the MatchEvent seeder
   await seedMatchEvents();
-
   await seedScorePoints();
+  await seedMatchMetrics()
 
   console.log("Seeding completed!");
 }

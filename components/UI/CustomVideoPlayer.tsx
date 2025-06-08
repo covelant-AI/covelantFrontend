@@ -166,7 +166,7 @@ export default function CustomVideoPlayer({
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
   return (
-    <div className="max-w-[800px]">
+  <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
       {/* VIDEO */}
       <div ref={containerRef} className="relative bg-black rounded-t-2xl overflow-hidden pt-[56.25%]">
         <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-contain" preload="metadata" controls={false} />
@@ -255,6 +255,7 @@ export default function CustomVideoPlayer({
         </div>
       </div>
     </div>
+    
   );
 }
 

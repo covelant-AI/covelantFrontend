@@ -45,20 +45,21 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
   };
 
   return (
-    <div className="bg-white p-2 rounded-xl w-full">
+    <div className="bg-white p-2 rounded-xl w-full justify-center items-center">
       <div className="flex items-center justify-between p-2">
         <h3 className="text-black font-semibold text-lg">Manual Tags</h3>
         <div className="w-4 h-4 bg-radial-[at_50%_50%] from-white-200 via-yellow-400 to-yellow-900 to-300% rounded-sm transform rotate-45 shadow-inner relative">
         </div>
       </div>
 
-      <div className="w-full flex gap-6">
+      <div className="flex flex-col md:flex-row gap-4 w-full">
+      <div className="w-full flex flex-col lg:flex-row gap-6">
         {/* ─── Left Column: dropdowns + time inputs ─── */}
         <div className="flex flex-col flex-none gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 sm:flex-row flex-col">
             {/* 1) Match type dropdown */}
             <select
-              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold"
+              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold max-sm:w-full"
               value={matchType}
               onChange={(e) => setMatchType(e.target.value)}
             >
@@ -72,7 +73,7 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
             {/* 2) Event time input (shows video timestamp) */}
             <input
               type="text"
-              className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-1 text-sm w-24 h-11 text-center font-bold text-black"
+              className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-1 text-sm w-24 h-11 text-center font-bold text-black max-sm:w-full "
               placeholder="00:00"
               value={eventTime}
               onChange={(e) => setEventTime(e.target.value)}
@@ -114,6 +115,7 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
             + Add
           </button>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -48,7 +48,7 @@ export default function NoteForm({ videoId, timeStamp, onAddTag }: MainTagManage
         <div className="w-4 h-4 bg-radial-[at_50%_50%] from-white-200 via-gray-400 to-gray-900 to-300% rounded-sm transform rotate-45 shadow-inner relative">
       </div>
     </div>
-      <div className="w-full flex gap-6">
+      <div className="w-full flex lg:flex-row flex-col gap-6">
         {/* Left: textarea + time input */}
         <div className="flex flex-1 items-center gap-3">
           <textarea

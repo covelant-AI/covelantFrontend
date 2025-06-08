@@ -54,12 +54,13 @@ export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagMana
         <div className="w-4 h-4 bg-radial-[at_50%_50%] from-white-200 via-teal-400 to-teal-900 to-300% rounded-sm transform rotate-45 shadow-inner relative">
         </div>
       </div>
-      <div className="w-full flex gap-6">
+            <div className="flex flex-col md:flex-row gap-4 w-full">
+      <div className="w-full flex flex-col lg:flex-row gap-6">
         {/* ─── Left Column: dropdown + time input ─── */}
         <div className="flex flex-col flex-none gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 sm:flex-row flex-col">
             <select
-              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold"
+              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold max-sm:w-full"
               value={tacticType}
               onChange={(e) => setTacticType(e.target.value)}
             >
@@ -71,7 +72,7 @@ export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagMana
             </select>
             <input
               type="text"
-              className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-1 text-sm w-24 h-11 text-center font-bold text-black"
+              className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-1 text-sm w-24 h-11 text-center font-bold text-black max-sm:w-full"
               placeholder="00:00"
               value={eventTime}
               onChange={(e) => setEventTime(e.target.value)}
@@ -112,6 +113,7 @@ export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagMana
             + Add
           </button>
         </div>
+      </div>
       </div>
     </div>
   );
