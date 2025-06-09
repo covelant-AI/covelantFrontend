@@ -1,33 +1,34 @@
 'use client';
-import { useState } from 'react';
-import {  useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useState, useEffect } from 'react';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/config'; 
 import { useRouter } from 'next/navigation';
 
-const SignInPage: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
+export default function SignInPage(){
+  const [email, setEmail]         = useState('');
+  const [password, setPassword]   = useState('');
+  const [error, setError]         = useState<string>('');
+  const [signIn, user, loading]   = useSignInWithEmailAndPassword(auth);
+  const router                   = useRouter();
 
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await signInWithEmailAndPassword(email, password);
-      sessionStorage.setItem('user', true as unknown as string);
-      if(res) {
-        setEmail('');
-        setPassword('');
-        router.push('/'); 
-      }
-      else{
-        setError('Incorrect email or password');
-      }
-    } catch (error: any) { 
-      setError('Something went wrong, please try again later');
+  // whenever `user` becomes non-null, store email & navigate:
+  useEffect(() => {
+    if (user) {
+      router.push('/');
     }
+  }, [user, router]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    sessionStorage.setItem('email', email);
+    e.preventDefault();
+    setError('');
+    signIn(email, password)
+    .then((res) => {
+      if(!res) setError('Incorrect email or password');
+    })
+    .catch(() => {
+      setError('Incorrect email or password');
+    });
   };
 
   return (
@@ -90,5 +91,4 @@ const SignInPage: React.FC = () => {
   );
 };
 
-export default SignInPage;
 

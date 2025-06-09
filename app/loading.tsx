@@ -15,7 +15,7 @@ export default function Loading() {
       setShowSignUp(true);
     }, 4000); 
 
-    return () => clearTimeout(timer); // Cleanup on unmount
+    return () => clearTimeout(timer);
   }, []);
 
   if (showSignUp) {

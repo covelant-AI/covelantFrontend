@@ -4,7 +4,7 @@ import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/config';
 import { useRouter } from 'next/navigation';
 
-const SignUpPage: React.FC = () => {
+export default function SignUpPage(){
   const [email, setEmail] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
@@ -17,7 +17,7 @@ const SignUpPage: React.FC = () => {
 
   const handleSubmit = async (formData: React.FormEvent) => {
     formData.preventDefault();
-
+    
     if(password !== passwordConfirm){
       setError('Your password & confirm password do not match');
       return;
@@ -49,6 +49,11 @@ const SignUpPage: React.FC = () => {
 
     if (data.message === 'Player created' || data.message === 'Coach created') {
       sessionStorage.setItem('user', 'true');
+      sessionStorage.setItem('email', email);
+      sessionStorage.setItem('firstName', firstName);
+      sessionStorage.setItem('lastName', lastName);
+      sessionStorage.setItem('avatar', avatar);
+      sessionStorage.setItem('type', role);
       setEmail('');
       setPassword('');
       setRole('');
@@ -186,4 +191,3 @@ const SignUpPage: React.FC = () => {
   );
 };
 
-export default SignUpPage;

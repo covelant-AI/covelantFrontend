@@ -1,4 +1,7 @@
-
+import {ReactNode } from 'react';
+import {
+  User as FirebaseUser,
+} from 'firebase/auth';
 
 export interface UserData {
   id: number;
@@ -17,6 +20,18 @@ export interface Profile {
   avatar: string;
   type: string;
 }
+
+export interface AuthContextType {
+  user: FirebaseUser | null;
+  loading: boolean;
+  signIn: () => Promise<void>;
+  logOut: () => Promise<void>;
+}
+
+export interface AuthProviderProps {
+  children: ReactNode;
+}
+
 
 export interface Props {
   activePlayer: Player | null;
