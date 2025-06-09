@@ -1,16 +1,16 @@
 'use client';
 import { useAuth } from '@/app/context/AuthContext';
 import Link from 'next/link'
-import {PlayerData} from "@/util/interfaces"
+import {PlayerDataAray} from "@/util/interfaces"
 import { useState, useEffect } from "react";
-import {profile} from "@/util/interfaces"
+import {Profile} from "@/util/interfaces"
 import Image from 'next/image'
 
 export default function ConnectionBox(){
   const {user} = useAuth();  
-  const [profile, setProfile] = useState<profile>()
+  const [profile, setProfile] = useState<Profile>()
 
-  const [playerData, setPlayerData] = useState<PlayerData[]>([]); 
+  const [playerData, setPlayerData] = useState<PlayerDataAray>(); 
   const safePlayerData = Array.isArray(playerData) ? playerData : [];
   const playerCount = safePlayerData.length;
 

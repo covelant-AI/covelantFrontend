@@ -17,6 +17,7 @@
     "@heroicons/react": "^2.2.0",
     "@lottiefiles/dotlottie-react": "^0.13.5",
     "@prisma/client": "^6.7.0",
+    "@sentry/nextjs": "^9.27.0",
     "axios": "^1.9.0",
     "body-parser": "^2.2.0",
     "firebase": "^11.7.1",

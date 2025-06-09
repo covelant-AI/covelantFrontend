@@ -1,15 +1,17 @@
 "use client";
+import * as Sentry from "@sentry/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from '@/app/context/AuthContext';
 import { useState, useRef, useEffect, MouseEvent } from "react";
-import {UserData, defaultUserData} from '@/util/interfaces'
-import {profile} from "@/util/interfaces"
+import {UserData} from '@/util/interfaces'
+import {defaultUserData} from '@/util/default'
+import {Profile} from "@/util/interfaces"
 
 export default function NavProfile(){
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
-  const [profile, setProfile] = useState<profile>()
+  const [profile, setProfile] = useState<Profile>()
   const [userData, setUserData] = useState<UserData>(defaultUserData);
   const { logOut} = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -35,7 +37,7 @@ export default function NavProfile(){
         setUserData(()=> result.data);
       })
     } catch (error) {
-      alert('Error fetching user data:');
+      Sentry.captureException(error);
     }
   };
 
