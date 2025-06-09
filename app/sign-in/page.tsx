@@ -4,6 +4,7 @@ import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/config'; 
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import * as Sentry from "@sentry/nextjs";
 
 
 export default function SignInPage(){
@@ -28,7 +29,8 @@ export default function SignInPage(){
     .then((res) => {
       if(!res) setError('Incorrect email or password');
     })
-    .catch(() => {
+    .catch((error) => {
+      Sentry.captureException(error);
       setError('Incorrect email or password');
     });
   };

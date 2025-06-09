@@ -1,22 +1,21 @@
 'use client';
 import NavBar from "@/components/nav/Navbar"
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState} from 'react'
 import { useAuth } from '@/app/context/AuthContext';
-import { User } from '@/util/interfaces'
 import AthletesList from '@/components/AthletesList'
 import CoachesList from '@/components/CoachesList'
-import { PlayerSelector } from '@/components/UI/PlayerSelector'
+import PlayerSelector from '@/components/InvitePage/PlayerSelector'
 import RadialBlurBg from "@/components/UI/RadialBlur";
-import {profile} from "@/util/interfaces"
+import {PlayerData} from "@/util/interfaces"
+import {inviteUrl} from "@/util/default"
+import * as Sentry from "@sentry/nextjs";
 
 export default function InvitePage() {
-    const [playerOne, setPlayerOne] = useState<User | null>(null)
-    const {user} = useAuth();
+    const [playerOne, setPlayerOne] = useState<PlayerData | null>(null)
     const [copied, setCopied] = useState(false)
-    const [profile, setProfile] = useState<profile>()
     const [invited, setInvited] = useState(false)
-    const inviteUrl = 'https://www.covelant.com/sign-up' 
+    const {profile} = useAuth(); 
 
     const handleCopy = async () => {
       try {
@@ -24,7 +23,7 @@ export default function InvitePage() {
         setCopied(true)
         setTimeout(() => setCopied(false), 2000) 
       } catch (err) {
-        console.error('Copy failed', err)
+        Sentry.captureException(err);
         alert('Failed to copy link')
       }
     }
@@ -35,7 +34,8 @@ export default function InvitePage() {
         setTimeout(() => setInvited(false), 2000)
       }
       catch(err){
-        alert('failed to invite Athlete')
+        Sentry.captureException(err);
+        alert('failed to invite User')
       }
     }
 
@@ -50,20 +50,11 @@ export default function InvitePage() {
           if (!res.ok) throw new Error('Failed to add player')
 
         } catch (error) {
-          console.error(error)
-          alert('Error inviting player')
+          Sentry.captureException(error);
+          alert('Error inviting User')
         }
     }
     
-      useEffect(() => {
-        const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
-        const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
-    
-        if (values.every((value): value is string => value !== null)) {
-          const [email, firstName, lastName, avatar, type] = values;
-          setProfile({ email, firstName, lastName, avatar, type });
-        }
-      }, []);
   return (
     <>
     <NavBar/>
@@ -106,35 +97,50 @@ export default function InvitePage() {
           <span className="mx-4 text-xl font-bold">or</span>
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
-        <PlayerSelector label="Your Athlete" onSelect={setPlayerOne} />
-      <div className="flex flex-row justify-center mt-6">
-        <button
-          disabled={!playerOne}
-          onClick={() => {
-            handleInvite()
-            handleOnSubmit()
-          }}
-          className={`border rounded-xl px-4 py-2 flex flex-row items-center transition
-            ${playerOne
-              ? 'bg-white text-black border-[#9ED8D5] hover:bg-teal-50 cursor-pointer'
-              : 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed'}
-          `}
-        >
-          <svg
-            className="w-6 h-6 stroke-current pr-2"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
+
+        <PlayerSelector
+         onSelect={(user) => {
+          const pd: PlayerData = {
+            id: user.id,
+            avatar: user.avatar ?? "",
+            age: user.age ?? 0,
+            dominantHand: user.avatar ?? "",
+            email: user.avatar ?? "",
+            firstName: user.firstName ?? "",
+            lastName: user.lastName ?? "",
+          };
+          setPlayerOne(pd);
+        }}
+        />
+        
+        <div className="flex flex-row justify-center mt-6">
+          <button
+            disabled={!playerOne}
+            onClick={() => {
+              handleInvite()
+              handleOnSubmit()
+            }}
+            className={`border rounded-xl px-4 py-2 flex flex-row items-center transition
+              ${playerOne
+                ? 'bg-white text-black border-[#9ED8D5] hover:bg-teal-50 cursor-pointer'
+                : 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed'}
+            `}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          <span>{invited? "Athlete Invited": "Invite" }</span>
-        </button>
+            <svg
+              className="w-6 h-6 stroke-current pr-2"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>{invited? "Athlete Invited": "Invite" }</span>
+          </button>
+          </div>
         </div>
+        {profile?.type == 'coach'? <AthletesList/>:<CoachesList/>}
       </div>
-      {profile?.type == 'coach'? <AthletesList/>:<CoachesList/>}
-    </div>
     </>
   )
 }

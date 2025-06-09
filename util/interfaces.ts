@@ -58,7 +58,6 @@ export interface MainTagManagerProps {
 
 export interface PlayerData {
   id: number;
-  Tier: string;
   age: number;
   avatar: string;
   dominantHand: string;
@@ -160,7 +159,6 @@ export interface Player {
   age: number | null;
   dominantHand: string;
   height: number;
-  Tier: string;
   winRate: number;
   stats: PlayerStat[];
   playerMatchesFirst: PlayerMatch[];
@@ -181,6 +179,18 @@ export interface Coach {
   age: number | null;
   players: Player[];
 }
+
+export type User = Player | Coach;  // used for Athlete and coach selector
+
+export interface GetUsersSearch { // used for player or coach searches
+  data: User[]           
+  message: 'Player Data' | 'Coach Data'
+}
+
+export interface PlayerSelectorProps {
+  onSelect: (user: User) => void
+}
+
 
 export interface PlayerStat {
   id: number;

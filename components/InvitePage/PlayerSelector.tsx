@@ -1,17 +1,17 @@
+"use client";
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { User } from '@/util/interfaces'
+import { User, GetUsersSearch, PlayerSelectorProps } from '@/util/interfaces'
+import * as Sentry from "@sentry/nextjs";
+import { useAuth } from '@/app/context/AuthContext';
 
-
-export const PlayerSelector: React.FC<{
-  label: string
-  onSelect: (user: User) => void
-}> = ({ label, onSelect }) => {
+export default function PlayerSelector({onSelect}: PlayerSelectorProps){
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [suggestions, setSuggestions] = useState<User[]>([])
   const [selected, setSelected] = useState<User | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const {profile} = useAuth(); 
 
   // fetch suggestions whenever the term changes
   useEffect(() => {
@@ -20,16 +20,18 @@ export const PlayerSelector: React.FC<{
       return
     }
     const ctrl = new AbortController()
-    fetch(`/api/getUser?name=${encodeURIComponent(searchTerm)}`, {
-      signal: ctrl.signal,
-    })
-      .then((res) => res.json())
-      .then((data: User[]) => {
-        setSuggestions(() => data.data || [])
-      })
-      .catch((err) => {
-        if (err.name !== 'AbortError') console.error(err)
-      })
+    const fetchSuggestions = async () => {
+      try {
+        const res = await fetch(`/api/getUser?name=${encodeURIComponent(searchTerm)}`, {
+          signal: ctrl.signal,
+        })
+        const data: GetUsersSearch = await res.json()
+        setSuggestions(data.data)
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    }
+    fetchSuggestions()
     return () => {
       ctrl.abort()
     }
@@ -72,11 +74,14 @@ export const PlayerSelector: React.FC<{
         {selected ? (
         <div className="h-45 w-full flex items-center justify-center text-black font-bold">
           {(
-            <img
-              src={selected.avatar ? selected.avatar : './images/default-avatar.png'}
-              alt={selected.firstName}
-              className="w-full h-full object-cover rounded-xl"
-            />
+            <div className="relative w-full h-full rounded-xl overflow-hidden">
+              <Image
+                src={selected.avatar || "/images/default-avatar.png"}
+                alt="User"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+            </div>
           )}
           <div className="absolute bottom-2 flex items-center text-black bg-gray-400 bg-opacity-50 rounded px-2">
             <button
@@ -105,7 +110,7 @@ export const PlayerSelector: React.FC<{
                 />
               </svg>
             </button>
-            <span className="text-sm text-black">{label}</span>
+            <span className="text-sm text-black">{profile?.type === "coach"? "Your Athlete" : "Your Coach"}</span>
           </>
         )}
       </div>
@@ -136,10 +141,12 @@ export const PlayerSelector: React.FC<{
                 onClick={() => handleSelect(u)}
               >
                 {u.avatar && (
-                  <img
+                  <Image
                     src={u.avatar}
-                    alt={u.firstName}
-                    className="w-6 h-6 rounded-full"
+                    alt="some Image"
+                    width={24}
+                    height={24}
+                    className="rounded-full"
                   />
                 )}
                 <span className='text-black'>{u.firstName}</span>

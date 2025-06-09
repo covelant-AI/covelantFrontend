@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { User } from '@/util/interfaces'
-import { PlayerSelector } from './PlayerSelector'
+import { PlayerSelector } from '../InvitePage/PlayerSelector'
 import { OpponentSelector } from './OpponentSelector'
 import {MatchDataProps} from '@/util/interfaces'
 

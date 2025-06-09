@@ -11,3 +11,5 @@ export const defaultUserData: UserData = {
   age: 0,
   dominantHand: '',
 };
+
+export const inviteUrl = 'https://www.covelant.com/sign-up'
