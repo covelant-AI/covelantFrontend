@@ -45,6 +45,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const result = await res.json();
 
       const { firstName, lastName, avatar } = result.data;
+      sessionStorage.setItem('email', email);
       sessionStorage.setItem('firstName', firstName);
       sessionStorage.setItem('lastName', lastName);
       sessionStorage.setItem('avatar', avatar);
@@ -67,8 +68,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
-        const email = currentUser.email ?? '';
-        sessionStorage.setItem('email', email);
+        let email = currentUser.email;
+        if(!email) email = "Coach@covelant.com"  
         setUser(currentUser);
 
         const fetched = await fetchUserType(email);
@@ -92,11 +93,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const currentUser = result.user;
       const email = currentUser.email ?? '';
       sessionStorage.setItem('email', email);
-      setUser(currentUser);
 
       const fetched = await fetchUserType(email);
       if (fetched) {
         setProfile({ email, ...fetched });
+        setUser(currentUser);
       }
     } catch (error) {
       console.error('Sign in failed:', error);
