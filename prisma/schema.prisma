@@ -9,79 +9,272 @@ datasource db {
 }
 
 model Player {
-  id            Int           @id @default(autoincrement())
-  firstName     String?
-  lastName      String?
-  email         String
-  avatar        String?
-  age           String?
-  dominantHand  String?       @default("Right Handed")
-  height        Int?          @default(180)
-  Tier          String?       @default("Professional")
-  coached       Coach?        @relation(fields: [coachId], references: [id])
-  coachId       Int?
-  winRate       Float?
-  playerMatches PlayerMatch[]
-  stats         PlayerStat[]   
-}
+  id           Int           @id @default(autoincrement())
+  firstName    String?
+  lastName     String?
+  email        String
+  avatar       String?
+  age          Int?
+  dominantHand String?       @default("Right Handed")
+  height       Int?          @default(180)
+  Tier         String?       @default("Professional")
+  winRate      Float?        @default(1)
+  stats        PlayerStat[]
 
+  playerMatchesFirst  PlayerMatch[] @relation("PlayerMatch_First")
+  playerMatchesSecond PlayerMatch[] @relation("PlayerMatch_Second")
+  coaches             Coach[]       @relation("CoachPlayers")
+  overallStats        OverallStats?
 
-model PlayerStat {
-  id        Int     @id @default(autoincrement())
-  subject   String  // e.g., "SRV", "RSV", etc.
-  value     Int     // e.g., 83, 72, etc. (formerly "A")
-  playerId  Int
-  player    Player  @relation(fields: [playerId], references: [id])
+  /// NEW: points this player scored
+  scorePoints ScorePoint[]
+
+  /// NEW: metric readings for this player (only used for player‐specific metrics)
+  matchMetrics MatchMetric[]
 }
 
 model Coach {
-  id         Int       @id @default(autoincrement())
-  firstName  String
-  lastName   String
-  avatar     String?
-  email      String
-  team       String?
-  age        String?
-  players    Player[]
-}
-
-model Match {
-  id           Int           @id @default(autoincrement())
-  videoUrl     String?
-  imageUrl     String?
-  type         String?
-  result       String?
-  fieldType     String?
-  date         DateTime
-  videoType    String
-  playerMatches PlayerMatch[]
-}
-
-/// This model stores opponents who are NOT registered players.
-model Opponent {
   id        Int      @id @default(autoincrement())
   firstName String
   lastName  String
+  avatar    String?
+  email     String
+  team      String?
+  age       Int?
 
+  players   Player[] @relation("CoachPlayers")
+}
+
+model PlayerStat {
+  id        Int     @id @default(autoincrement())
+  subject   String
+  value     Int
+  playerId  Int
+  player    Player  @relation(fields: [playerId], references: [id])
+
+  @@index([playerId])
+}
+
+model OverallStats {
+  id               Int     @id @default(autoincrement())
+  wins             Int     @default(0)
+  losses           Int     @default(0)
+  setsWon          Int     @default(0)
+  setsLost         Int     @default(0)
+  totalMatches     Int     @default(0)
+  avgMatchDuration Float   @default(0)
+
+  playerId         Int     @unique
+  player           Player  @relation(fields: [playerId], references: [id])
+}
+
+model Match {
+  id            Int           @id @default(autoincrement())
+  videoUrl      String?
+  imageUrl      String?
+  type          String?
+  result        String?
+  fieldType     String?
+  status        String?
+  date          DateTime
+  videoType     String
   playerMatches PlayerMatch[]
+
+  events        MatchEvent[]
+
+  /// NEW: all point events for this match
+  scorePoints ScorePoint[]
+
+  /// NEW: all metric events tied to this match
+  matchMetrics MatchMetric[]
 }
 
-/// PlayerMatch now links either to a Player or an Opponent (but not both).
+model StatMatch {
+  id        Int    @id @default(autoincrement())
+  condition String?
+}
+
+model Opponent {
+  id            Int           @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  playerMatches PlayerMatch[]
+  scorePoints   ScorePoint[]      // ← back‐relation
+}
+
 model PlayerMatch {
-  id        Int       @id @default(autoincrement())
-  matchId   Int
-  result    String   
-  match     Match     @relation(fields: [matchId], references: [id])
+  id           Int       @id @default(autoincrement())
+  matchId      Int
+  result       String
+  match        Match     @relation(fields: [matchId], references: [id])
 
-  // Nullable foreign keys for player or opponent
-  playerId   Int?     
-  player     Player?   @relation(fields: [playerId], references: [id])
+  // First player slot
+  playerId     Int?
+  player       Player?   @relation("PlayerMatch_First", fields: [playerId], references: [id])
 
-  opponentId Int?     
-  opponent   Opponent? @relation(fields: [opponentId], references: [id])
+  // Second player slot (for player-vs-player)
+  playerTwoId  Int?
+  playerTwo    Player?   @relation("PlayerMatch_Second", fields: [playerTwoId], references: [id])
 
-  @@unique([matchId, playerId, opponentId])
+  // Opponent slot (for player-vs-opponent)
+  opponentId   Int?
+  opponent     Opponent? @relation(fields: [opponentId], references: [id])
+
+  /// Enforce uniqueness per “mode”:
+  @@unique([matchId, playerId, playerTwoId])   // no two identical P-vs-P rows
+  @@unique([matchId, playerId, opponentId])    // no two identical P-vs-O rows
 }
+
+/// New enums:
+
+/// Defines which category this event belongs to.
+enum EventCategory {
+  MATCH
+  TACTIC
+  FOULS
+  PHYSICAL
+  COMMENT
+}
+
+/// “type” values for the MATCH category.
+enum MatchEventType {
+  FIRST_SERVE
+  SECOND_SERVE
+  BREAK_POINT
+  GAME_POINT
+  SET_POINT
+  TIEBREAK
+  START_OF_SET
+}
+
+/// “type” values for the TACTIC category.
+enum TacticEventType {
+  SERVE_VOLLEY
+  BASELINE_RALLY
+  DROP_SHOT
+  NET_PLAY
+  CROSS_COURT_RALLY
+  DOWN_THE_LINE_SHOT
+  OPPONENT_PULLED_WIDE
+}
+
+/// “type” values for the FOULS category.
+enum FoulsEventType {
+  UNFORCED_ERROR
+  FORCED_ERROR
+  DOUBLE_FAULT
+  FOOT_FAULT
+  NET_TOUCH
+  RACKET_VIOLATION
+}
+
+/// “type” values for the PHYSICAL category.
+enum PhysicalEventType {
+  FATIGUE_SIGN
+  SLOW_RECOVERY
+  INJURY_CONCERN
+  GOOD_MOVEMENT
+  POOR_FOOTWORK
+}
+
+/// Shared “condition” for MATCH, TACTIC, FOULS, PHYSICAL categories.
+enum ConditionType {
+  UNDER_PRESSURE
+  CONFIDENT
+  FOCUSED
+  LOST_FOCUS
+  MOMENTUM_SHIFT
+  CLUTCH_PLAY
+  FATIGUE_SIGNS
+}
+
+model ScorePoint {
+  id               Int         @id @default(autoincrement())
+  matchId          Int
+  match            Match       @relation(fields: [matchId], references: [id])
+  playerId         Int?
+  player           Player?     @relation(fields: [playerId], references: [id])
+  opponentId       Int?
+  opponent         Opponent?   @relation(fields: [opponentId], references: [id])
+  setNumber        Int
+  gamePoint         Int        @default(0)
+  matchPoint       Int         @default(0)
+  eventTimeSeconds Int
+  createdAt        DateTime    @default(now())
+  @@index([matchId])
+  @@index([playerId])
+  @@index([opponentId])
+}
+
+model MatchMetric {
+  id               Int        @id @default(autoincrement())
+  matchId          Int
+  match            Match      @relation(fields: [matchId], references: [id])
+
+  /// Which player this metric is for (nullable for match‐wide metrics like longest rally)
+  playerId         Int?       
+  player           Player?    @relation(fields: [playerId], references: [id])
+
+  /// What kind of metric this is
+  metricType       MetricType
+
+  /// Numeric value (e.g. 138.5 for km/h, 52 for seconds…)
+  value            Float
+
+  /// Seconds from the video start when this measurement was taken
+  eventTimeSeconds Int
+
+  createdAt        DateTime   @default(now())
+
+  @@index([matchId])
+  @@index([playerId])
+  @@index([metricType])
+}
+
+/// What kinds of metrics we record
+enum MetricType {
+  BALL_SPEED       // ball speed in km/h
+  PLAYER_SPEED     // player movement speed in km/h
+  LONGEST_RALLY    // rally duration in seconds
+  STRIKES_EFF      // strikes per rally (hits/rally)
+  NOTE
+}
+
+/// New model that stores any of the five categories in one table:
+model MatchEvent {
+  id               Int               @id @default(autoincrement())
+  matchId          Int
+  match            Match             @relation(fields: [matchId], references: [id])
+  category         EventCategory
+  comment          String?
+
+  /// If category = MATCH, this field may be set (else remains null)
+  matchType        MatchEventType?
+
+  /// If category = TACTIC, this field may be set (else remains null)
+  tacticType       TacticEventType?
+
+  /// If category = FOULS, this field may be set (else remains null)
+  foulType         FoulsEventType?
+
+  /// If category = PHYSICAL, this field may be set (else remains null)
+  physicalType     PhysicalEventType?
+
+  /// If category = COMMENT, store the user’s free‐text comment here (else remains null)
+  commentText      String?
+
+  /// For MATCH, TACTIC, FOULS, PHYSICAL: store one of the ConditionType values. Null if category = COMMENT
+  condition        ConditionType?
+
+  /// The timestamp (in seconds from video start) at which this event occurred
+  eventTimeSeconds Float
+
+  /// When this event was created
+  createdAt        DateTime          @default(now())
+
+  @@index([matchId, category])
+}
+
 
 
 

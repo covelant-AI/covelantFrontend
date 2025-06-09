@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     if (!playerOne || !playerTwo || !date || !fieldType || !matchType) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
-
+    console.log(matchType, fieldType, videoURL, thumbnail)
     // Create Match record
     const match = await prisma.match.create({
       data: {
@@ -20,47 +20,30 @@ export async function POST(req: NextRequest) {
         fieldType: fieldType,
         videoUrl: videoURL,
         imageUrl: thumbnail,
-        videoType: "unknown" // or set based on data if available
+        videoType: "mp4" 
       },
     });
 
     // Find or create PlayerOne (always a Player)
-    let playerOneRecord = await prisma.player.findFirst({
+    const playerOneRecord = await prisma.player.findFirst({
       where: { email: playerOne.email },
     });
 
     if (!playerOneRecord) {
-      playerOneRecord = await prisma.player.create({
-        data: {
-          firstName: playerOne.firstName,
-          lastName: playerOne.lastName,
-          email: playerOne.email,
-          avatar: playerOne.avatar || null,
-        },
-      });
+      return NextResponse.json({ message: "something went wrong during query" }, { status: 501 });
     }
 
     // For playerTwo: determine if Player or Opponent
     let playerTwoRecord;
     let isOpponent = false;
 
-    if (playerTwo.stats) {
+    if (playerTwo.email) {
       // Try find Player by email
       playerTwoRecord = await prisma.player.findFirst({
         where: { email: playerTwo.email },
       });
 
-      if (!playerTwoRecord) {
-        playerTwoRecord = await prisma.player.create({
-          data: {
-            firstName: playerTwo.firstName,
-            lastName: playerTwo.lastName,
-            email: playerTwo.email,
-            avatar: playerTwo.avatar || null,
-          },
-        });
-      }
-    } else if (playerTwo.firstName && playerTwo.lastName) {
+    } else  {
       isOpponent = true;
       // Try find Opponent by name (or other unique criteria)
       playerTwoRecord = await prisma.opponent.findFirst({
@@ -71,15 +54,8 @@ export async function POST(req: NextRequest) {
       });
 
       if (!playerTwoRecord) {
-        playerTwoRecord = await prisma.opponent.create({
-          data: {
-            firstName: playerTwo.firstName,
-            lastName: playerTwo.lastName,
-          },
-        });
+        NextResponse.json({ message: "Something went wrong during query" }, { status: 501 });
       }
-    } else {
-      return NextResponse.json({ message: "Invalid playerTwo type" }, { status: 400 });
     }
 
     // Create PlayerMatch for playerOne
@@ -87,7 +63,7 @@ export async function POST(req: NextRequest) {
       data: {
         matchId: match.id,
         playerId: playerOneRecord.id,
-        result: playerOne.result || "", // if you have this info
+        result: playerOne.result || "win",
       },
     });
 
@@ -95,8 +71,8 @@ export async function POST(req: NextRequest) {
     await prisma.playerMatch.create({
       data: {
         matchId: match.id,
-        playerId: isOpponent ? null : playerTwoRecord.id,
-        opponentId: isOpponent ? playerTwoRecord.id : null,
+        playerId: isOpponent ? null : playerTwoRecord?.id,
+        opponentId: isOpponent ? playerTwoRecord?.id : null,
         result: playerTwo.result || "",
       },
     });

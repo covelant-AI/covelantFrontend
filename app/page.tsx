@@ -1,11 +1,11 @@
 'use client';
 import { motion } from "framer-motion";
-import SignInPage from './sign-in/page';
 import { useAuth } from './context/AuthContext';
-import NavBar from '@/components/Navbar'
-import HeroSection from '@/components/HeroSection'
-import HomeDashboard from '@/components/HomeDashboard';
+import SignInPage from './sign-in/page';
 import Loading from './loading';
+import NavBar from '@/components/nav/Navbar'
+import HeroSection from '@/components/HeroSection/HeroSection'
+import HomeDashboard from '@/components/Dashboard/HomeDashboard';
 
 export default function Home() {
   const { user, loading } = useAuth()

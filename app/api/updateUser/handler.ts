@@ -8,9 +8,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: 'wrong method used' });
     }
 
-  const { type, firstName, lastName, dominantHand, age, height, email } = await req.json();
+  const { type, firstName, lastName, dominantHand, age, height, email, avatar } = await req.json();
 
-  if (!type || !email) {
+  if (!type && !email) {
      return NextResponse.json({ message: 'Missing required fields: type or email' });
   }
     try {
@@ -26,9 +26,10 @@ export async function POST(req: NextRequest) {
         data: {
           firstName,
           lastName,
+          avatar,
           dominantHand,
-          age,
-          height,
+          age: Number(age),
+          height: Number(height),
         },
       })
       return NextResponse.json({ message: 'Player updated successfully', data: updatedPlayer });
@@ -44,7 +45,8 @@ export async function POST(req: NextRequest) {
         data: {
           firstName,
           lastName,
-          age,
+          age: Number(age),
+          avatar,
         },
       })
        return NextResponse.json({ message: 'Coach updated successfully', data: updatedCoach });

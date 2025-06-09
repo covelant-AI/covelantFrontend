@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 
 export default function UploadMatchPage() {
   const router = useRouter();
-
     const [matchInfo, setMatchInfo] = useState<{
     playerOne: User | null
     playerTwo: User | null
@@ -76,7 +75,7 @@ export default function UploadMatchPage() {
         <div className="w-screen flex justify-start px-40">
             <Link href="/">
                 <button className="px-6 py-4 rounded-xl bg-white shadow-md hover:bg-gray-100 transition-colors 
-                    duration-200 hover:scale-105 hover:cursor-pointer active:scale-95 transition-transform">
+                    duration-100 hover:scale-105 hover:cursor-pointer active:scale-95 transition-transform">
                   <Image src="/icons/backArrow.svg" alt="Back" width={20} height={20} />
                 </button>
             </Link>
@@ -104,7 +103,7 @@ export default function UploadMatchPage() {
       </div>
       {/* Next Button */}
         <button onClick={handleSubmit} className="bg-[#4DBAB5] mt-6 text-xl px-20 py-2 rounded-xl cursor-pointer 
-        hover:bg-teal-600 transition-colors duration-300 active:scale-95 transition-transform">
+        hover:bg-teal-600 transition-colors duration-100 active:scale-95 transition-transform">
           Next
         </button>
     </div>

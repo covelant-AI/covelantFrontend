@@ -112,8 +112,6 @@ export default class RadarGraph extends PureComponent<RadarGraphProps> {
         A: s.A,
       }));
 
-      console.log("StatData", statData.length);
-
   if(statData.length === 0) {
     return (
       <ResponsiveContainer width="100%" height="100%">

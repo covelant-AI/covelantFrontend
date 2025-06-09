@@ -2,37 +2,24 @@ import { PrismaClient } from '../../../generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 const prisma = new PrismaClient();
 
-export async function GET(req: NextRequest) {
-    console.log('getUser handler called');
-  const url = new URL(req.url);
-  const emailParam = url.searchParams.get('email');
-  const nameParam  = url.searchParams.get('name');
-
-  // require at least one
-  if (!emailParam && !nameParam) {
-    return NextResponse.json(
-      { message: 'Either `email` or `name` query-param is required' },
-      { status: 400 }
-    );
-  }
-
-  try {
-    if (emailParam) {
-      const coach = await prisma.coach.findFirst({
+async function getUserInfo(emailParam:string){
+  const coach = await prisma.coach.findFirst({
         where: { email: String(emailParam) },
       });
 
-      if (!coach) {
-        const player = await prisma.player.findFirst({
-          where: { email: String(emailParam) },
-        });
-        return NextResponse.json({ data: player, message: 'Player Data' });
-      }
+  if (!coach) {
+    const player = await prisma.player.findFirst({
+      where: { email: String(emailParam) },
+    });
+    return NextResponse.json({ data: player, message: 'Player Data' });
+  }
 
-      return NextResponse.json({ data: coach, message: 'Coach Data' });
-    }
+  return NextResponse.json({ data: coach, message: 'Coach Data' });
+}
 
-    const raw = nameParam!.trim()
+
+async function searchUserDB(nameParam:string){
+  const raw = nameParam!.trim()
     const tokens = raw.split(/\s+/)
 
         // build a flexible "where" clause
@@ -72,7 +59,29 @@ export async function GET(req: NextRequest) {
     })
 
     return NextResponse.json({ data: players, message: 'Player Data' })
+}
 
+
+export async function GET(req: NextRequest) {
+
+  const url = new URL(req.url);
+  const emailParam = url.searchParams.get('email');
+  const nameParam  = url.searchParams.get('name');
+
+  // require at least one
+  if (!emailParam && !nameParam) {
+    return NextResponse.json(
+      { message: 'Either `email` or `name` query-param is required' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    if (nameParam) {
+      return await searchUserDB(nameParam);
+    } else if (emailParam) {
+      return await getUserInfo(emailParam);
+    }
   } catch (error) {
     return NextResponse.json(
       { message: 'Error fetching user', error },
