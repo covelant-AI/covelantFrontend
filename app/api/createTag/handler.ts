@@ -1,8 +1,11 @@
 // /app/api/createTag/route.ts
-import { PrismaClient, EventCategory } from '../../../generated/prisma';
+import { PrismaClient, EventCategory, Prisma } from '../../../generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
+
+
+type CreateMatchEventData = Prisma.MatchEventCreateArgs['data']
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,7 +34,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2) Build the common payload
-    const payload: any = {
+    const payload: CreateMatchEventData = {
       matchId,
       category:
         category === 'note' || category === EventCategory.COMMENT

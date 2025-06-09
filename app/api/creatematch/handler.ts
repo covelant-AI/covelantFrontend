@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Find or create PlayerOne (always a Player)
-    let playerOneRecord = await prisma.player.findFirst({
+    const playerOneRecord = await prisma.player.findFirst({
       where: { email: playerOne.email },
     });
 

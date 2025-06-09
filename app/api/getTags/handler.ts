@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const tags = await prisma.matchEvent.findMany({
       where: { matchId },
       orderBy: { eventTimeSeconds: 'asc' },
-    });
+    }) 
 
     return NextResponse.json(
       { message: 'MatchEvents fetched', data: tags },
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('Error fetching MatchEvents:', error);
     return NextResponse.json(
-      { message: 'Error fetching MatchEvents', error: (error as Error).message },
+      { message: 'Error fetching MatchEvents', error: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

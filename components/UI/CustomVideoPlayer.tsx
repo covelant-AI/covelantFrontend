@@ -212,25 +212,6 @@ export default function CustomVideoPlayer({
             />
           ))}
 
-                   {/* 3) Diamond markers: place by offsetSeconds/duration
-          {marksWithOffsets.map((m, i) => {
-            if (duration <= 0) return null;
-            if (m.offsetSeconds < 0 || m.offsetSeconds > duration) return null;
-            return (
-              <div
-                key={i}
-                className="absolute w-[12px] h-[12px] transform rotate-45 rounded-sm border border-black"
-                style={{
-                  left: calc(${(m.offsetSeconds / duration) * 100}% - 6px),
-                  top: "-2px",
-                  backgroundColor: m.color,
-                }}
-                // pointer-events none so video bar remains interactive
-                aria-hidden="true"
-              />
-            );
-          })} */}
-
           {/* Tooltip */}
           {hoveredIndex !== null && (
             <div
