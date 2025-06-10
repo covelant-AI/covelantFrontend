@@ -161,7 +161,7 @@ export default function SignUpPage(){
         />
         <input
           type="password"
-          id="password"
+          id="password2"
           name="password"
           value={passwordConfirm}
           onChange={(e) => setPasswordConfirm(e.target.value)}

@@ -28,10 +28,15 @@ export interface AuthContextType {
   logOut: () => Promise<void>;
 }
 
+export interface MatchDisplay {   // Displayed matches on Dashboard
+  id: number;
+  title: string;
+  imageUrl: string;
+}
+
 export interface AuthProviderProps {
   children: ReactNode;
 }
-
 
 export interface Props {
   activePlayer: Player | null;

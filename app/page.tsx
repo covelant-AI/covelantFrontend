@@ -20,7 +20,7 @@ export default function Home() {
       transition={{ duration: 2.2, ease: "easeOut" }}>
       <NavBar />
       <HeroSection />
-      {/* <HomeDashboard /> */}
+      <HomeDashboard />
     </motion.div>
   );
 }

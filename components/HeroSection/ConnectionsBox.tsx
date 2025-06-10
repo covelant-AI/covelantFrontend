@@ -91,7 +91,7 @@ export default function ConnectionBox(){
                     alt={`${player.firstName} ${player.lastName}`}
                     fill
                     style={{ objectFit: 'cover' }}
-                    sizes="100vw"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
                 </div>

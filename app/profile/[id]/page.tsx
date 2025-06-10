@@ -13,6 +13,7 @@ const prisma = new PrismaClient();
 export default async function PlayerProfilePage({ params }: ProfilePageProps) {
   const { id } = params;
   const playerId = parseInt(id, 10);
+   
   if (isNaN(playerId)) {
     return (
       <>
@@ -29,8 +30,8 @@ export default async function PlayerProfilePage({ params }: ProfilePageProps) {
     player = await prisma.player.findUnique({
       where: { id: playerId },
       include: {
-        stats: true,          // keep fetching PlayerStat rows (subject/value)
-        overallStats: true,   // fetch OverallStats relation
+        stats: true,          
+        overallStats: true,   
       },
     });
   } catch (err) {
@@ -72,9 +73,7 @@ export default async function PlayerProfilePage({ params }: ProfilePageProps) {
                     </h1>
                 </div>
             </div>
-            </div>
-
-
+          </div>
             
             {/* Stats row: Age, Height, W/L */}
             <div className="flex flex-wrap md:grid md:grid-cols-3 md:items-center md:justify-items-center md:gap-2 px-4 md:px-20">
@@ -136,9 +135,6 @@ export default async function PlayerProfilePage({ params }: ProfilePageProps) {
                 </div>
               </div>
             )}
-
-            
-
 
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-700">Stats</h2>

@@ -1,5 +1,7 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import {Profile} from "@/util/interfaces"
+
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -8,15 +10,6 @@ import {
   User as FirebaseUser,
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
-
-// --- Types
-export interface Profile {
-  email: string;
-  firstName: string;
-  lastName: string;
-  avatar: string;
-  type: string;
-}
 
 export interface AuthContextType {
   user: FirebaseUser | null;

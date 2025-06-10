@@ -51,15 +51,9 @@ export default function PlayerSelector({onSelect}: PlayerSelectorProps){
 
   const handleSelect = (user: User) => {
     setSelected(user)
-    // Only call onSelect if user is a Player (has Player-specific properties)
-    if (
-      user &&
-      'dominantHand' in user &&
-      'height' in user &&
-      'winRate' in user &&
-      'stats' in user
-    ) {
-      onSelect(user as Player) // or as Player, if Player is imported
+
+    if (user) {
+      onSelect(user as Player)
     }
     setSearchOpen(false)
   }
