@@ -1,26 +1,20 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useAuth } from '@/app/context/AuthContext';
-import { CheckCircleIcon, PlusCircleIcon } from '@heroicons/react/24/solid'
+import { PlusCircleIcon } from '@heroicons/react/24/solid'
+import {Coach} from "@/util/interfaces"
+import * as Sentry from "@sentry/nextjs";
+import Image from 'next/image'
 
-export default function AthletesList(){
+export default function ListAllCoaches(){
     const [selectedIds, setSelectedIds] = useState(new Set())
-    const {user} = useAuth();
-    
-    interface PlayerData {
-      id?: number;       
-      avatar?: string;
-      firstName?: string;
-      lastName?: string;
-      coachId?: number;   
-    }
-
-    const [playerData, setPlayerData] = useState<PlayerData[]>([]);
+    const [playerData, setPlayerData] = useState<Coach[]>([]);
     const safePlayerData = Array.isArray(playerData) ? playerData : [];
+    const {profile} = useAuth();
 
     const getUserData = async (): Promise<void> => {
       try {
-        await fetch('/api/getAllAthletes', {
+        await fetch('/api/getAllCoaches', {
           method: 'GET',
           headers: new Headers({
             'Content-Type': 'application/json',
@@ -38,23 +32,23 @@ export default function AthletesList(){
       }
     };
 
-    async function handleOnSubmit(clickedPlayer:any) {
+    async function handleOnSubmit(clickedPlayer: Coach) {
       if (!clickedPlayer) return
     
       try {
-        const res = await fetch('/api/addPlayer', {
+        const res = await fetch('/api/addCoach', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ player: clickedPlayer, email: user?.email }),
+          headers: new Headers( { 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ coach: clickedPlayer, email: profile?.email }),
         })
     
-        if (!res.ok) throw new Error('Failed to add player')
+        if (!res.ok) Sentry.captureException(res);
         
-        alert('Athlete has been added!')
+        alert('Coach has been added!')
         setSelectedIds((prev) => new Set(prev).add(clickedPlayer.id))
         
       } catch (error) {
-        console.error(error)
+        Sentry.captureException(error);
         alert('Error inviting player')
       }
     }
@@ -63,10 +57,10 @@ export default function AthletesList(){
 
 
     useEffect(() => {
-      if (user) {
+      if (profile) {
         getUserData()
       }
-    }, [user]);
+    }, [profile]);
     
     return(
         <>
@@ -74,7 +68,7 @@ export default function AthletesList(){
       <></>
       :
     <div className="bg-white rounded-xl shadow-md max-w-4xl p-6 overflow-hidden z-10">
-      <div className="font-bold text-gray-700 mb-4">Suggested Athletes</div>
+      <div className="font-bold text-gray-700 mb-4">Suggested Coaches</div>
       <div
         className="flex flex-wrap gap-4 max-w-[520px] p-4 justify-center max-h-[320px] overflow-y-auto"
       >
@@ -85,11 +79,15 @@ export default function AthletesList(){
             onClick={() => handleOnSubmit(player)}
           >
             <div className="w-20 h-20 rounded-lg bg-cyan-200 overflow-hidden mb-2 transform transition-transform duration-200 hover:scale-105 relative">
-              <img
-                src={player?.avatar}
-                alt="Athlete"
-                className="w-full h-full object-cover"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src={player?.avatar || '/images/default-avatar.png'}
+                  alt="Athlete"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
+
 
               {/* Overlay plus icon on hover */}
               <div className="absolute inset-0 bg-[#42B6B1] bg-opacity-100 opacity-0 hover:opacity-100 flex justify-center items-center transition-opacity rounded-lg">

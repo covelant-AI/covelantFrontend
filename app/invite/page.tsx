@@ -3,8 +3,8 @@ import NavBar from "@/components/nav/Navbar"
 import Image from 'next/image'
 import { useState} from 'react'
 import { useAuth } from '@/app/context/AuthContext';
-import AthletesList from '@/components/AthletesList'
-import CoachesList from '@/components/CoachesList'
+import ListAllAthletes from '@/components/InvitePage/ListAllAthletes'
+import ListAllCoaches from '@/components/InvitePage/ListAllCoaches'
 import PlayerSelector from '@/components/InvitePage/PlayerSelector'
 import RadialBlurBg from "@/components/UI/RadialBlur";
 import {PlayerData} from "@/util/interfaces"
@@ -100,19 +100,20 @@ export default function InvitePage() {
 
         <PlayerSelector
          onSelect={(user) => {
+          if (typeof user === 'function' || !user) return;
           const pd: PlayerData = {
             id: user.id,
             avatar: user.avatar ?? "",
             age: user.age ?? 0,
-            dominantHand: user.avatar ?? "",
-            email: user.avatar ?? "",
+            dominantHand: user.dominantHand ?? "",
+            email: user.email ?? "",
             firstName: user.firstName ?? "",
             lastName: user.lastName ?? "",
           };
           setPlayerOne(pd);
         }}
         />
-        
+
         <div className="flex flex-row justify-center mt-6">
           <button
             disabled={!playerOne}
@@ -139,7 +140,7 @@ export default function InvitePage() {
           </button>
           </div>
         </div>
-        {profile?.type == 'coach'? <AthletesList/>:<CoachesList/>}
+        {profile?.type == 'coach'? <ListAllAthletes/>:<ListAllCoaches/>}
       </div>
     </>
   )

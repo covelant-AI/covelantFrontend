@@ -22,7 +22,6 @@ export const defaultPlayer1 = {
   age: 25,
   dominantHand: 'right',
   height: 180,
-  Tier: 'Professional',
 };
 
 export const defaultPlayer: Player = {
@@ -34,7 +33,6 @@ export const defaultPlayer: Player = {
   age: null,
   dominantHand: 'Right Handed',
   height: 180,
-  Tier: 'Professional',
   winRate: 1,
   stats: [],
   playerMatchesFirst: [],

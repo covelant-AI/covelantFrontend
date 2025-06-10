@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { User, GetUsersSearch, PlayerSelectorProps } from '@/util/interfaces'
+import { User, GetUsersSearch, PlayerSelectorProps, Player } from '@/util/interfaces'
 import * as Sentry from "@sentry/nextjs";
-import { useAuth } from '@/app/context/AuthContext';
 
 export default function PlayerSelector({onSelect}: PlayerSelectorProps){
   const [searchOpen, setSearchOpen] = useState(false)
@@ -11,7 +10,6 @@ export default function PlayerSelector({onSelect}: PlayerSelectorProps){
   const [suggestions, setSuggestions] = useState<User[]>([])
   const [selected, setSelected] = useState<User | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const {profile} = useAuth(); 
 
   // fetch suggestions whenever the term changes
   useEffect(() => {
@@ -53,7 +51,16 @@ export default function PlayerSelector({onSelect}: PlayerSelectorProps){
 
   const handleSelect = (user: User) => {
     setSelected(user)
-    onSelect(user)
+    // Only call onSelect if user is a Player (has Player-specific properties)
+    if (
+      user &&
+      'dominantHand' in user &&
+      'height' in user &&
+      'winRate' in user &&
+      'stats' in user
+    ) {
+      onSelect(user as Player) // or as Player, if Player is imported
+    }
     setSearchOpen(false)
   }
 
@@ -110,7 +117,7 @@ export default function PlayerSelector({onSelect}: PlayerSelectorProps){
                 />
               </svg>
             </button>
-            <span className="text-sm text-black">{profile?.type === "coach"? "Your Athlete" : "Your Coach"}</span>
+            <span className="text-sm text-black">Search User</span>
           </>
         )}
       </div>

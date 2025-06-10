@@ -1,18 +1,18 @@
 'use client';
-import { useState,useCallback, SetStateAction, useEffect } from 'react'
+import { useState,useCallback, SetStateAction } from 'react'
 import Image from "next/image";
 import Link from "next/link";
 import UploadVideo from "@/components/UI/uploadVideo";
-import MatchData from "@/components/UI/MatchData";
-import { User } from '@/util/interfaces'
+import MatchData from "@/components/UploadPage/MatchData";
+import { Player } from '@/util/interfaces'
 import { useRouter } from 'next/navigation';
 
 
 export default function UploadMatchPage() {
   const router = useRouter();
     const [matchInfo, setMatchInfo] = useState<{
-    playerOne: User | null
-    playerTwo: User | null
+    playerOne: Player | null
+    playerTwo: Player | null
     matchType: string
     fieldType: string
     date: string
@@ -27,7 +27,7 @@ export default function UploadMatchPage() {
   const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null)
 
   
-  const handleMatchDataChange = useCallback((data: SetStateAction<{ playerOne: User | null; playerTwo: User | null; matchType: string; fieldType: string; date: string; }>) => {
+  const handleMatchDataChange = useCallback((data: SetStateAction<{ playerOne: Player | null; playerTwo: Player | null; matchType: string; fieldType: string; date: string; }>) => {
     setMatchInfo(data)
   }, [])
 

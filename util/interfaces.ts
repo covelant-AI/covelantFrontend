@@ -1,4 +1,4 @@
-import {ReactNode } from 'react';
+import {Dispatch, ReactNode, SetStateAction } from 'react';
 import {
   User as FirebaseUser,
 } from 'firebase/auth';
@@ -56,7 +56,7 @@ export interface MainTagManagerProps {
   onAddTag: (tag: any) => void;
 }
 
-export interface PlayerData {
+export interface PlayerData {  // use in ListAllThletes
   id: number;
   age: number;
   avatar: string;
@@ -181,14 +181,35 @@ export interface Coach {
 }
 
 export type User = Player | Coach;  // used for Athlete and coach selector
+export type OpponentSearch = Opponent | Player;
+
+export interface GetOpponentSearch{
+  data: Player[],
+  message: 'Player and Opponent Data'
+}
+
+export interface OpponentSelectorProps {  // used in OpponentSelector
+  onSelect: (user: Player) => void
+}
+
 
 export interface GetUsersSearch { // used for player or coach searches
   data: User[]           
   message: 'Player Data' | 'Coach Data'
 }
 
+export interface MatchDataProps {
+  onDataChange: (data: {
+    playerOne: Player | null;
+    playerTwo: Player | null;
+    matchType: string;
+    fieldType: string;
+    date: string;
+  }) => void;
+};
+
 export interface PlayerSelectorProps {
-  onSelect: (user: User) => void
+  onSelect: Dispatch<SetStateAction<Player | null>>
 }
 
 

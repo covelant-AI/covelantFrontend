@@ -11,7 +11,6 @@ export type Player = {
   age: number | null;
   dominantHand: string;
   height: number;
-  Tier: string;
   winRate: number;
   stats: PlayerStat[];
 
@@ -24,16 +23,6 @@ export type Player = {
   matchMetrics: MatchMetric[];
 };
 
-
-export type MatchDataProps = {
-  onDataChange: (data: {
-    playerOne: User | null;
-    playerTwo: User | null;
-    matchType: string;
-    fieldType: string;
-    date: string;
-  }) => void;
-};
 
 export type UserData = {
   id: number;

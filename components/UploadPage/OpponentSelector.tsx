@@ -1,15 +1,18 @@
+"use client";
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { User } from '@/util/interfaces'
+import { Player } from '@/util/interfaces'
+import {GetOpponentSearch, OpponentSelectorProps} from "@/util/interfaces"
+import * as Sentry from "@sentry/nextjs";
 
-export const OpponentSelector: React.FC<{
-  label: string
-  onSelect: (user: User) => void
-}> = ({ label, onSelect }) => {
+
+export default function OpponentSelector({
+  onSelect,
+}: OpponentSelectorProps){
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [suggestions, setSuggestions] = useState<User[]>([])
-  const [selected, setSelected] = useState<User | null>(null)
+  const [suggestions, setSuggestions] = useState<Player[]>([])
+  const [selected, setSelected] = useState<Player | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [newFirstName, setNewFirstName] = useState('')
   const [newLastName, setNewLastName] = useState('')
@@ -26,9 +29,8 @@ export const OpponentSelector: React.FC<{
       signal: ctrl.signal,
     })
       .then((res) => res.json())
-      .then((data: any) => {
-
-        setSuggestions(() => data.data || [])
+      .then((data: GetOpponentSearch) => {
+        setSuggestions(data.data )
       })
       .catch((err) => {
         if (err.name !== 'AbortError') console.error(err)
@@ -53,7 +55,7 @@ export const OpponentSelector: React.FC<{
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  const handleSelect = (user: User) => {
+  const handleSelect = (user: Player) => {
     setSelected(user)
     onSelect(user)
     setSearchOpen(false)
@@ -93,7 +95,7 @@ export const OpponentSelector: React.FC<{
         setShowCreateForm(false)
       }
     } catch (error) {
-      throw new Error('Failed to store opponent')
+      Sentry.captureException(error);
     }
   }
 
@@ -105,11 +107,14 @@ return (
       {selected ? (
         <div className="h-45 w-full flex items-center justify-center text-black font-bold">
           {(
-            <img
-              src={selected.avatar ? selected.avatar : './images/default-avatar.png'}
-              alt={selected.firstName}
-              className="w-full h-full object-cover rounded-xl"
+          <div className="relative w-full h-full rounded-xl overflow-hidden">
+            <Image
+              src={selected.avatar || '/images/default-avatar.png'}
+              alt="unavailable"
+              fill
+              style={{ objectFit: 'cover' }}
             />
+          </div>
           )}
           <div className="absolute bottom-2 flex items-center text-black bg-gray-400 bg-opacity-50 rounded px-2">
             <button
@@ -221,11 +226,13 @@ return (
               onClick={() => handleSelect(u)}
             >
               {u.avatar && (
-                <img
-                  src={u.avatar}
-                  alt={u.firstName}
-                  className="w-6 h-6 rounded-full"
-                />
+              <Image
+                src={u.avatar}
+                alt="Unavailable"
+                width={24}
+                height={24}
+                className="rounded-full"
+              />
               )}
               <span className="text-black">{u.firstName}</span>
             </div>
