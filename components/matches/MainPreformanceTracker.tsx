@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { formatSeconds } from "@/util/services";
-import TennisScoreBoard from "@/components/UI/TennisScoreBoard"
-import {MainPreformanceTrackerProps} from "@/util/interfaces"
-import AISummery from "@/components/AISummery"
+import TennisScoreBoard from "@/components/matches/TennisScoreBoard"
+import {MainPerformanceTrackerProps, MatchMetric, EventRecord} from "@/util/interfaces"
+import AISummery from "@/components/matches/AISummary"
+import Image from "next/image";
 
 
 export default function MainPreformanceTracker({
@@ -13,25 +14,25 @@ export default function MainPreformanceTracker({
   live,
   matchTime,
   setInfo,
-}: MainPreformanceTrackerProps) {
+}: MainPerformanceTrackerProps) {
     const [eventTime, setEventTime] = useState<string>("00:00");
-    const [ballSpeeds, setBallSpeeds] = useState<any>([])
-    const [playerSpeeds, setPlayerSpeeds] = useState<any>([])
-    const [longestRallies, setLongestRallies] = useState<any>([])
-    const [strikesEff, setStrikesEff] = useState<any>([])
-    const [scorePoints, setScorePoints] = useState<any>([])
+    const [ballSpeeds, setBallSpeeds] = useState<MatchMetric[]>([])
+    const [playerSpeeds, setPlayerSpeeds] = useState<MatchMetric[]>([])
+    const [longestRallies, setLongestRallies] = useState<MatchMetric[]>([])
+    const [strikesEff, setStrikesEff] = useState<MatchMetric[]>([])
+    const [scorePoints, setScorePoints] = useState<EventRecord[]>([])
 
     useEffect(() => {
       setEventTime(formatSeconds(matchTime));  
     }, [matchTime]);
 
   async function getMatchData() {
-    // note: our GET handler expects `?matchId=…`
     const res = await fetch(`/api/getMatchData?id=${videoId}`);
     const json = await res.json();
 
 
     if (res.ok) {
+      console.log(json.data.ballSpeeds)
       setBallSpeeds(json.data.ballSpeeds);
       setPlayerSpeeds(json.data.playerSpeeds);
       setLongestRallies(json.data.longestRallies);
@@ -54,11 +55,15 @@ export default function MainPreformanceTracker({
         <div className="flex items-center justify-between p-8 relative bg-gradient-to-b from-white via-gray-50 via-white to-[#9ED8D5] overflow-hidden
              [clip-path:polygon(0_0,100%_0,100%_85%,50%_100%,0_85%)]">
           {/* Left avatar */}
-          <img
-            src={rightPlayer?.avatar || "/images/default-avatar.png"}
-            alt={rightPlayer?.firstName || "Player One"}
-            className="w-16 h-16 rounded-full ring-2 ring-gray-100 object-cover"
-          />
+          <div className="w-18 h-18 rounded-full overflow-hidden flex justify-center items-center">
+            <Image
+               src={rightPlayer?.avatar || "/images/default-avatar.png"}
+               alt={rightPlayer?.firstName || "Player One"}
+               width={64}  // Equivalent to w-16 (16 * 4px = 64px)
+               height={64} // Equivalent to h-16 (16 * 4px = 64px)
+               className="ring-2 ring-gray-100 object-cover w-full h-full"
+             />
+           </div>
 
           {/* Center: Live & Time */}
           <div className="flex flex-col items-center space-y-1">
@@ -73,11 +78,15 @@ export default function MainPreformanceTracker({
           </div>
 
           {/* Right avatar */}
-          <img
-            src={leftPlayer.avatar || "/images/default-avatar.png"}
-            alt={leftPlayer.firstName || "Player Two"}
-            className="w-16 h-16 rounded-full ring-2 ring-gray-100 object-cover"
-          />
+          <div className="w-18 h-18 rounded-full overflow-hidden flex justify-center items-center">
+            <Image
+              src={leftPlayer.avatar || "/images/default-avatar.png"}
+              alt={leftPlayer.firstName || "Player Two"}
+              width={64}  // Equivalent to w-16 (16 * 4px = 64px)
+              height={64} // Equivalent to h-16 (16 * 4px = 64px)
+              className="ring-2 ring-gray-100 object-cover w-full h-full"
+            />
+          </div>
         </div>
 
         {/* Score row */}

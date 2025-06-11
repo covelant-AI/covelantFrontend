@@ -1,4 +1,5 @@
-import { UserData } from './interfaces'
+import { UserData} from './interfaces'
+import { CategoryKey } from '@/util/types';
 
 ////////////////////////////////////////////////////////////////////////////// DEFAULTS //////////////////////////////////////////////////////////////////
 
@@ -31,6 +32,30 @@ export const defaultPlayer = {
   matchMetrics: [],          
 };
 
+
+export const tabs: CategoryKey[] = [
+    "Match",
+    "Tactic",
+    "Fouls",
+    "Physical",
+    "Note",
+  ];
+
+export const COLOR_MAP: Record<string, string> = {
+  MATCH:   "#FACC15",   // yellow
+  TACTIC:  "#14B8A6",   // teal
+  FOULS:   "#EF4444",   // red
+  PHYSICAL:"#38BDF8",   // sky
+  COMMENT: "#9CA3AF",   // gray
+};
+export const ICON_MAP: Record<string, string> = {
+  MATCH:   "/images/lables/lable-check.png",
+  TACTIC:  "/images/lables/lable-angle.png",
+  FOULS:   "/images/lables/lable-error.png",
+  PHYSICAL:"/images/lables/lable-time.png",
+  COMMENT: "/images/lables/lable-note.png",
+};
+
 export const DEFAULT_STATS = [
   { subject: "SRV", A: 0, color: "#42B6B1" },
   { subject: "RSV", A: 0, color: "#42B6B1" },
@@ -49,3 +74,7 @@ export const defaultDisplayedMatches = [
 ];
 
 export const inviteUrl = 'https://www.covelant.com/sign-up'
+
+
+//////////////////////////////////////////////////////////////////// MAIN PREFORMANCE TRACKER SECTION ///////////////////////////////////////////////////////////
+

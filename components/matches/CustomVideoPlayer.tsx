@@ -1,45 +1,8 @@
 "use client";
-// /components/CustomVideoPlayer.tsx
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useMemo,
-  MouseEvent,
-} from "react";
-
-interface TimestampMarker {
-  /** The real‐world timestamp (ISO string) when this tag was created. */
-  timestamp: string;
-  /** Optional color for the diamond (any valid CSS color). Defaults to gray. */
-  color?: string;
-  /** Optional label or message to show on hover */
-  label?: string;
-   /** Optional label or message to show on hover */
-  lablePath?:string;
-}
-
-interface CustomVideoPlayerProps {
-  /** The video URL (e.g. from Firebase Storage) */
-  src: string;
-  /**
-   * The real‐world Date/Time when this video began (ISO string).
-   */
-  videoStartTime: string;
-  /**
-   * An array of timestamped tags. Each one has an ISO timestamp, optional color, and optional hover label.
-   */
-  markers: TimestampMarker[];
-  /**
-   * (Optional) If you already know the video’s total duration in seconds, pass it here. 
-   */
-  durationOverride?: number;
-  /**
-   * Callback that receives updates whenever the current playback time changes (in seconds).
-   */
-  lablePath?: string;
-  onTimeUpdate?: (currentTime: number) => void;
-}
+import React, { useRef, useState, useEffect, useMemo, MouseEvent} from "react";
+import {CustomVideoPlayerProps, MatchEventData} from "@/util/interfaces"
+import {COLOR_MAP,ICON_MAP} from "@/util/default"
+import Image from "next/image"
 
 export default function CustomVideoPlayer({
   src,
@@ -102,25 +65,10 @@ export default function CustomVideoPlayer({
     else document.exitFullscreen().then(() => setIsPlaying(false));
   };
 
-  // ────────────  NEW: build a map for colors & icons ────────────
-  const COLOR_MAP: Record<string, string> = {
-    MATCH:   "#FACC15",   // yellow
-    TACTIC:  "#14B8A6",   // teal
-    FOULS:   "#EF4444",   // red
-    PHYSICAL:"#38BDF8",   // sky
-    COMMENT: "#9CA3AF",   // gray
-  };
-  const ICON_MAP: Record<string, string> = {
-    MATCH:   "/images/lables/lable-check.png",
-    TACTIC:  "/images/lables/lable-angle.png",
-    FOULS:   "/images/lables/lable-error.png",
-    PHYSICAL:"/images/lables/lable-time.png",
-    COMMENT: "/images/lables/lable-note.png",
-  };
 
   // 5) Convert DB markers to { offsetSeconds, color, label, lablePath }
   const marksWithOffsets = useMemo(() => {
-    return (markers as any[])
+    return (markers as MatchEventData[])
       .map((m) => {
         const offsetSeconds = m.eventTimeSeconds;
         if (typeof offsetSeconds !== "number") return null;
@@ -220,7 +168,13 @@ export default function CustomVideoPlayer({
                 left: `calc(${(marksWithOffsets[hoveredIndex].offsetSeconds / duration) * 100}% - 0px)`,
               }}
             >
-              <img src={marksWithOffsets[hoveredIndex].lablePath} alt="" className="w-4 h-4 flex-shrink-0" />
+              <Image
+                src={marksWithOffsets[hoveredIndex].lablePath}
+                alt=""
+                width={16} 
+                height={16} 
+                className="flex-shrink-0"
+              />
               <span className="text-sm font-medium text-black">
                 {marksWithOffsets[hoveredIndex].label}
               </span>

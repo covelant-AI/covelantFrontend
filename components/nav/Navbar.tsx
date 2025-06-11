@@ -28,7 +28,6 @@ export default function NavBar() {
           height={60} 
           style={{ height: 'auto' }}
           className="cursor-pointer ml-4"
-          priority
         />
       </div>
 

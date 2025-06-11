@@ -1,33 +1,5 @@
 import React, { useMemo } from "react";
-
-interface Scorer {
-  id: number;
-  firstName: string;
-  lastName: string;
-  avatar?: string;
-  type: "PLAYER" | "OPPONENT";
-}
-
-export interface EventRecord {
-  /** 1 = first set, 2 = second set, etc. */
-  setNumber: number;
-  /** Number of games won in that set at this moment */
-  gamePoint: number;
-  /** The score within the current game (0,15,30,40) */
-  matchPoint: number;
-  /** Seconds from the video start when this record occurred */
-  eventTimeSeconds: number;
-  scorer: Scorer;
-}
-
-interface TennisScoreBoardProps {
-  /** All point‐events from your backend */
-  events: EventRecord[] | { [key: string]: EventRecord };
-  /** Current playback time in seconds */
-  eventTime: number;
-  /** Which sets to show columns for */
-  rounds?: number[];
-}
+import {TennisScoreBoardProps,Scorer,EventRecord} from "@/util/interfaces"
 
 export default function TennisScoreBoard({
   events,

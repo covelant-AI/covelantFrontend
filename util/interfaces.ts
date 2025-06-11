@@ -21,6 +21,12 @@ export interface Profile {
   type: string;
 }
 
+export interface WinOutcome {
+  id:number,
+  match: Match,
+  result: string,
+}
+
 export interface AuthContextType {
   user: FirebaseUser | null;
   loading: boolean;
@@ -55,10 +61,46 @@ export interface UploadVideoProps {
   onVideoUpload: (videoURL: string, videoThumbnail: string) => void;
 }
 
+export interface MetricPoint {
+  eventTimeSeconds: number;
+  value: number;
+}
+
+export interface AISummaryProps {
+  ballSpeeds: MetricPoint[];
+  playerSpeeds: MetricPoint[];
+  longestRallies: MetricPoint[];
+  strikesEff: MetricPoint[];
+  eventTime: number;
+}
+
 export interface MainTagManagerProps {
   videoId: number;
   timeStamp: number;
   onAddTag: (tag: any) => void;
+}
+
+export interface Scorer {
+  id: number;
+  firstName: string;
+  lastName: string;
+  avatar?: string;
+  type: "PLAYER" | "OPPONENT";
+}
+
+
+export interface EventRecord {
+  setNumber: number;
+  gamePoint: number;
+  matchPoint: number;
+  eventTimeSeconds: number;
+  scorer: Scorer;
+}
+
+export interface TennisScoreBoardProps {
+  events: EventRecord[] | { [key: string]: EventRecord };
+  eventTime: number;
+  rounds?: number[];
 }
 
 export interface PlayerData {  // use in ListAllThletes
@@ -90,6 +132,31 @@ export interface RadialBlurBgProps {
     bottom?: number;
     right?: number;
 }
+
+export interface MatchEventData {
+  id: number;
+  matchId: number;
+  category: 'MATCH' | 'TACTIC' | 'FOULS' | 'PHYSICAL' | 'COMMENT';
+  comment: string | null;
+  commentText: string | null;
+  condition: 'UNDER_PRESSURE' | 'CONFIDENT' | 'FOCUSED' | 'LOST_FOCUS' | 'MOMENTUM_SHIFT' | 'CLUTCH_PLAY' | 'FATIGUE_SIGNS';
+  createdAt: string; 
+  eventTimeSeconds: number;
+  foulType: string | null;
+  matchType: string;
+  physicalType: string | null;
+  tacticType: string | null;
+}
+
+export interface CustomVideoPlayerProps {
+  src: string;
+  videoStartTime: string;
+  markers: MatchEventData[];
+  durationOverride?: number;
+  lablePath?: string;
+  onTimeUpdate?: (currentTime: number) => void;
+}
+
 
 // Enums & Models (from schema)
 export enum EventCategory {
@@ -157,11 +224,11 @@ export enum MetricType {
 
 export interface Player {
   id: number;
-  firstName: string | null;
-  lastName: string | null;
+  firstName: string 
+  lastName: string 
   email: string;
-  avatar: string | null;
-  age: number | null;
+  avatar: string 
+  age: number 
   dominantHand: string;
   height: number;
   winRate: number;

@@ -1,19 +1,6 @@
 import React, { useMemo } from "react";
-
-interface MetricPoint {
-  eventTimeSeconds: number;
-  value: number;
-}
-
-interface AISummaryProps {
-  /** arrays of metric snapshots */
-  ballSpeeds: MetricPoint[];
-  playerSpeeds: MetricPoint[];
-  longestRallies: MetricPoint[];
-  strikesEff: MetricPoint[];
-  /** current playback time in seconds */
-  eventTime: number;
-}
+import {MetricPoint, AISummaryProps} from "@/util/interfaces"
+import Image from 'next/image';
 
 export default function AISummary({
   ballSpeeds,
@@ -51,9 +38,11 @@ export default function AISummary({
       <div className="flex flex-col items-start p-3 rounded-2xl shadow bg-gray-100">
         <span className="flex flex-row justify-center items-center pb-6">
           <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-            <img
+            <Image
               src="/images/lables/lable-ball.png"
               alt="ball"
+              width={24} 
+              height={24} 
               className="w-6 h-6"
             />
           </div>
@@ -69,9 +58,11 @@ export default function AISummary({
       <div className="flex flex-col items-start p-3 rounded-2xl shadow bg-gray-100">
         <span className="flex flex-row justify-center items-center pb-6">
           <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-            <img
+            <Image
               src="/images/lables/lable-person.png"
               alt="person"
+              width={24}
+              height={24}
               className="w-6 h-6"
             />
           </div>
@@ -87,9 +78,11 @@ export default function AISummary({
       <div className="flex flex-col items-start p-3 rounded-2xl shadow bg-gray-100">
         <span className="flex flex-row justify-center items-center pb-6">
           <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-            <img
+            <Image
               src="/images/lables/lable-time.png"
               alt="time"
+              width={16} 
+              height={16}
               className="w-4 h-4"
             />
           </div>
@@ -105,9 +98,11 @@ export default function AISummary({
       <div className="flex flex-col items-start p-3 rounded-2xl shadow bg-gray-100">
         <span className="flex flex-row justify-center items-center pb-6">
           <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-            <img
+            <Image
               src="/images/lables/lable-target.png"
               alt="target"
+              width={20}
+              height={20} 
               className="w-5 h-5"
             />
           </div>

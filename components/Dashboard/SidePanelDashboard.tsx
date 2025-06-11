@@ -1,46 +1,46 @@
 "use client";
-import { useEffect, useState } from 'react'
+import { useEffect, useState,useCallback  } from 'react'
 import RadarGraph from '../UI/RadarGraph'
-import { SidePanelDashboardProps } from '@/util/interfaces';
+import { SidePanelDashboardProps, WinOutcome } from '@/util/interfaces';
 import { QuestionMarkCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '@/app/context/AuthContext';
 import Image from "next/image"
 import * as Sentry from "@sentry/nextjs";
 
 export default function SidePanelDashboard({ activePlayer }: SidePanelDashboardProps) {
-  const [winOutcome, setWinOutcome] = useState<Array<any> | null>([]);
+  const [winOutcome, setWinOutcome] = useState<Array<WinOutcome> | null>([]);
   const [showExplanation, setShowExplanation] = useState(false)
   const { profile } = useAuth();
 
-
-  const getMatchOutcome = async (): Promise<void> => { 
+  const getMatchOutcome = useCallback(async (): Promise<void> => {
     try {
-        const email = activePlayer?.email;
-        if(!email) {
-          return;
-        }
-        await fetch(`/api/getMatchOutcome?email=${encodeURIComponent(email)}`, {
-          method: 'GET',
-          headers: new Headers({
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          }),
-        }).then((response) => response.json())
-        .then((result)=> {
-          if(result.error){
-            console.error('Error fetching user data:', result.error);
-          }
-          setWinOutcome(()=> result.data);
-        })
-
-      } catch (error) {
-        Sentry.captureException(error);
+      const email = activePlayer?.email;
+      if (!email) {
+        return;
       }
-  };
+      const response = await fetch(`/api/getMatchOutcome?email=${encodeURIComponent(email)}`, {
+        method: 'GET',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }),
+      });
 
-  useEffect(()=>{
-    getMatchOutcome()
-  },[activePlayer])
+      const result = await response.json();
+      if (!result.success) {
+        console.error('Error fetching matchOutcome data:', result.error); // add loading here but later---------------------------
+      }
+      setWinOutcome(() => result.data);
+    } catch (error) {
+      Sentry.captureException(error);
+    }
+  }, [activePlayer?.email]);
+
+  useEffect(() => {
+    if (activePlayer) {
+      getMatchOutcome(); 
+    }
+  }, [activePlayer, getMatchOutcome]);
 
     return (
         <div className="col-span-3 flex justify-center">

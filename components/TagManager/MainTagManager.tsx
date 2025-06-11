@@ -1,13 +1,15 @@
 'use client';
 import React, { useState, useRef, useEffect } from "react";
+import { MainTagManagerProps } from "@/util/interfaces";
 import { CategoryKey } from '@/util/types';
+import {tabs} from '@/util/default'
 import MatchForm from "./MatchForm";
 import TacticForm from "./TacticForm";
 import FoulsForm  from "./FoulsForm";
 import PhysicalForm from "./PhysicalForm";
 import NoteForm from "./NoteForm";
-import { MainTagManagerProps } from "@/util/interfaces";
 import { Menu, X } from "lucide-react";
+import Image from "next/image"
 
 export default function MainTagManager({
   videoId,
@@ -33,14 +35,6 @@ export default function MainTagManager({
     return () => window.removeEventListener("mousedown", handleClick);
   }, [menuOpen]);
 
-  const tabs: CategoryKey[] = [
-    "Match",
-    "Tactic",
-    "Fouls",
-    "Physical",
-    "Note",
-  ];
-
   return (
       <div className="w-full max-w-[700px] shadow-lg bg-gray-100 mx-auto flex flex-col space-y-4 p-6">
       {/* header: inline tabs on md+, hamburger on sm */}
@@ -60,10 +54,12 @@ export default function MainTagManager({
                   : "bg-white border-gray-100 text-gray-600 hover:scale-105"
               }`}
             >
-              <img
+              <Image
                 src={`/images/lables/tag${idx + 1}.png`}
                 alt={`${tab} icon`}
-                className="w-5 h-5 mr-2"
+                width={20} 
+                height={20} 
+                className="mr-2"
               />
               {tab}
             </button>
@@ -99,10 +95,12 @@ export default function MainTagManager({
                   : "bg-white border-gray-100 text-gray-600 hover:scale-105"
               }`}
             >
-              <img
+              <Image
                 src={`/images/lables/tag${idx + 1}.png`}
                 alt={`${tab} icon`}
-                className="w-5 h-5 mr-2"
+                width={20}
+                height={20} 
+                className="mr-2"
               />
               {tab}
             </button>

@@ -85,7 +85,7 @@ export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagMana
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
             >
-              {CONDITION_OPTIONS.map((opt: any) => (
+              {CONDITION_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>

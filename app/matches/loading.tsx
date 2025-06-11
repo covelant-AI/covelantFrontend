@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white max-h-screen pt-10">
       <h1 className="absolute text-3xl font-normal text-center text-gray-600 mb-20">
-        please wait while<br />Or our AI will be mad :D
+        Establishing Neural network Link<br />Please Wait...
       </h1>
       <RadialBlurBg
         background={
