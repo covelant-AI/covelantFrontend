@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { profile as ProfileType } from '@/util/interfaces'
+import { Profile } from '@/util/interfaces'
 import { storage, ref, uploadBytesResumable, getDownloadURL } from '@/app/firebase/config';
-
+import Image from 'next/image';
+import * as Sentry from "@sentry/nextjs";
 
 export default function ProfileSettings() {
   const [loading, setLoading] = useState(true)
-  const [profile, setProfile] = useState<ProfileType | null>(null)
+  const [profile, setProfile] = useState<Profile>()
   
 
   // Extend form to include avatar
@@ -58,7 +59,7 @@ export default function ProfileSettings() {
         setForm(loadedForm);
         setInitialForm(loadedForm);
       })
-      .catch((err) => console.error(err))
+      .catch((err) => Sentry.captureException(err))
       .finally(() => setLoading(false))
   }, [profile?.email])
 
@@ -98,7 +99,7 @@ export default function ProfileSettings() {
       // hard reload on success
       window.location.reload()
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
     }
   }
 
@@ -143,9 +144,6 @@ export default function ProfileSettings() {
 
       uploadTask.on(
         'state_changed',
-        (snapshot) => {
-          // Optionally, you can add upload progress UI here
-        },
         (error) => {
           console.error('Avatar upload failed:', error);
           alert('Failed to upload avatar image');
@@ -178,9 +176,11 @@ export default function ProfileSettings() {
       {/* Profile picture and buttons */}
       <div className="col-span-1 flex flex-row justify-center items-center space-x-4">
         <div className="w-24 h-24 rounded-full overflow-hidden shadow-lg">
-          <img
+         <Image
             src={form.avatar || '/images/default-avatar.png'}
             alt="Profile"
+            width={500} // You can adjust the width as per your layout or desired size
+            height={500} // Adjust the height to match the aspect ratio
             className="object-cover w-full h-full"
           />
         </div>

@@ -66,6 +66,11 @@ export interface MetricPoint {
   value: number;
 }
 
+export interface FirebaseError{
+  code : string,
+  message: string
+}
+
 export interface AISummaryProps {
   ballSpeeds: MetricPoint[];
   playerSpeeds: MetricPoint[];
