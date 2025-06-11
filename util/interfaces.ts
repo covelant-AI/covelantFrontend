@@ -71,6 +71,10 @@ export interface FirebaseError{
   message: string
 }
 
+export interface PayloadGraph{
+  value: string;
+}
+
 export interface AISummaryProps {
   ballSpeeds: MetricPoint[];
   playerSpeeds: MetricPoint[];

@@ -1,4 +1,3 @@
-import { stat } from 'fs';
 import { PrismaClient } from '../../../generated/prisma';  
 import { NextRequest, NextResponse } from 'next/server';
 

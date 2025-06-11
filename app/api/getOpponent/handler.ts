@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     })
 
 
-    let player = await prisma.player.findMany({
+    const player = await prisma.player.findMany({
       where: nameFilter,
       take: 3,
     })

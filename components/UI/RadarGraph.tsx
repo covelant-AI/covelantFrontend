@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
-import { SidePanelDashboardProps } from '@/util/interfaces';
+import { SidePanelDashboardProps, PayloadGraph } from '@/util/interfaces';
 import {DEFAULT_STATS} from "@/util/default"
 
 
 export default class RadarGraph extends PureComponent<SidePanelDashboardProps> {
   renderCustomizedLabel = (props: {
-    payload: any;
+    payload: PayloadGraph;
     x: number;
     y: number;
     cx: number;

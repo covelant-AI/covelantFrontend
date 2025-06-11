@@ -7,12 +7,9 @@ interface CircleChartProps {
 }
 
 const CircleChart: React.FC<CircleChartProps> = ({ wins, losses, percentage }) => {
-  let winsPercent: number;
-  let lossesPercent: number;
-
     const total = wins + losses;
-    winsPercent = total === 0 ? 0 : (wins / total) * 100;
-    lossesPercent = total === 0 ? 0 : (losses / total) * 100;
+    const winsPercent: number = total === 0 ? 0 : (wins / total) * 100;
+    const lossesPercent: number = total === 0 ? 0 : (losses / total) * 100;
 
 
   const circleRadius = 50;

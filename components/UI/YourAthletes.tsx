@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useAuth } from '@/app/context/AuthContext';
+import Image from "next/image"
 
 export default function YourAthletes(){
             const {user} = useAuth();
@@ -60,11 +61,13 @@ export default function YourAthletes(){
             {safePlayerData.map((player) => ( 
               <div key={player.id} className="flex flex-col items-center w-20">
                 <div className="w-20 h-20 rounded-lg bg-cyan-200 overflow-hidden mb-2">
-                  <img
-                    src={player?.avatar}
+                  <Image
+                    src={player?.avatar || '/images/default-avatar.png'} // Default to a fallback image if player.avatar is undefined
                     alt="Athlete"
+                    width={500} // Adjust the width according to your layout or desired size
+                    height={500} // Adjust the height to match the aspect ratio
                     className="w-full h-full object-cover"
-                    />
+                  />
                 </div>
                 <div className="text-sm text-center text-gray-700">{player.firstName} {player.lastName}</div>
               </div>
