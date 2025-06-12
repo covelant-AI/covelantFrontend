@@ -1,107 +1,84 @@
-import { useAuth } from '@/app/context/AuthContext';
-import { Player } from '@/generated/prisma';
-import { Props, defaultPlayer } from '@/util/interfaces';
-import {Match} from '@/util/types';
+"use client";
 import { useEffect, useState, MouseEvent, useRef } from 'react'
-import {profile} from "@/util/interfaces"
+import { useAuth } from '@/app/context/AuthContext';
+import { MatchDisplay, Match, Props, Player, PlayerMatch} from '@/util/interfaces';
+import { defaultPlayer} from "@/util/default"
+import Image from 'next/image'
 import Link from 'next/link'
-
-// 1) rename your static list so we can keep it around
-const defaultMatches: Match[] = [
-  { id: 1, title: 'Alexis Lebrun vs Hugo Calderano', imageUrl: '/images/whiteBackground.png' },
-  { id: 2, title: 'Alexis Lebrun vs LIANG Jinkun',   imageUrl: '/images/whiteBackground.png' },
-  { id: 3, title: 'Alexis Lebrun vs Fan Zhendong',  imageUrl: '/images/whiteBackground.png' },
-  { id: 4, title: 'Alexis Lebrun vs Liam Pitchford',imageUrl: '/images/whiteBackground.png' },
-  { id: 5, title: 'Alexis Lebrun vs Xiang Peng',    imageUrl: '/images/whiteBackground.png' },
-  { id: 6, title: 'Alexis Lebrun vs Xiang Peng',    imageUrl: '/images/whiteBackground.png' },
-];
+import * as Sentry from "@sentry/nextjs";
 
 export default function VideoDashboard({ activePlayer, setActivePlayer }: Props) {
-    const { user } = useAuth();
+    const { profile } = useAuth();
     const [showMenu, setShowMenu] = useState<boolean>(false);
+    const [selectedPlayer, setSelectedPlayer] = useState<Player[]>([]);
+    const [matches, setMatches] = useState<MatchDisplay[]>([]);
     const menuRef = useRef<HTMLDivElement>(null);
-    const [selectedPlayer, setSelectedPlayer] = useState<Player[]>([defaultPlayer]);
-    const [profile, setProfile] = useState<profile>()
-    const [matches, setMatches] = useState<Match[]>(defaultMatches);
-
-      useEffect(() => {
-        const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
-        const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
-
-        if (values.every((value): value is string => value !== null)) {
-          const [email, firstName, lastName, avatar, type] = values;
-          setProfile({ email, firstName, lastName, avatar, type });
-        }
-      }, [user]);
-
-      useEffect(() => {
-        if (!profile?.email) return;
-      
-        const getUserData = async () => {
-          try {
-            const res = await fetch(
-              `/api/getConnection?email=${encodeURIComponent(profile.email)}`,
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                  Accept: 'application/json',
-                },
-              }
-            );
-            const result = await res.json();
-            if (result.error) {
-              console.error('Error fetching user data:', result.error);
-              return;
-            }
-            setSelectedPlayer(result.connection);
-
-            if(result.connection.length == 0){
-              setActivePlayer(defaultPlayer);
-            }else{
-              setActivePlayer(result.connection[0]);
-            }
-          } catch (err) {
-            console.error('Error fetching user data:', err);
-          }
-        };
-      
-        getUserData();
-      }, [profile?.email]);
+    const toggleMenu = () => {setShowMenu((prev) => !prev);};
 
     useEffect(() => {
-        if (!activePlayer?.id) {
-          return;
-        }
-       
-        (async () => {
-          try {
-            const res = await fetch(`/api/getMatches?playerId=${activePlayer.id}`);
-            const data = await res.json();
-
-            const live: Match[] = data.matches.map((m: any) => {
-              // find the entry where this user appears as playerId
-              const selfEntry = m.playerMatches.find((pm: any) => pm.playerId === activePlayer.id);
-              let opponentName = 'Unknown';
-            
-              if (selfEntry?.opponent) {
-                opponentName = `${selfEntry.opponent.firstName} ${selfEntry.opponent.lastName}`;
-              } else if (selfEntry?.playerTwo) {
-                opponentName = `${selfEntry.playerTwo.firstName} ${selfEntry.playerTwo.lastName}`;
-              }
-            
-              return {
-                id: m.id,
-                title: `${activePlayer.firstName} ${activePlayer.lastName} vs ${opponentName}`,
-                imageUrl: m.imageUrl,
-              };
-            });
-
-            setMatches(live);
-          } catch (err) {
-            console.error('Error fetching matches:', err);
+      if (!profile?.email) return;
+    
+      const getUserData = async () => {
+        try {
+          const res = await fetch(
+            `/api/getConnection?email=${encodeURIComponent(profile.email)}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              },
+            }
+          );
+          const result = await res.json();
+          if (result.error) {
+            console.error('Error fetching user data:', result.error);
+            return;
           }
-        })();
-      }, [activePlayer]);      
+          setSelectedPlayer(result.connection);
+          if(result.connection.length == 0){
+            setActivePlayer(defaultPlayer);
+          }else{
+            setActivePlayer(result.connection[0]);
+          }
+        } catch (err) {
+          Sentry.captureException(err);
+        }
+      };
+    
+      getUserData();
+    }, [profile, setActivePlayer]);
+
+    useEffect(() => {
+      if (!activePlayer?.id) {
+        return;
+      }
+     
+      (async () => {
+        try {
+          const res = await fetch(`/api/getMatches?playerId=${activePlayer.id}`);
+          const data = await res.json();
+          const live: MatchDisplay[] = data.matches.map((m: Match) => {
+            const selfEntry = m.playerMatches.find((pm: PlayerMatch) => pm.playerId === activePlayer.id);
+            let opponentName = 'Unknown';
+            
+            if (selfEntry?.opponent) {
+              opponentName = `${selfEntry.opponent.firstName} ${selfEntry.opponent.lastName}`;
+            } else if (selfEntry?.playerTwo) {
+              opponentName = `${selfEntry.playerTwo.firstName} ${selfEntry.playerTwo.lastName}`;
+            }
+          
+            return {
+              id: m.id,
+              title: `${activePlayer.firstName} ${activePlayer.lastName} vs ${opponentName}`,
+              imageUrl: m.imageUrl,
+            };
+          });
+          setMatches(live);
+        } catch (err) {
+          Sentry.captureException(err);
+        }
+      })();
+    }, [activePlayer]);      
 
         useEffect(() => {
            function handleClickOutside(event: MouseEvent | MouseEvent & { target: Node }) {
@@ -121,8 +98,6 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
            };
          }, []);
 
-        const toggleMenu = () => {setShowMenu((prev) => !prev);};
-
     return (
         <div className="col-span-1 lg:col-span-9 rounded-2xl shadow p-1 flex flex-col gap-2 bg-[#F8F8F8] my-5 justify-center">
 
@@ -132,11 +107,13 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
             <>
             <div className='max-md:hidden'></div>
             <div className="flex flex-col items-center justify-center h-100 bg-[#FFFFFF] rounded-lg">
-              <img
+              <Image
                 src="/images/noMatches.png"
                 alt="No matches"
+                width={500} 
+                height={300} 
                 className="max-w-full max-h-full object-contain"
-                />
+              />
               <h3 className='text-black text-xl font-bold text-center'>No analysis available, upload a match!</h3>
               <p  className='text-gray-400 font-semibold text-center'>List of analyzed videos will appear here</p>
             </div>
@@ -148,9 +125,11 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                 className="relative rounded-2xl overflow-hidden h-50 bg-[#F8F8F8] border-2 border-[#F8F8F8] 
                            hover:scale-[1.03] transition duration-100 active:scale-[0.99]">
                 <Link key={m.id} href={`/matches/${m.id}`}>
-                  <img
+                  <Image
                     src={m.imageUrl}
                     alt={m.title}
+                    width={500}  
+                    height={300} 
                     className="w-full h-full object-cover"
                   />
                 </Link>
@@ -174,11 +153,13 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                onClick={toggleMenu}
                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full text-lg cursor-pointer hover:bg-gray-200"
              >
-               <img
-                 src={activePlayer?.avatar ?? '/images/default-avatar.png'}
-                 alt="Avatar"
-                 className="w-7 h-7 rounded-full object-cover"
-               />
+               <Image
+                  src={activePlayer?.avatar ?? '/images/default-avatar.png'}
+                  alt="Avatar"
+                  width={28}  
+                  height={28} 
+                  className="w-7 h-7 rounded-full object-cover"
+                />
                <span className="text-gray-700">
                  {activePlayer?.firstName} {activePlayer?.lastName}
                </span>
@@ -198,11 +179,13 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                      setShowMenu(false); 
                    }}
                    >
-                     <img
-                       src={player?.avatar ?? '/images/default-avatar.png'}
-                       alt="Avatar"
-                       className="w-8 h-8 rounded-full object-cover"
-                     />
+                     <Image
+                        src={player?.avatar ?? '/images/default-avatar.png'}
+                        alt="Avatar"
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
                      <span className='font-normal text-gray-700 text-md'>
                        {player.firstName} {player.lastName}
                      </span>

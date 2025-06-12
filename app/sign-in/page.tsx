@@ -1,46 +1,65 @@
 'use client';
-import { useState } from 'react';
-import {  useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useState, useEffect } from 'react';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/config'; 
 import { useRouter } from 'next/navigation';
+import Image from "next/image";
+import * as Sentry from "@sentry/nextjs";
 
-const SignInPage: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
 
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
-  const router = useRouter();
+export default function SignInPage(){
+  const [email, setEmail]         = useState('');
+  const [password, setPassword]   = useState('');
+  const [error, setError]         = useState<string>('');
+  const [signIn, user]   = useSignInWithEmailAndPassword(auth);
+  const router                   = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await signInWithEmailAndPassword(email, password);
-      sessionStorage.setItem('user', true as unknown as string);
-      if(res) {
-        setEmail('');
-        setPassword('');
-        router.push('/'); 
-      }
-      else{
-        setError('Incorrect email or password');
-      }
-    } catch (error: any) { 
-      setError('Something went wrong, please try again later');
+  // whenever `user` becomes non-null, store email & navigate:
+  useEffect(() => {
+    if (user) {
+      router.push('/');
     }
+  }, [user, router]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    sessionStorage.setItem('email', email);
+    e.preventDefault();
+    setError('');
+    signIn(email, password)
+    .then((res) => {
+      if(!res) setError('Incorrect email or password');
+    })
+    .catch((error) => {
+      Sentry.captureException(error);
+      setError('Incorrect email or password');
+    });
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8" style={{ backgroundImage: "url('/images/bg-signIn.png')", backgroundSize: 'cover', backgroundPosition: 'center'}}> 
       <div className="bg-[#F9F9F9] p-8 rounded-3xl shadow-lg w-full max-w-md">
-        <img src="/icons/signUp.svg" alt="Sign Up Icon" className="mx-auto h-20" />
+        <div className="relative mx-auto w-20 h-20">
+          <Image
+            src="/icons/signUp.svg"
+            alt="Sign Up Icon"
+            fill
+            style={{ objectFit: 'contain' }}
+          />
+        </div>
         <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">Sign In</h2>
 
         <form onSubmit={handleSubmit} className='py-3'>
           <div className={`mb-6 flex items-center bg-[#F0F0F0] rounded-xl ${
                   error ? 'border-red-500 border-1' : ''}`}
           >
-            <img src="/icons/mail.svg" alt="Email Icon" className="w-6 h-6 mx-3 opacity-80 " />
+            
+            <Image
+              src="/icons/mail.svg"
+              alt="Email Icon"
+              width={24}
+              height={24}
+              className="mx-3 opacity-80"
+            />
             <input
               type="email"
               id="email"
@@ -55,7 +74,13 @@ const SignInPage: React.FC = () => {
 
           <div className={`my-4 flex items-center bg-[#F0F0F0] rounded-xl ${
                   error ? 'border-red-500 border-1' : ''}`}>
-            <img src="/icons/lock.svg" alt="Password Icon" className="w-6 h-6 mx-3 opacity-35"/>
+            <Image
+              src="/icons/lock.svg"
+              alt="Password Icon"
+              width={24}
+              height={24}
+              className="mx-3 opacity-35"
+            />
             <input
               type="password"
               id="password"
@@ -73,7 +98,7 @@ const SignInPage: React.FC = () => {
 
 
           <p className="text-center text-gray-500 my-4">
-            don't have an account?{' '}
+            don&apos;t have an account?{' '}
             <a href="/sign-up" className="text-teal-500 font-normal hover:underline">
               Sign Up
             </a>
@@ -90,5 +115,4 @@ const SignInPage: React.FC = () => {
   );
 };
 
-export default SignInPage;
 

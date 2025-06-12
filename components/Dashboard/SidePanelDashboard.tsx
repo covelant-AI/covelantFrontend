@@ -1,51 +1,46 @@
-import { useEffect, useState } from 'react'
+"use client";
+import { useEffect, useState,useCallback  } from 'react'
 import RadarGraph from '../UI/RadarGraph'
-import { sidePanelDashboardProps } from '@/util/interfaces';
-import {profile} from "@/util/interfaces"
+import { SidePanelDashboardProps, WinOutcome } from '@/util/interfaces';
 import { QuestionMarkCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useAuth } from '@/app/context/AuthContext';
+import Image from "next/image"
+import * as Sentry from "@sentry/nextjs";
 
-export default function SidePanelDashboard({ activePlayer }: sidePanelDashboardProps) {
-  const [winOutcome, setWinOutcome] = useState<Array<any> | null>([]);
-  const [profile, setProfile] = useState<profile>()
-   const [showExplanation, setShowExplanation] = useState(false)
+export default function SidePanelDashboard({ activePlayer }: SidePanelDashboardProps) {
+  const [winOutcome, setWinOutcome] = useState<Array<WinOutcome> | null>([]);
+  const [showExplanation, setShowExplanation] = useState(false)
+  const { profile } = useAuth();
 
-
-  const getMatchOutcome = async (): Promise<void> => { 
+  const getMatchOutcome = useCallback(async (): Promise<void> => {
     try {
-        const email = activePlayer?.email;
-        if(!email) {
-          return;
-        }
-        await fetch(`/api/getMatchOutcome?email=${encodeURIComponent(email)}`, {
-          method: 'GET',
-          headers: new Headers({
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          }),
-        }).then((response) => response.json())
-        .then((result)=> {
-          if(result.error){
-            console.error('Error fetching user data:', result.error);
-          }
-          setWinOutcome(()=> result.data);
-        })
-
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+      const email = activePlayer?.email;
+      if (!email) {
+        return;
       }
-      
-  };
-  
-  useEffect(() => {
-    const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
-    const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
-    
-    if (values.every((value): value is string => value !== null)) {
-      const [email, firstName, lastName, avatar, type] = values;
-      setProfile({ email, firstName, lastName, avatar, type });
+      const response = await fetch(`/api/getMatchOutcome?email=${encodeURIComponent(email)}`, {
+        method: 'GET',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }),
+      });
+
+      const result = await response.json();
+      if (!result.success) {
+        Sentry.captureException(result); // add loading here but later---------------------------
+      }
+      setWinOutcome(() => result.data);
+    } catch (error) {
+      Sentry.captureException(error);
     }
-      getMatchOutcome()
-    }, [activePlayer?.email]) 
+  }, [activePlayer?.email]);
+
+  useEffect(() => {
+    if (activePlayer) {
+      getMatchOutcome(); 
+    }
+  }, [activePlayer, getMatchOutcome]);
 
     return (
         <div className="col-span-3 flex justify-center">
@@ -55,16 +50,20 @@ export default function SidePanelDashboard({ activePlayer }: sidePanelDashboardP
                 {profile?.type == "player" ? <div className='bg-gray-100 w-full rounded-2xl p-1'>
                   <div className="flex flex-col w-full gap-4 bg-[#FFFFFF] p-4 rounded-2xl">
                       <span className='flex flex-row items-center gap-4'>
-                          <img
-                            src={profile?.avatar}
-                            alt="Profile picture"
-                            className="w-19 h-19 rounded-full object-cover"
-                          />
-                          <h3 className="text-xl font-semibold text-gray-800">{profile?.firstName}<br/> <span className='font-bold'>{profile?.lastName}</span></h3>
+                        <div className="w-18 h-18 rounded-full overflow-hidden flex justify-center items-center">
+                            <Image
+                              src={profile?.avatar || '/images/default-avatar.png'}
+                              alt="Profile picture"
+                              width={70}  
+                              height={70} 
+                              className="object-cover w-full h-full"
+                            />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-800">{profile?.firstName}<br/> <span className='font-bold'>{profile?.lastName}</span></h3>
                       </span>
                   <div className="flex items-center gap-2 justify-between pt-8 text-xl">
                     <span className="flex items-center justify-center text-white bg-[#C6C6C6] w-10 lg:w-9 h-9 rounded-full">?</span>
-                    {winOutcome?.map((outcome, index) =>
+                    {winOutcome?.map((outcome) =>
                       outcome.result == "win"
                         ? <span key={outcome.id} className="flex items-center justify-center text-white bg-[#42B6B1] w-10 lg:w-9 h-9 rounded-full">✓</span>
                         : <span key={outcome.id} className="flex items-center justify-center text-white bg-[#FF4545] w-10 lg:w-9 h-9 rounded-full">✕</span>
@@ -82,14 +81,18 @@ export default function SidePanelDashboard({ activePlayer }: sidePanelDashboardP
                 <div className='bg-gray-100 w-full rounded-2xl p-1'>
                   <div className="flex flex-col w-full gap-4 bg-[#FFFFFF] p-4 rounded-2xl">
                       <span className='flex flex-row items-center gap-4'>
-                          <img
-                            src={activePlayer?.avatar ?? '/images/default-avatar.png'}
-                            alt="Alexis Lebrun"
-                            className="w-19 h-19 rounded-full object-cover"
-                          />
+                           <div className="w-18 h-18 rounded-full overflow-hidden flex justify-center items-center">
+                              <Image
+                                src={activePlayer?.avatar || '/images/default-avatar.png'}
+                                alt="Alexis Lebrun"
+                                width={72}
+                                height={72}
+                                className="object-cover w-full h-full"
+                              />
+                            </div>
                           <h3 className="text-xl font-semibold text-gray-800">{activePlayer?.firstName ?? 'No Player'}<br/> <span className='font-bold'>{activePlayer?.lastName ?? 'selected'}</span></h3>
                       </span>
-                  <div className="flex items-center gap-2 justify-between pt-8 text-xl">
+                    <div className="flex items-center gap-2 justify-between pt-8 text-xl">
                     <span className="flex items-center justify-center text-white bg-[#C6C6C6] w-10 lg:w-9 h-9 rounded-full">?</span>
                     {activePlayer ? (
                       winOutcome?.map((outcome) =>

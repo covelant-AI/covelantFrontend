@@ -25,7 +25,8 @@ export default function NavBar() {
           src="/images/logoBlack.png"
           alt="Covalent Logo"
           width={170}
-          height={60}
+          height={60} 
+          style={{ height: 'auto' }}
           className="cursor-pointer ml-4"
         />
       </div>

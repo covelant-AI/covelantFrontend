@@ -17,7 +17,6 @@ model Player {
   age          Int?
   dominantHand String?       @default("Right Handed")
   height       Int?          @default(180)
-  Tier         String?       @default("Professional")
   winRate      Float?        @default(1)
   stats        PlayerStat[]
 

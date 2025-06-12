@@ -1,27 +1,15 @@
 'use client';
-
 import NavBar from '@/components/nav/Navbar';
 import Link from 'next/link';
 import { PlayerData } from '@/util/interfaces';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
-import { profile } from '@/util/interfaces';
+import Image from 'next/image';
+import * as Sentry from "@sentry/nextjs";
 
 export default function YourConnection() {
   const [playerData, setPlayerData] = useState<PlayerData[]>([]);
-  const [profile, setProfile] = useState<profile>();
-  const { user } = useAuth();
-
-
-  useEffect(() => {
-    const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
-    const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
-    if (values.every((value): value is string => value !== null)) {
-      const [email, firstName, lastName, avatar, type] = values;
-      setProfile({ email, firstName, lastName, avatar, type });
-    }
-  }, [user]);
-
+  const { profile } = useAuth();
 
   useEffect(() => {
     if (!profile?.type) return;
@@ -47,7 +35,7 @@ export default function YourConnection() {
           setPlayerData(result.connection[0].coaches);
         }
       } catch (err) {
-        alert('Error fetching user data: ' + (err as any).message);
+        Sentry.captureException(err);
       }
     };
 
@@ -80,9 +68,11 @@ export default function YourConnection() {
                 <div className="max-md:hidden" />
                 <div className="max-md:hidden" />
                 <div className="flex flex-col items-center justify-center h-100 bg-white rounded-lg">
-                  <img
+                  <Image
                     src="/images/noMatches.png"
                     alt="No connections"
+                    width={500}  // Define width according to your design
+                    height={300} // Define height according to your design
                     className="max-w-full max-h-full object-contain mb-4"
                   />
                   <h3 className="text-black text-xl font-bold text-center">
@@ -100,9 +90,11 @@ export default function YourConnection() {
                   return (
                     <div key={athlete.id} className="flex flex-col justify-center items-center">
                       <div className="rounded-lg p-1">
-                        <img
+                        <Image
                           src={athlete.avatar || '/images/default-avatar.png'}
                           alt={`${athlete.firstName} ${athlete.lastName}`}
+                          width={80}  
+                          height={80} 
                           className="w-20 h-20 object-cover rounded-md cursor-default"
                         />
                       </div>
@@ -121,10 +113,12 @@ export default function YourConnection() {
                     className="flex flex-col items-center"
                   >
                     <div className="rounded-lg p-1 hover:scale-[1.05] active:scale-[1.02]">
-                      <img
+                      <Image
                         src={athlete.avatar || '/images/default-avatar.png'}
                         alt={`${athlete.firstName} ${athlete.lastName}`}
-                        className="w-20 h-20 object-cover rounded-md"
+                        width={80}  
+                        height={80} 
+                        className="object-cover rounded-md w-20 h-20 object-cover rounded-md"
                       />
                     </div>
                     <span className="mt-2 text-sm font-semibold text-gray-700 text-center">

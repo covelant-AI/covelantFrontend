@@ -1,30 +1,16 @@
 'use client';
 import { useAuth } from '@/app/context/AuthContext';
 import Link from 'next/link'
-import {PlayerData} from "@/util/interfaces"
+import {PlayerDataAray} from "@/util/interfaces"
 import { useState, useEffect } from "react";
-import {profile} from "@/util/interfaces"
 import Image from 'next/image'
+import * as Sentry from "@sentry/nextjs";
 
 export default function ConnectionBox(){
-  const {user} = useAuth();  
-  const [profile, setProfile] = useState<profile>()
-
-  const [playerData, setPlayerData] = useState<PlayerData[]>([]); 
+  const {profile} = useAuth();  
+  const [playerData, setPlayerData] = useState<PlayerDataAray>(); 
   const safePlayerData = Array.isArray(playerData) ? playerData : [];
   const playerCount = safePlayerData.length;
-
-
-  useEffect(() => {
-    const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
-    const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
-
-    if (values.every((value): value is string => value !== null)) {
-      const [email, firstName, lastName, avatar, type] = values;
-      setProfile({ email, firstName, lastName, avatar, type });
-    }
-  }, [user]) 
-
 
   useEffect(() => {
     if (!profile?.type) return
@@ -38,7 +24,7 @@ export default function ConnectionBox(){
           }
         )
         const result = await res.json()
-        if (result.error) throw new Error(result.error)
+        if (result.error) Sentry.captureException(result.error)
 
         if (profile.type === 'coach') {
           setPlayerData(result.connection)
@@ -46,6 +32,7 @@ export default function ConnectionBox(){
           setPlayerData(result.connection[0].coaches)
         }
       } catch (err) {
+        Sentry.captureException(err);
         alert('Error fetching user data:')
       }
     }
@@ -98,11 +85,15 @@ export default function ConnectionBox(){
             <Link key={player.id} href={`/profile/${player.id}`}>
               <button className='cursor-pointer'>
                 <div key={player.id} className="w-12 h-12 rounded-xl overflow-hidden  active:scale-[0.9] hover:scale-[1.05]">
-                  <img
-                    src={player.avatar || "images/test.jpg"}
+                <div className="relative w-full h-full">
+                  <Image
+                    src={player.avatar || "/images/test.jpg"}
                     alt={`${player.firstName} ${player.lastName}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
+                </div>
                 </div>
               </button>
             </Link>
@@ -138,7 +129,7 @@ export default function ConnectionBox(){
         </button>
       </Link>
       </>}
-    </div> 
-  </div>  
+      </div> 
+    </div>  
   )
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/app/context/AuthContext'
 import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth'
+import { FirebaseError } from 'firebase/app';
 
 export default function SecuritySettings() {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
@@ -36,11 +37,16 @@ export default function SecuritySettings() {
       setCurrentPassword('')
       setNewPassword('')
       setRepeatPassword('')
-    } catch (error: any) {
-      if (error.code === 'auth/wrong-password') {
-        alert('Your current password is not correct')
+    } catch (error) {
+      if (error instanceof FirebaseError) { 
+        if (error.code === 'auth/wrong-password') {
+          alert('Your current password is not correct');
+        } else {
+          alert('Error updating password: ' + error.message);
+        }
       } else {
-        alert('Error updating password: ' + error.message)
+        // Handle unexpected errors
+        alert('An unexpected error occurred: ' + (error as Error).message);
       }
     }
   }

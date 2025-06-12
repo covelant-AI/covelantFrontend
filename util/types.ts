@@ -1,21 +1,45 @@
-export interface Player {
+/////////////////////////////////////////////////////////////////////////////// TYPES //////////////////////////////////////////////////////////////////////////////////////////////
+// Player type based on Prisma schema
+import { PlayerStat, PlayerMatch, Coach, OverallStats, ScorePoint, MatchMetric } from '@/generated/prisma';
+
+export type Player = {
   id: number;
   firstName: string | null;
   lastName: string | null;
   email: string;
   avatar: string | null;
   age: number | null;
-  dominantHand: string | null;
-  height: number | null;
-  Tier: string | null;
-  winRate: number | null;
-}
+  dominantHand: string;
+  height: number;
+  winRate: number;
+  stats: PlayerStat[];
 
-export type Match = {
-  id: number
-  title: string
-  imageUrl: string
-}
+  playerMatchesFirst: PlayerMatch[];
+  playerMatchesSecond: PlayerMatch[];
+  coaches: Coach[];
+  overallStats: OverallStats | null;
+
+  scorePoints: ScorePoint[];
+  matchMetrics: MatchMetric[];
+};
+
+
+export type UserData = {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  avatar?: string;
+  age?: number;
+  dominantHand?: string;
+};
+
+export type User = {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  avatar: any;
+};
 
 export type CategoryKey = "Match" | "Tactic" | "Fouls" | "Physical" | "Note";
 
@@ -67,19 +91,3 @@ export const PHYSICAL_TYPES = [
   { value: "GOOD_MOVEMENT", label: "Good Movement" },
   { value: "POOR_FOOTWORK", label: "Poor Footwork" },
 ];
-
-// types.ts
-export interface Scorer {
-  id: number;
-  firstName: string;
-  lastName: string;
-  avatar?: string;
-  type: "PLAYER" | "OPPONENT";
-}
-
-export interface EventRecord {
-  setNumber: number;
-  eventTimeSeconds: number;
-  scorer: Scorer;
-}
-

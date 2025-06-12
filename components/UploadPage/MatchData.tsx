@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react'
-import { User } from '@/util/interfaces'
-import { PlayerSelector } from './PlayerSelector'
-import { OpponentSelector } from './OpponentSelector'
+import PlayerSelector  from '@/components/InvitePage/PlayerSelector'
+import StaticPlayerDisplay from "@/components/UI/StaticPlayerDisplay"
+import OpponentSelector  from './OpponentSelector'
 import {MatchDataProps} from '@/util/interfaces'
+import { Player } from '@/util/interfaces'
+import { useAuth } from '@/app/context/AuthContext';
+
 
 export default function MatchData({ onDataChange }: MatchDataProps) {
-  const [playerOne, setPlayerOne] = useState<User | null>(null)
-  const [playerTwo, setPlayerTwo] = useState<User | null>(null)
+  const [playerOne, setPlayerOne] = useState<Player | null>(null)
+  const [playerTwo, setPlayerTwo] = useState<Player | null>(null)
   const [matchType, setMatchType] = useState('')
   const [fieldType, setFieldType] = useState('')
   const [date, setDate] = useState('')
+  const {profile} = useAuth(); 
 
   // Notify parent on any change
   useEffect(() => {
@@ -22,9 +26,9 @@ export default function MatchData({ onDataChange }: MatchDataProps) {
 
       {/* Player Selection */}
       <div className="flex justify-between gap-4 mb-4 px-4">
-        <PlayerSelector label="Your Athlete" onSelect={setPlayerOne} />
+        {profile?.type === "player" ? <StaticPlayerDisplay onSelect={setPlayerOne}/>: <PlayerSelector onSelect={setPlayerOne} />}
         <div className="flex items-center font-bold text-gray-400">VS</div>
-        <OpponentSelector label="Opponent" onSelect={setPlayerTwo} />
+        <OpponentSelector onSelect={setPlayerTwo} />
       </div>
 
       <hr className="my-4" />
@@ -36,7 +40,7 @@ export default function MatchData({ onDataChange }: MatchDataProps) {
           value={matchType}
           onChange={(e) => setMatchType(e.target.value)}
         >
-          <option value="">Match Type</option>
+          <option value="">Select Match Type</option>
           <option value="tournament">Tournament</option>
           <option value="friendly">Friendly</option>
           <option value="training">Training</option>
@@ -47,7 +51,8 @@ export default function MatchData({ onDataChange }: MatchDataProps) {
           value={fieldType}
           onChange={(e) => setFieldType(e.target.value)}
         >
-          <option value="">Hard Court</option>
+          <option value="">Select Court</option>
+          <option value="Hard Court">Hard Court</option>
           <option value="local">Clay Court</option>
           <option value="national">Grass Court</option>
           <option value="international">Carpet Court</option>

@@ -1,31 +1,12 @@
 import React, { PureComponent } from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
+import { SidePanelDashboardProps, PayloadGraph } from '@/util/interfaces';
+import {DEFAULT_STATS} from "@/util/default"
 
-type Stat = {
-  subject: string;
-  value: number;
-};
 
-type Player = {
-  stats: Stat[];
-};
-
-interface RadarGraphProps {
-  activePlayer?: Player;
-}
-
-// Default stat values if no activePlayer is provided
-const DEFAULT_STATS = [
-  { subject: "SRV", A: 0, color: "#42B6B1" },
-  { subject: "RSV", A: 0, color: "#42B6B1" },
-  { subject: "FRH", A: 0, color: "#F24B3E" },
-  { subject: "BRH", A: 0, color: "#F08C2B" },
-  { subject: "RLY", A: 0, color: "#42B6B1" },
-];
-
-export default class RadarGraph extends PureComponent<RadarGraphProps> {
+export default class RadarGraph extends PureComponent<SidePanelDashboardProps> {
   renderCustomizedLabel = (props: {
-    payload: any;
+    payload: PayloadGraph;
     x: number;
     y: number;
     cx: number;

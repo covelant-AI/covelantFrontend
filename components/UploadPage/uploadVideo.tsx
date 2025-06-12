@@ -10,9 +10,7 @@ interface UploadVideoProps {
 export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [highlight, setHighlight] = useState(false);
-  const [videoURL, setVideoURL] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
 
   const extractThumbnail = (videoFile: File, url: string): Promise<string> => {
@@ -47,7 +45,6 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
     if (file && file.type.startsWith("video/")) {
       const localUrl = URL.createObjectURL(file);
       const ProfileEmail = sessionStorage.removeItem('userEmail');
-      setVideoURL(localUrl);
       setUploadProgress(0);
     
       // Extract thumbnail first
@@ -78,9 +75,6 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
         async () => {
           const downloadVideoURL = await getDownloadURL(uploadTask2.snapshot.ref);
           const downloadThumbnailURL = await getDownloadURL(uploadTask1.snapshot.ref);
-        
-          setVideoURL(downloadVideoURL);
-          setVideoThumbnail(downloadThumbnailURL);
         
           // Call onVideoUpload once both are ready
           onVideoUpload(downloadVideoURL, downloadThumbnailURL);

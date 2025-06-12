@@ -1,26 +1,22 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useAuth } from '@/app/context/AuthContext';
+import Image from 'next/image'
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
+import {PlayerData} from "@/util/interfaces"
+import * as Sentry from "@sentry/nextjs";
 
-export default function CoachesList(){
+
+export default function ListAllAthletes(){
     const [selectedIds, setSelectedIds] = useState(new Set())
-    const {user} = useAuth();
-    
-    interface PlayerData {
-      id?: number;       
-      avatar?: string;
-      firstName?: string;
-      lastName?: string;
-      coachId?: number;   
-    }
-
     const [playerData, setPlayerData] = useState<PlayerData[]>([]);
     const safePlayerData = Array.isArray(playerData) ? playerData : [];
+    const visiblePlayers = safePlayerData.filter((p) => !selectedIds.has(p.id))
+    const {profile} = useAuth();
 
     const getUserData = async (): Promise<void> => {
       try {
-        await fetch('/api/getAllCoaches', {
+        await fetch('/api/getAllAthletes', {
           method: 'GET',
           headers: new Headers({
             'Content-Type': 'application/json',
@@ -29,28 +25,28 @@ export default function CoachesList(){
         }).then((response) => response.json())
         .then((result)=> {
           if(result.error){
-            console.error('Error fetching user data:', result.error);
+            Sentry.captureException(result.error);
           }
           setPlayerData(()=> result.data);
         })
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        Sentry.captureException(error);
       }
     };
 
-    async function handleOnSubmit(clickedPlayer:any) {
+    async function handleOnSubmit(clickedPlayer: PlayerData) {
       if (!clickedPlayer) return
     
       try {
-        const res = await fetch('/api/addCoach', {
+        const res = await fetch('/api/addPlayer', {
           method: 'POST',
-          headers: new Headers( { 'Content-Type': 'application/json' }),
-          body: JSON.stringify({ coach: clickedPlayer, email: user?.email }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ player: clickedPlayer, email: profile?.email }),
         })
     
         if (!res.ok) throw new Error('Failed to add player')
         
-        alert('Coach has been added!')
+        alert('Athlete has been added!')
         setSelectedIds((prev) => new Set(prev).add(clickedPlayer.id))
         
       } catch (error) {
@@ -59,14 +55,12 @@ export default function CoachesList(){
       }
     }
 
-    const visiblePlayers = safePlayerData.filter((p) => !selectedIds.has(p.id))
-
 
     useEffect(() => {
-      if (user) {
+      if (profile) {
         getUserData()
       }
-    }, [user]);
+    }, [profile]);
     
     return(
         <>
@@ -85,11 +79,14 @@ export default function CoachesList(){
             onClick={() => handleOnSubmit(player)}
           >
             <div className="w-20 h-20 rounded-lg bg-cyan-200 overflow-hidden mb-2 transform transition-transform duration-200 hover:scale-105 relative">
-              <img
-                src={player?.avatar}
-                alt="Athlete"
-                className="w-full h-full object-cover"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src={player?.avatar || '/images/default-avatar.png'}
+                  alt="Athlete"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
 
               {/* Overlay plus icon on hover */}
               <div className="absolute inset-0 bg-[#42B6B1] bg-opacity-100 opacity-0 hover:opacity-100 flex justify-center items-center transition-opacity rounded-lg">

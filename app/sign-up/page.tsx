@@ -3,37 +3,39 @@ import React, { useState } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/config';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'
+import * as Sentry from "@sentry/nextjs";
 
-const SignUpPage: React.FC = () => {
+export default function SignUpPage(){
   const [email, setEmail] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
   const [role, setRole] = useState<string>('');
-  const [error, setError] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
 
   const handleSubmit = async (formData: React.FormEvent) => {
     formData.preventDefault();
-
+    
     if(password !== passwordConfirm){
-      setError('Your password & confirm password do not match');
+      setErrorMessage('Your password & confirm password do not match');
       return;
     }
 
     if(!role){
-      setError('please select either Player or Coache');
+      setErrorMessage('please select either Player or Coache');
       return;
     }
 
-    setError('');
+    setErrorMessage('');
     
     try {
       const userCredential = await createUserWithEmailAndPassword(email, password);
       if (!userCredential) {
-        setError('Failed to create user.');
+        setErrorMessage('Failed to create user.');
       }
       const avatar = '/images/default-avatar.png'; // Default avatar URL
       const response = await fetch('/api/createUser', {
@@ -49,6 +51,11 @@ const SignUpPage: React.FC = () => {
 
     if (data.message === 'Player created' || data.message === 'Coach created') {
       sessionStorage.setItem('user', 'true');
+      sessionStorage.setItem('email', email);
+      sessionStorage.setItem('firstName', firstName);
+      sessionStorage.setItem('lastName', lastName);
+      sessionStorage.setItem('avatar', avatar);
+      sessionStorage.setItem('type', role);
       setEmail('');
       setPassword('');
       setRole('');
@@ -56,20 +63,27 @@ const SignUpPage: React.FC = () => {
       setLastName('');
       router.push('/');
     } else {
-      setError('Oops! Something went wrong on our end');
+      setErrorMessage('Oops! Something went wrong on our end');
     }
     } catch (error) {
-      setError('Looks like password is too easy to guess, try a more complex password');
+      Sentry.captureException(error);
+      setErrorMessage('Looks like password is too easy to guess, try a more complex password');
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8" style={{ backgroundImage: "url('/images/bg-signIn.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
   <div className="bg-[#F9F9F9] p-8 rounded-3xl shadow-lg w-full max-w-md">
-    <img src="/icons/signUp.svg" alt="Sign Up Icon" className="mx-auto h-20" />
+    <Image
+      src="/icons/signUp.svg"
+      alt="Sign Up Icon"
+      width={80}
+      height={80}
+      className="mx-auto"
+    />
     <h2 className="text-3xl font-semibold text-center text-gray-900 my-4">Sign Up</h2>
     {/* Error message */}
-        {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+        {errorMessage && <div className="text-red-500 text-center mb-4">{errorMessage}</div>}
     <form onSubmit={handleSubmit} className='py-3'>
       <span className="flex flex-row gap-4">
         <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
@@ -98,7 +112,13 @@ const SignUpPage: React.FC = () => {
         </div>
       </span>
       <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
-        <img src="/icons/mail.svg" alt="Email Icon" className="w-6 h-6 mx-3 opacity-80" />
+        <Image
+          src="/icons/mail.svg"
+          alt="Email Icon"
+          width={24}
+          height={24}
+          className="mx-3 opacity-80"
+        />
         <input
           type="email"
           id="email"
@@ -112,7 +132,13 @@ const SignUpPage: React.FC = () => {
       </div>
 
       <div className="my-4 flex items-center bg-[#F0F0F0] rounded-xl">
-        <img src="/icons/lock.svg" alt="Password Icon" className="w-6 h-6 mx-3 opacity-35" />
+        <Image
+          src="/icons/lock.svg"
+          alt="Email Icon"
+          width={24}
+          height={24}
+          className="mx-3 opacity-35"
+        />
         <input
           type="password"
           id="password"
@@ -126,10 +152,16 @@ const SignUpPage: React.FC = () => {
       </div>
 
       <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
-        <img src="/icons/lock.svg" alt="Password Icon" className="w-6 h-6 mx-3 opacity-35" />
+        <Image
+          src="/icons/lock.svg"
+          alt="Password Icon"
+          width={24}
+          height={24}
+          className="mx-3 opacity-35"
+        />
         <input
           type="password"
-          id="password"
+          id="password2"
           name="password"
           value={passwordConfirm}
           onChange={(e) => setPasswordConfirm(e.target.value)}
@@ -186,4 +218,3 @@ const SignUpPage: React.FC = () => {
   );
 };
 
-export default SignUpPage;

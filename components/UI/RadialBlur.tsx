@@ -1,13 +1,4 @@
-export interface RadialBlurBgProps {
-    background: string;
-    width: string;
-    height: string;
-    rotate: string;
-    top?: number | string;
-    left?: number | string;
-    bottom?: number;
-    right?: number;
-}
+import {RadialBlurBgProps} from '@/util/interfaces'
 
 export default function RadialBlurBg({ width, height, rotate, top, left, bottom, right, background }: RadialBlurBgProps) {
     return (

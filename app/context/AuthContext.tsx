@@ -1,11 +1,20 @@
 'use client';
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, updatePassword, User as FirebaseUser } from 'firebase/auth';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import {Profile} from "@/util/interfaces"
+
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  User as FirebaseUser,
+} from 'firebase/auth';
 import { auth } from '../firebase/config';
 
-interface AuthContextType {
+export interface AuthContextType {
   user: FirebaseUser | null;
   loading: boolean;
+  profile: Profile | null;
   signIn: () => Promise<void>;
   logOut: () => Promise<void>;
 }
@@ -14,103 +23,102 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// --- Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// --- Provider
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
-  async function fetchUserType(email: string): Promise<string | undefined> {
+  const fetchUserType = useCallback(async (email: string) => {
     try {
-      const res = await fetch(`/api/getUser?email=${encodeURIComponent(email)}`, {
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      });
+      const res = await fetch(`/api/getUser?email=${encodeURIComponent(email)}`);
       const result = await res.json();
 
-      sessionStorage.setItem('firstName', result.data.firstName);
-      sessionStorage.setItem('lastName', result.data.lastName);
-      sessionStorage.setItem('avatar', result.data.avatar);
+      const { firstName, lastName, avatar } = result.data;
+      sessionStorage.setItem('email', email);
+      sessionStorage.setItem('firstName', firstName);
+      sessionStorage.setItem('lastName', lastName);
+      sessionStorage.setItem('avatar', avatar);
 
+      let type = '';
       if (result.message === 'Player Data') {
-        sessionStorage.setItem('type', 'player');
-        return 'player';
+        type = 'player';
+      } else if (result.message === 'Coach Data') {
+        type = 'coach';
       }
-      if (result.message === 'Coach Data') {
-        sessionStorage.setItem('type', 'coach');
-        return 'coach';
-      }
+      sessionStorage.setItem('type', type);
+      return { firstName, lastName, avatar, type };
     } catch (error) {
       console.error('Error fetching user data:', error);
+      return null;
     }
-  }
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setLoading(true);
       if (currentUser) {
-        sessionStorage.setItem('userEmail', currentUser.email ?? '');
+        let email = currentUser.email;
+        if(!email) email = "Coach@covelant.com"  
         setUser(currentUser);
-        setLoading(true);
-        const userType = await fetchUserType(currentUser.email ?? '');
-        setLoading(false);
-      } else {
-        sessionStorage.removeItem('userEmail');
-        sessionStorage.removeItem('firstName');
-        sessionStorage.removeItem('lastName');
-        sessionStorage.removeItem('avatar');
-        sessionStorage.removeItem('type');
-        setUser(null);
-        setLoading(false);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
 
-  const signIn = async () => {
+        const fetched = await fetchUserType(email);
+        if (fetched) {
+          setProfile({ email, ...fetched });
+        }
+      } else {
+        sessionStorage.clear();
+        setUser(null);
+        setProfile(null);
+      }
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, [fetchUserType]);
+
+  const signIn = useCallback(async () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const currentUser = result.user;
-      sessionStorage.setItem('userEmail', currentUser.email ?? '');
-      setUser(currentUser);
+      const email = currentUser.email ?? '';
+      sessionStorage.setItem('email', email);
+
+      const fetched = await fetchUserType(email);
+      if (fetched) {
+        setProfile({ email, ...fetched });
+        setUser(currentUser);
+      }
     } catch (error) {
       console.error('Sign in failed:', error);
     }
-  };
+  }, [fetchUserType]);
 
-  const logOut = async () => {
+  const logOut = useCallback(async () => {
     try {
-      sessionStorage.removeItem('userEmail');
-      sessionStorage.removeItem('firstName');
-      sessionStorage.removeItem('lastName');
-      sessionStorage.removeItem('avatar');
-      sessionStorage.removeItem('type');
+      sessionStorage.clear();
       setUser(null);
+      setProfile(null);
       await signOut(auth);
     } catch (error) {
       console.error('Sign out error:', error);
     }
-  };
-
+  }, []);
 
   return (
-    <AuthContext.Provider value={{
-        user,
-        loading,
-        signIn,
-        logOut,
-      }}
-    >
+    <AuthContext.Provider value={{ user, loading, profile, signIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
+// --- Hook
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }
-
 
