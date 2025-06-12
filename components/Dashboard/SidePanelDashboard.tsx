@@ -28,7 +28,7 @@ export default function SidePanelDashboard({ activePlayer }: SidePanelDashboardP
 
       const result = await response.json();
       if (!result.success) {
-        console.error('Error fetching matchOutcome data:', result.error); // add loading here but later---------------------------
+        Sentry.captureException(result); // add loading here but later---------------------------
       }
       setWinOutcome(() => result.data);
     } catch (error) {

@@ -23,7 +23,7 @@ export default function StaticPlayerDisplay({onSelect}: PlayerSelectorProps){
           })
           .catch((err) => Sentry.captureException(err))
   
-      }, [profile, onSelect, userData])
+      }, [])
 
     return(
       <div className="flex-1 border border-gray-200 rounded-xl flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 relative">
