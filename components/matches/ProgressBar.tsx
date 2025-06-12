@@ -148,7 +148,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           <div
             onMouseMove={e => e.stopPropagation()}
             className="absolute top-8 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-lg px-3 py-2 flex flex-col space-y-1 shadow-lg max-w-xs"
-            style={{ left: `calc(${(localMarks[openIndex].offsetSeconds / duration) * 100}% - 0px)` }}
+            style={{ left: `calc(${(localMarks[openIndex].offsetSeconds / duration) * 100}% - 6px)` }}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">

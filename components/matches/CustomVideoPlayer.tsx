@@ -91,7 +91,7 @@ export default function CustomVideoPlayer({
           case "PHYSICAL":
             label = m.physicalType!;
             break;
-          case "NOTE":         // your new comment‐category
+          case "NOTE":         
             label = m.noteType ;
             break;
         }

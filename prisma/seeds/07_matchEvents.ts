@@ -33,7 +33,7 @@ export async function seedMatchEvents() {
       category: EventCategory.MATCH,
       matchType: MatchEventType.FIRST_SERVE,
       condition: ConditionType.FOCUSED,
-      comment: "great Job",
+      comment: "AI: Excelent start to the game",
       eventTimeSeconds: 10.0,
     }});
 
@@ -41,9 +41,9 @@ export async function seedMatchEvents() {
     await prisma.matchEvent.create({ data: {
       matchId,
       category: EventCategory.TACTIC,
-      tacticType: TacticEventType.BASELINE_RALLY,
+      tacticType: TacticEventType.DROP_SHOT,
       condition: ConditionType.CONFIDENT,
-      comment: "great Job2",
+      comment: "AI: Your opponent's positioning and superior sprinting ability allow him to reach the ball in time.",
       eventTimeSeconds: 14.0,
     }});
 
@@ -53,7 +53,7 @@ export async function seedMatchEvents() {
       category: EventCategory.FOULS,
       foulType: FoulsEventType.NET_TOUCH,
       condition: ConditionType.UNDER_PRESSURE,
-      comment: "great Job3",
+      comment: "AI: You attempted to drop shot the ball in a similar manner as before but failed due to improper positioning. Advise to avoid sharp angle drop shots against this opponent",
       eventTimeSeconds: 46.5,
     }});
 
@@ -62,18 +62,18 @@ export async function seedMatchEvents() {
       matchId,
       category: EventCategory.PHYSICAL,
       physicalType: PhysicalEventType.FATIGUE_SIGN,
-      condition: ConditionType.FATIGUE_SIGNS,
-      comment: "great Job4",      
-      eventTimeSeconds: 110.2,
+      condition: ConditionType.CLUTCH_PLAY,
+      comment: "AI: you seam to exhibit signs of injury",      
+      eventTimeSeconds: 117.2,
     }});
 
     // NOTE event: GENERAL
     await prisma.matchEvent.create({ data: {
       matchId,
       category: EventCategory.NOTE,
-      noteType: NoteEventType.GENERAL,
+      noteType: NoteEventType.IMPORTANT,
       condition: ConditionType.FOCUSED,
-      comment: "great Job5",      
+      comment: "AI: I would recommend you watch this sequence for further analysis",      
       eventTimeSeconds: 105.0,
     }});
   }
