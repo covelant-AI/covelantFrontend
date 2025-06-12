@@ -12,6 +12,7 @@ import RadialBlurBg from '@/components/UI/RadialBlur'
 export default function EditProfile(){
     const [activePage, setActivePage] = useState('Profile Settings')
     
+    
     return(
         <>
         <NavBar />

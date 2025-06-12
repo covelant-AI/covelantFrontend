@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Profile } from '@/util/interfaces'
 import { storage, ref, uploadBytesResumable, getDownloadURL } from '@/app/firebase/config';
 import Image from 'next/image';
+import { useAuth } from '@/app/context/AuthContext';
 import * as Sentry from "@sentry/nextjs";
 
 export default function ProfileSettings() {
   const [loading, setLoading] = useState(true)
-  const [profile, setProfile] = useState<Profile>()
+  const { profile } = useAuth();
   
 
   // Extend form to include avatar
@@ -23,18 +24,6 @@ export default function ProfileSettings() {
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // 1. Load session profile ONCE on mount
-  useEffect(() => {
-    const keys: (keyof Storage)[] = ['userEmail', 'firstName', 'lastName', 'avatar', 'type'];
-    const values: (string | null)[] = keys.map((key) => sessionStorage.getItem(String(key)));
-
-    if (values.every((value): value is string => value !== null)) {
-      const [email, firstName, lastName, avatar, type] = values;
-      setProfile({ email, firstName, lastName, avatar, type });
-    } else {
-      setLoading(false)
-    }
-  }, [])
 
   // 2. Once we have a profile.email, fetch the rest of the user data
   useEffect(() => {
