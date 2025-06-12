@@ -1,8 +1,8 @@
 "use client";
-import React, { useRef, useState, useEffect, useMemo, MouseEvent} from "react";
-import {CustomVideoPlayerProps, MatchEventData} from "@/util/interfaces"
-import {COLOR_MAP,ICON_MAP} from "@/util/default"
-import Image from "next/image"
+import React, { useRef, useState, useEffect, useMemo, MouseEvent } from "react";
+import { CustomVideoPlayerProps, MatchEventData } from "@/util/interfaces";
+import { COLOR_MAP, ICON_MAP } from "@/util/default";
+import Image from "next/image";
 
 export default function CustomVideoPlayer({
   src,
@@ -20,11 +20,18 @@ export default function CustomVideoPlayer({
   const [duration, setDuration] = useState(durationOverride || 0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+  // <-- NEW: which diamond is “open” (showing full comment) -->
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const toggleOpen = (i: number) =>
+    setOpenIndex((prev) => (prev === i ? null : i));
+
   // 1) Load metadata + time updates
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    const onLoaded = () => { if (!durationOverride) setDuration(v.duration); };
+    const onLoaded = () => {
+      if (!durationOverride) setDuration(v.duration);
+    };
     const onTime = () => {
       const t = v.currentTime;
       setCurrentTime(t);
@@ -45,8 +52,13 @@ export default function CustomVideoPlayer({
   const togglePlay = () => {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) { v.play(); setIsPlaying(true); }
-    else        { v.pause(); setIsPlaying(false); }
+    if (v.paused) {
+      v.play();
+      setIsPlaying(true);
+    } else {
+      v.pause();
+      setIsPlaying(false);
+    }
   };
 
   // 3) Seek
@@ -61,26 +73,37 @@ export default function CustomVideoPlayer({
   const toggleFullscreen = () => {
     const c = containerRef.current;
     if (!c) return;
-    if (!document.fullscreenElement) c.requestFullscreen().then(() => setIsPlaying(true));
+    if (!document.fullscreenElement)
+      c.requestFullscreen().then(() => setIsPlaying(true));
     else document.exitFullscreen().then(() => setIsPlaying(false));
   };
 
-
-  // 5) Convert DB markers to { offsetSeconds, color, label, lablePath }
+  // 5) Convert DB markers to { offsetSeconds, color, label, lablePath, commentText }
   const marksWithOffsets = useMemo(() => {
     return (markers as MatchEventData[])
       .map((m) => {
         const offsetSeconds = m.eventTimeSeconds;
         if (typeof offsetSeconds !== "number") return null;
 
-        // 2) label = the subtype or, for comments, the comment text
+        // label = the subtype or (for comments) the comment title
         let label = "";
         switch (m.category) {
-          case "MATCH":    label = m.matchType!; break;
-          case "TACTIC":   label = m.tacticType!; break;
-          case "FOULS":    label = m.foulType!; break;
-          case "PHYSICAL": label = m.physicalType!; break;
-          case "COMMENT":  label = m.commentText || m.comment || ""; break;
+          case "MATCH":
+            label = m.matchType!;
+            break;
+          case "TACTIC":
+            label = m.tacticType!;
+            break;
+          case "FOULS":
+            label = m.foulType!;
+            break;
+          case "PHYSICAL":
+            label = m.physicalType!;
+            break;
+          case "COMMENT":
+            // if you have a separate “title” for COMMENT, put it here
+            label = m.comment || "Note";
+            break;
         }
 
         return {
@@ -88,19 +111,27 @@ export default function CustomVideoPlayer({
           color: COLOR_MAP[m.category] || "#9CA3AF",
           label,
           lablePath: ICON_MAP[m.category] || ICON_MAP.COMMENT,
+          // this is the body text we want to show when expanded:
+          commentText: m.comment || m.commentText || "",
         };
       })
-      .filter((x): x is {
-        offsetSeconds: number;
-        color: string;
-        label: string;
-        lablePath: string;
-      } => x !== null);
+      .filter(
+        (x): x is {
+          offsetSeconds: number;
+          color: string;
+          label: string;
+          lablePath: string;
+          commentText: string;
+        } => x !== null
+      );
   }, [markers]);
 
   // 6) Hover detection
   const onProgressMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!progressContainerRef.current || duration <= 0) { setHoveredIndex(null); return; }
+    if (!progressContainerRef.current || duration <= 0) {
+      setHoveredIndex(null);
+      return;
+    }
     const rect = progressContainerRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const barW = rect.width;
@@ -114,12 +145,26 @@ export default function CustomVideoPlayer({
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
   return (
-  <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
+    <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
       {/* VIDEO */}
-      <div ref={containerRef} className="relative bg-black rounded-t-2xl overflow-hidden pt-[56.25%]">
-        <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-contain" preload="metadata" controls={false} />
-        <div className="absolute top-2 left-3 bg-black bg-opacity-60 px-2 py-1 rounded text-white text-sm font-bold pointer-events-none">#WTT Macao</div>
-        <div className="absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded" onClick={toggleFullscreen}>
+      <div
+        ref={containerRef}
+        className="relative bg-black rounded-t-2xl overflow-hidden pt-[56.25%]"
+      >
+        <video
+          ref={videoRef}
+          src={src}
+          className="absolute inset-0 w-full h-full object-contain"
+          preload="metadata"
+          controls={false}
+        />
+        <div className="absolute top-2 left-3 bg-black bg-opacity-60 px-2 py-1 rounded text-white text-sm font-bold pointer-events-none">
+          #WTT Macao
+        </div>
+        <div
+          className="absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded"
+          onClick={toggleFullscreen}
+        >
           <span className="text-white text-lg">⛶</span>
         </div>
       </div>
@@ -148,36 +193,71 @@ export default function CustomVideoPlayer({
           {marksWithOffsets.map((m, i) => (
             <div
               key={i}
-              className="absolute w-[12px] h-[12px] transform rotate-45 rounded-sm border border-black"
+              onClick={() => toggleOpen(i)}
+              className={`absolute w-[12px] h-[12px] transform rotate-45 rounded-sm border ${
+                openIndex === i
+                  ? "border-yellow-600 bg-yellow-200 cursor-pointer"
+                  : "border-black"
+              }`}
               style={{
                 left: `calc(${(m.offsetSeconds / duration) * 100}% - 6px)`,
                 top: "-2px",
-                backgroundColor: m.color,
-                maskSize: "cover",
-                WebkitMaskSize: "cover",
+                backgroundColor:
+                  openIndex === i ? "#FEF3C7" : m.color /* gold vs normal */,
+                transition: "background-color 0.2s, border-color 0.2s",
               }}
-              aria-hidden
             />
           ))}
 
-          {/* Tooltip */}
-          {hoveredIndex !== null && (
+          {/* Hover tooltip */}
+          {hoveredIndex !== null && openIndex !== hoveredIndex && (
             <div
               className="absolute top-7 left-0 transform -translate-x-1/2 bg-white border-2 border-teal-600 rounded-full px-4 py-2 flex items-center space-x-2 shadow-lg"
               style={{
-                left: `calc(${(marksWithOffsets[hoveredIndex].offsetSeconds / duration) * 100}% - 0px)`,
+                left: `calc(${
+                  (marksWithOffsets[hoveredIndex].offsetSeconds / duration) * 100
+                }% - 0px)`,
               }}
             >
               <Image
                 src={marksWithOffsets[hoveredIndex].lablePath}
                 alt=""
-                width={16} 
-                height={16} 
+                width={16}
+                height={16}
                 className="flex-shrink-0"
               />
               <span className="text-sm font-medium text-black">
                 {marksWithOffsets[hoveredIndex].label}
               </span>
+            </div>
+          )}
+
+          {/* Expanded bubble */}
+          {openIndex !== null && (
+            <div
+              className="absolute top-8 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-lg px-3 py-2 flex flex-col space-y-1 shadow-lg max-w-xs"
+              style={{
+                left: `calc(${
+                  (marksWithOffsets[openIndex].offsetSeconds / duration) * 100
+                }% - 0px)`,
+              }}
+            >
+              <div className="flex items-center space-x-2">
+                <Image
+                  src={marksWithOffsets[openIndex].lablePath}
+                  alt=""
+                  width={16}
+                  height={16}
+                />
+                <span className="text-sm font-semibold text-black">
+                  {marksWithOffsets[openIndex].label}
+                </span>
+              </div>
+              {marksWithOffsets[openIndex].commentText && (
+                <p className="text-xs text-gray-700">
+                  {marksWithOffsets[openIndex].commentText}
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -190,7 +270,5 @@ export default function CustomVideoPlayer({
         </div>
       </div>
     </div>
-    
   );
 }
-

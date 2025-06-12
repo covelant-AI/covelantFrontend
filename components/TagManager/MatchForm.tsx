@@ -21,7 +21,7 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
       matchType,
       eventTimeSeconds: parseTimeToSeconds(eventTime),
       condition,
-      comment,
+      commentText: comment,
     };
 
       fetch('/api/createTag', {
