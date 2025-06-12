@@ -112,42 +112,50 @@ export default function ProfileSettings() {
     }
   }
 
-  // Change picture handler (opens file picker)
-  const handleChangePicture = () => {
-    fileInputRef.current?.click()
-  }
+const handleChangePicture = () => {
+  fileInputRef.current?.click();
+};
 
-  // When file selected
-  const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file || !profile?.type) return;
+// When file selected
+const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file || !profile?.type) return;
 
-    // Optional: Preview local avatar immediately
-    const localUrl = URL.createObjectURL(file);
-    setForm((prev) => ({ ...prev, avatar: localUrl }));
+  // Optional: Preview local avatar immediately
+  const localUrl = URL.createObjectURL(file);
+  setForm((prev) => ({ ...prev, avatar: localUrl }));
 
-    try {
-      // Upload avatar to Firebase Storage
-      const avatarRef = ref(storage, `avatars/${profile.email}_${Date.now()}_${file.name}`);
-      const uploadTask = uploadBytesResumable(avatarRef, file);
-
-      uploadTask.on(
-        'state_changed',
-        (error) => {
-          console.error('Avatar upload failed:', error);
-          alert('Failed to upload avatar image');
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          // Update form with the Firebase avatar URL
-          setForm((prev) => ({ ...prev, avatar: downloadURL }));
-        }
-      );
-    } catch (error) {
-      console.error(error);
+  try {
+    // Validate the file type (e.g., only accept images)
+    if (!file.type.startsWith('image/')) {
+      console.error('Selected file is not an image.');
+      return;
     }
-  };
 
+    const avatarRef = ref(storage, `avatars/${profile.email}_${Date.now()}_${file.name}`);
+    const uploadTask = uploadBytesResumable(avatarRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        // Optionally handle progress here (e.g., showing a progress bar)
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+      },
+      (error) => {
+        console.error('Avatar upload failed:', error);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        setForm((prev) => ({ ...prev, avatar: downloadURL }));
+        // Clean up the local object URL after the upload
+        URL.revokeObjectURL(localUrl);
+      }
+    );
+  } catch (error) {
+    console.error('Error during file upload:', error);
+  }
+};
 
   if (loading) return <p className="text-center mt-10">Loading...</p>
 
