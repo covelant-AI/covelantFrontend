@@ -25,10 +25,7 @@ model Player {
   coaches             Coach[]       @relation("CoachPlayers")
   overallStats        OverallStats?
 
-  /// NEW: points this player scored
-  scorePoints ScorePoint[]
-
-  /// NEW: metric readings for this player (only used for player‐specific metrics)
+  scorePoints  ScorePoint[]
   matchMetrics MatchMetric[]
 }
 
@@ -81,11 +78,8 @@ model Match {
 
   events        MatchEvent[]
 
-  /// NEW: all point events for this match
-  scorePoints ScorePoint[]
-
-  /// NEW: all metric events tied to this match
-  matchMetrics MatchMetric[]
+  scorePoints   ScorePoint[]
+  matchMetrics  MatchMetric[]
 }
 
 model StatMatch {
@@ -98,7 +92,7 @@ model Opponent {
   firstName     String
   lastName      String
   playerMatches PlayerMatch[]
-  scorePoints   ScorePoint[]      // ← back‐relation
+  scorePoints   ScorePoint[]
 }
 
 model PlayerMatch {
@@ -107,35 +101,29 @@ model PlayerMatch {
   result       String
   match        Match     @relation(fields: [matchId], references: [id])
 
-  // First player slot
   playerId     Int?
   player       Player?   @relation("PlayerMatch_First", fields: [playerId], references: [id])
 
-  // Second player slot (for player-vs-player)
   playerTwoId  Int?
   playerTwo    Player?   @relation("PlayerMatch_Second", fields: [playerTwoId], references: [id])
 
-  // Opponent slot (for player-vs-opponent)
   opponentId   Int?
   opponent     Opponent? @relation(fields: [opponentId], references: [id])
 
-  /// Enforce uniqueness per “mode”:
-  @@unique([matchId, playerId, playerTwoId])   // no two identical P-vs-P rows
-  @@unique([matchId, playerId, opponentId])    // no two identical P-vs-O rows
+  @@unique([matchId, playerId, playerTwoId])
+  @@unique([matchId, playerId, opponentId])
 }
 
-/// New enums:
-
-/// Defines which category this event belongs to.
+/// Event categories
 enum EventCategory {
   MATCH
   TACTIC
   FOULS
   PHYSICAL
-  COMMENT
+  NOTE
 }
 
-/// “type” values for the MATCH category.
+/// MATCH event types
 enum MatchEventType {
   FIRST_SERVE
   SECOND_SERVE
@@ -146,7 +134,7 @@ enum MatchEventType {
   START_OF_SET
 }
 
-/// “type” values for the TACTIC category.
+/// TACTIC event types
 enum TacticEventType {
   SERVE_VOLLEY
   BASELINE_RALLY
@@ -157,7 +145,7 @@ enum TacticEventType {
   OPPONENT_PULLED_WIDE
 }
 
-/// “type” values for the FOULS category.
+/// FOULS event types
 enum FoulsEventType {
   UNFORCED_ERROR
   FORCED_ERROR
@@ -167,7 +155,7 @@ enum FoulsEventType {
   RACKET_VIOLATION
 }
 
-/// “type” values for the PHYSICAL category.
+/// PHYSICAL event types
 enum PhysicalEventType {
   FATIGUE_SIGN
   SLOW_RECOVERY
@@ -176,7 +164,7 @@ enum PhysicalEventType {
   POOR_FOOTWORK
 }
 
-/// Shared “condition” for MATCH, TACTIC, FOULS, PHYSICAL categories.
+/// Shared condition across all categories
 enum ConditionType {
   UNDER_PRESSURE
   CONFIDENT
@@ -187,19 +175,29 @@ enum ConditionType {
   FATIGUE_SIGNS
 }
 
+/// NOTE event types
+enum NoteEventType {
+  GENERAL
+  GREAT
+  POOR
+  IMPORTANT
+}
+
+/// Points scored in matches
 model ScorePoint {
-  id               Int         @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   matchId          Int
-  match            Match       @relation(fields: [matchId], references: [id])
+  match            Match     @relation(fields: [matchId], references: [id])
   playerId         Int?
-  player           Player?     @relation(fields: [playerId], references: [id])
+  player           Player?   @relation(fields: [playerId], references: [id])
   opponentId       Int?
-  opponent         Opponent?   @relation(fields: [opponentId], references: [id])
+  opponent         Opponent? @relation(fields: [opponentId], references: [id])
   setNumber        Int
-  gamePoint         Int        @default(0)
-  matchPoint       Int         @default(0)
+  gamePoint        Int       @default(0)
+  matchPoint       Int       @default(0)
   eventTimeSeconds Int
-  createdAt        DateTime    @default(now())
+  createdAt        DateTime  @default(now())
+
   @@index([matchId])
   @@index([playerId])
   @@index([opponentId])
@@ -209,20 +207,11 @@ model MatchMetric {
   id               Int        @id @default(autoincrement())
   matchId          Int
   match            Match      @relation(fields: [matchId], references: [id])
-
-  /// Which player this metric is for (nullable for match‐wide metrics like longest rally)
-  playerId         Int?       
+  playerId         Int?
   player           Player?    @relation(fields: [playerId], references: [id])
-
-  /// What kind of metric this is
   metricType       MetricType
-
-  /// Numeric value (e.g. 138.5 for km/h, 52 for seconds…)
   value            Float
-
-  /// Seconds from the video start when this measurement was taken
   eventTimeSeconds Int
-
   createdAt        DateTime   @default(now())
 
   @@index([matchId])
@@ -230,16 +219,15 @@ model MatchMetric {
   @@index([metricType])
 }
 
-/// What kinds of metrics we record
 enum MetricType {
-  BALL_SPEED       // ball speed in km/h
-  PLAYER_SPEED     // player movement speed in km/h
-  LONGEST_RALLY    // rally duration in seconds
-  STRIKES_EFF      // strikes per rally (hits/rally)
+  BALL_SPEED
+  PLAYER_SPEED
+  LONGEST_RALLY
+  STRIKES_EFF
   NOTE
 }
 
-/// New model that stores any of the five categories in one table:
+/// Unified event table
 model MatchEvent {
   id               Int               @id @default(autoincrement())
   matchId          Int
@@ -247,32 +235,26 @@ model MatchEvent {
   category         EventCategory
   comment          String?
 
-  /// If category = MATCH, this field may be set (else remains null)
+  // MATCH
   matchType        MatchEventType?
-
-  /// If category = TACTIC, this field may be set (else remains null)
+  // TACTIC
   tacticType       TacticEventType?
-
-  /// If category = FOULS, this field may be set (else remains null)
+  // FOULS
   foulType         FoulsEventType?
-
-  /// If category = PHYSICAL, this field may be set (else remains null)
+  // PHYSICAL
   physicalType     PhysicalEventType?
+  // NOTE
+  noteType         NoteEventType?
 
-  /// If category = COMMENT, store the user’s free‐text comment here (else remains null)
-  commentText      String?
-
-  /// For MATCH, TACTIC, FOULS, PHYSICAL: store one of the ConditionType values. Null if category = COMMENT
+  // Shared condition across all categories
   condition        ConditionType?
 
-  /// The timestamp (in seconds from video start) at which this event occurred
   eventTimeSeconds Float
-
-  /// When this event was created
   createdAt        DateTime          @default(now())
 
   @@index([matchId, category])
 }
+
 
 
 

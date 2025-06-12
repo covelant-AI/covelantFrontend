@@ -1,8 +1,8 @@
 "use client";
 import React, { useRef, useState, useEffect, useMemo, MouseEvent } from "react";
+import { ProgressBar } from "./ProgressBar";
 import { CustomVideoPlayerProps, MatchEventData } from "@/util/interfaces";
 import { COLOR_MAP, ICON_MAP } from "@/util/default";
-import Image from "next/image";
 
 export default function CustomVideoPlayer({
   src,
@@ -14,16 +14,13 @@ export default function CustomVideoPlayer({
   const progressRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressContainerRef = useRef<HTMLDivElement>(null);
-
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(durationOverride || 0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  // <-- NEW: which diamond is “open” (showing full comment) -->
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const toggleOpen = (i: number) =>
-    setOpenIndex((prev) => (prev === i ? null : i));
+
+  
+  const toggleOpen = (i: number) => setOpenIndex((prev) => (prev === i ? null : i));
 
   // 1) Load metadata + time updates
   useEffect(() => {
@@ -34,7 +31,6 @@ export default function CustomVideoPlayer({
     };
     const onTime = () => {
       const t = v.currentTime;
-      setCurrentTime(t);
       if (progressRef.current && duration > 0) {
         progressRef.current.value = ((t / duration) * 100).toString();
       }
@@ -52,13 +48,8 @@ export default function CustomVideoPlayer({
   const togglePlay = () => {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) {
-      v.play();
-      setIsPlaying(true);
-    } else {
-      v.pause();
-      setIsPlaying(false);
-    }
+    if (v.paused) { v.play(); setIsPlaying(true); }
+    else        { v.pause(); setIsPlaying(false); }
   };
 
   // 3) Seek
@@ -78,14 +69,14 @@ export default function CustomVideoPlayer({
     else document.exitFullscreen().then(() => setIsPlaying(false));
   };
 
-  // 5) Convert DB markers to { offsetSeconds, color, label, lablePath, commentText }
+  // 5) Convert DB markers to include `comment`
   const marksWithOffsets = useMemo(() => {
     return (markers as MatchEventData[])
       .map((m) => {
         const offsetSeconds = m.eventTimeSeconds;
         if (typeof offsetSeconds !== "number") return null;
 
-        // label = the subtype or (for comments) the comment title
+        // title label
         let label = "";
         switch (m.category) {
           case "MATCH":
@@ -100,28 +91,30 @@ export default function CustomVideoPlayer({
           case "PHYSICAL":
             label = m.physicalType!;
             break;
-          case "COMMENT":
-            // if you have a separate “title” for COMMENT, put it here
-            label = m.comment || "Note";
+          case "NOTE":         // your new comment‐category
+            label = m.noteType ;
             break;
         }
 
         return {
+          id: m.id, 
           offsetSeconds,
           color: COLOR_MAP[m.category] || "#9CA3AF",
           label,
           lablePath: ICON_MAP[m.category] || ICON_MAP.COMMENT,
-          // this is the body text we want to show when expanded:
-          commentText: m.comment || m.commentText || "",
+          condition: m.condition,
+          comment: m.comment || "",
         };
       })
       .filter(
         (x): x is {
+          id:number;
           offsetSeconds: number;
           color: string;
           label: string;
           lablePath: string;
-          commentText: string;
+          condition: "UNDER_PRESSURE" | "CONFIDENT" | "FOCUSED" | "LOST_FOCUS" | "MOMENTUM_SHIFT" | "CLUTCH_PLAY" | "FATIGUE_SIGNS";
+          comment: string;
         } => x !== null
       );
   }, [markers]);
@@ -158,8 +151,8 @@ export default function CustomVideoPlayer({
           preload="metadata"
           controls={false}
         />
-        <div className="absolute top-2 left-3 bg-black bg-opacity-60 px-2 py-1 rounded text-white text-sm font-bold pointer-events-none">
-          #WTT Macao
+        <div className="absolute top-2 left-3 bg-black bg-opacity-60 px-2 py-1 rounded-xl text-white text-sm font-bold pointer-events-none">
+          Covelant Tech
         </div>
         <div
           className="absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded"
@@ -169,106 +162,23 @@ export default function CustomVideoPlayer({
         </div>
       </div>
 
-      {/* CONTROLS */}
-      <div className="bg-white rounded-b-2xl flex items-center px-3 py-2 gap-3 bg-[#D4EBEA]">
-        <button onClick={togglePlay} className="text-black text-lg">
-          {isPlaying ? "❚❚" : "►"}
-        </button>
+      {/* VIDEO & TAG CONTROLS */}
+      <ProgressBar
+        duration={duration}
+        marks={marksWithOffsets}
+        progressRef={progressRef}
+        progressContainerRef={progressContainerRef}
+        hoveredIndex={hoveredIndex}
+        openIndex={openIndex}
+        onSeek={onSeek}
+        onProgressMouseMove={onProgressMouseMove}
+        onProgressMouseLeave={onProgressMouseLeave}
+        toggleOpen={toggleOpen}
+        isPlaying={isPlaying}
+        togglePlay={togglePlay}
+      />
 
-        <div
-          ref={progressContainerRef}
-          className="relative flex-1 h-2 flex items-center"
-          onMouseMove={onProgressMouseMove}
-          onMouseLeave={onProgressMouseLeave}
-        >
-          <input
-            type="range"
-            ref={progressRef}
-            defaultValue={0}
-            onChange={onSeek}
-            className="w-full h-1 bg-gray-700 rounded outline-none cursor-pointer accent-green-500"
-          />
-
-          {/* Diamonds */}
-          {marksWithOffsets.map((m, i) => (
-            <div
-              key={i}
-              onClick={() => toggleOpen(i)}
-              className={`absolute w-[12px] h-[12px] transform rotate-45 rounded-sm border ${
-                openIndex === i
-                  ? "border-yellow-600 bg-yellow-200 cursor-pointer"
-                  : "border-black"
-              }`}
-              style={{
-                left: `calc(${(m.offsetSeconds / duration) * 100}% - 6px)`,
-                top: "-2px",
-                backgroundColor:
-                  openIndex === i ? "#FEF3C7" : m.color /* gold vs normal */,
-                transition: "background-color 0.2s, border-color 0.2s",
-              }}
-            />
-          ))}
-
-          {/* Hover tooltip */}
-          {hoveredIndex !== null && openIndex !== hoveredIndex && (
-            <div
-              className="absolute top-7 left-0 transform -translate-x-1/2 bg-white border-2 border-teal-600 rounded-full px-4 py-2 flex items-center space-x-2 shadow-lg"
-              style={{
-                left: `calc(${
-                  (marksWithOffsets[hoveredIndex].offsetSeconds / duration) * 100
-                }% - 0px)`,
-              }}
-            >
-              <Image
-                src={marksWithOffsets[hoveredIndex].lablePath}
-                alt=""
-                width={16}
-                height={16}
-                className="flex-shrink-0"
-              />
-              <span className="text-sm font-medium text-black">
-                {marksWithOffsets[hoveredIndex].label}
-              </span>
-            </div>
-          )}
-
-          {/* Expanded bubble */}
-          {openIndex !== null && (
-            <div
-              className="absolute top-8 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-lg px-3 py-2 flex flex-col space-y-1 shadow-lg max-w-xs"
-              style={{
-                left: `calc(${
-                  (marksWithOffsets[openIndex].offsetSeconds / duration) * 100
-                }% - 0px)`,
-              }}
-            >
-              <div className="flex items-center space-x-2">
-                <Image
-                  src={marksWithOffsets[openIndex].lablePath}
-                  alt=""
-                  width={16}
-                  height={16}
-                />
-                <span className="text-sm font-semibold text-black">
-                  {marksWithOffsets[openIndex].label}
-                </span>
-              </div>
-              {marksWithOffsets[openIndex].commentText && (
-                <p className="text-xs text-gray-700">
-                  {marksWithOffsets[openIndex].commentText}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="text-black text-xs whitespace-nowrap">
-          {Math.floor(currentTime / 60)}:
-          {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
-          {Math.floor(duration / 60)}:
-          {String(Math.floor(duration % 60)).padStart(2, "0")}
-        </div>
-      </div>
     </div>
   );
 }
+

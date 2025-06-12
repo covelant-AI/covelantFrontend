@@ -32,7 +32,6 @@ export default function MainPreformanceTracker({
 
 
     if (res.ok) {
-      console.log(json.data.ballSpeeds)
       setBallSpeeds(json.data.ballSpeeds);
       setPlayerSpeeds(json.data.playerSpeeds);
       setLongestRallies(json.data.longestRallies);

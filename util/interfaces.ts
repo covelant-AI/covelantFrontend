@@ -145,7 +145,7 @@ export interface RadialBlurBgProps {
 export interface MatchEventData {
   id: number;
   matchId: number;
-  category: 'MATCH' | 'TACTIC' | 'FOULS' | 'PHYSICAL' | 'COMMENT';
+  category: 'MATCH' | 'TACTIC' | 'FOULS' | 'PHYSICAL' | 'NOTE';
   comment: string | null;
   commentText: string | null;
   condition: 'UNDER_PRESSURE' | 'CONFIDENT' | 'FOCUSED' | 'LOST_FOCUS' | 'MOMENTUM_SHIFT' | 'CLUTCH_PLAY' | 'FATIGUE_SIGNS';
@@ -153,6 +153,7 @@ export interface MatchEventData {
   eventTimeSeconds: number;
   foulType: string | null;
   matchType: string;
+  noteType: string;
   physicalType: string | null;
   tacticType: string | null;
 }

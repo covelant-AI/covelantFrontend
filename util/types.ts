@@ -65,6 +65,13 @@ export const MATCH_TYPES = [
   { value: "START_OF_SET", label: "Start of Set" },
 ];
 
+export const NOTE_TYPES = [
+  { value: "GENERAL", label: "General Comment" },
+  { value: "GREAT", label: "great Play" },
+  { value: "POOR", label: "Poor Play" },
+  { value: "IMPORTANT", label: "Importan note" },
+];
+
 export const TACTIC_TYPES = [
   { value: "SERVE_VOLLEY", label: "Serve & volley" },
   { value: "BASELINE_RALLY", label: "Baseline Rally" },

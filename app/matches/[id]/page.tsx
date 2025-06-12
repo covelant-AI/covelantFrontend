@@ -4,7 +4,7 @@ import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "@/app/firebase/config";
 import NavBar from "@/components/nav/Navbar";
 import CustomVideoPlayer from "@/components/matches/CustomVideoPlayer"
-import MainTagManager from "@/components/TagManager/MainTagManager"
+import MainTagManager from "@/components/matches/TagManager/MainTagManager"
 import MainPreformanceTracker from "@/components/matches/MainPreformanceTracker"
 import {Player, MatchEventData} from "@/util/interfaces"
 import {defaultPlayer} from "@/util/default"
@@ -48,6 +48,7 @@ const getVideoData = useCallback(async() => {
     const res = await fetch(`/api/getTags?id=${videoId}`);
     const json = await res.json();
     if (json.data.length !== 0) {
+      console.log(json.data)
       setMarkers(json.data)
     } else {
       setMarkers([])
