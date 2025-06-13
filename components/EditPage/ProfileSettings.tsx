@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Profile } from '@/util/interfaces'
 import { storage, ref, uploadBytesResumable, getDownloadURL } from '@/app/firebase/config';
 import Image from 'next/image';
 import { useAuth } from '@/app/context/AuthContext';
@@ -7,6 +6,7 @@ import * as Sentry from "@sentry/nextjs";
 
 export default function ProfileSettings() {
   const [loading, setLoading] = useState(true)
+  const [uploading, setUploading] = useState(false);
   const { profile } = useAuth();
   
 
@@ -72,6 +72,7 @@ export default function ProfileSettings() {
 
   // Build payload including type right before sending
   const handleSave = async () => {
+    if (uploading) return;
     if (!profile?.type) {
       console.error('Missing profile.type, cannot save')
       return
@@ -117,45 +118,44 @@ const handleChangePicture = () => {
 };
 
 // When file selected
-const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
-  const file = e.target.files?.[0];
-  if (!file || !profile?.type) return;
+  const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile?.type) return;
 
-  // Optional: Preview local avatar immediately
-  const localUrl = URL.createObjectURL(file);
-  setForm((prev) => ({ ...prev, avatar: localUrl }));
+    // preview immediately
+    const localUrl = URL.createObjectURL(file);
+    setForm(prev => ({ ...prev, avatar: localUrl }));
 
-  try {
-    // Validate the file type (e.g., only accept images)
-    if (!file.type.startsWith('image/')) {
-      console.error('Selected file is not an image.');
-      return;
-    }
-
-    const avatarRef = ref(storage, `avatars/${profile.email}_${Date.now()}_${file.name}`);
-    const uploadTask = uploadBytesResumable(avatarRef, file);
-
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        // Optionally handle progress here (e.g., showing a progress bar)
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('Upload is ' + progress + '% done');
-      },
-      (error) => {
-        console.error('Avatar upload failed:', error);
-      },
-      async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        setForm((prev) => ({ ...prev, avatar: downloadURL }));
-        // Clean up the local object URL after the upload
-        URL.revokeObjectURL(localUrl);
+    try {
+      if (!file.type.startsWith('image/')) {
+        console.error('Selected file is not an image.');
+        return;
       }
-    );
-  } catch (error) {
-    console.error('Error during file upload:', error);
-  }
-};
+
+      setUploading(true);  // <-- start upload lock
+
+      const avatarRef = ref(storage, `avatars/${profile.email}_${Date.now()}_${file.name}`);
+      const uploadTask = uploadBytesResumable(avatarRef, file);
+
+      uploadTask.on(
+        'state_changed',
+        () => {/* progress… */},
+        (error) => {
+          console.error('Avatar upload failed:', error);
+          setUploading(false);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setForm(prev => ({ ...prev, avatar: downloadURL }));
+          URL.revokeObjectURL(localUrl);
+          setUploading(false);  // <-- unlock when real URL is set
+        }
+      );
+    } catch (err) {
+      console.error('Error during file upload:', err);
+      setUploading(false);
+    }
+  };
 
   if (loading) return <p className="text-center mt-10">Loading...</p>
 
@@ -300,14 +300,14 @@ const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e)
       <div className="col-span-2 flex justify-center mt-6">
         <button
           onClick={handleSave}
-          disabled={!isFormChanged()}
+          disabled={!isFormChanged() || uploading}  // disable during upload
           className={`rounded-md px-20 py-2 font-semibold transition
-            ${isFormChanged()
-              ? 'bg-[#42B6B1] text-white hover:bg-teal-600  cursor-pointer'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>
-          Save
+            ${isFormChanged() && !uploading
+              ? 'bg-[#42B6B1] text-white hover:bg-teal-600 cursor-pointer'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+        >
+          {uploading ? 'Uploading…' : 'Save'}
         </button>
-
       </div>
     </div>
   )

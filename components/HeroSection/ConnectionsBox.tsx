@@ -4,6 +4,7 @@ import Link from 'next/link'
 import {PlayerDataAray} from "@/util/interfaces"
 import { useState, useEffect } from "react";
 import Image from 'next/image'
+import { UserPen } from 'lucide-react';
 import * as Sentry from "@sentry/nextjs";
 
 export default function ConnectionBox(){
@@ -80,7 +81,7 @@ export default function ConnectionBox(){
           </Link>
         </div>
       </>: <>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 mr-6">
           {(playerCount < 3 ? safePlayerData : safePlayerData.slice(0, 3)).map((player) => (
             <Link key={player.id} href={`/profile/${player.id}`}>
               <button className='cursor-pointer'>
@@ -100,13 +101,11 @@ export default function ConnectionBox(){
           ))}
 
           <Link href="/your-connection">
-            <button className='cursor-pointer mr-6 active:scale-[0.9]'>
-              {playerCount  - 3 > 0 ? (
-                <div className="w-12 h-12 flex justify-center items-center bg-white border 
+            <button className='active:scale-[0.9]'>
+                <div className="w-13 h-13 flex justify-center items-center bg-white border cursor-pointer 
                 border-[#E7E7E7] font-semibold text-black rounded-xl text-md hover:bg-[#42B6B1] hover:text-white transition-colors duration-300">
-                  +{playerCount  - 3}
+                  <UserPen />
                 </div>
-              ) : null}
             </button>
           </Link>
       </div>

@@ -42,6 +42,50 @@ export default function YourConnection() {
     getUserData();
   }, [profile?.type, profile?.email]);
 
+  // Delete player from the connection list
+  const handleRemovePlayer = async (playerId: number) => {
+    try {
+      const res = await fetch(`/api/deleteConnection?email=${profile?.email}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: playerId,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to remove player");
+
+      // Re-fetch the data to reflect the removal in the UI
+      await fetchUserData();
+    } catch (error) {
+      console.error("Error removing player:", error);
+      alert("Could not remove player. Please try again.");
+    }
+  };
+
+  // Re-fetch user data after deletion
+  const fetchUserData = async () => {
+    if (!profile?.type) return;
+
+    try {
+      const res = await fetch(
+        `/api/getConnection?email=${encodeURIComponent(profile.email)}`,
+        {
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json', type: profile.type },
+        }
+      );
+      const result = await res.json();
+      if (profile.type === 'coach') {
+        setPlayerData(result.connection);
+      } else {
+        setPlayerData(result.connection[0].coaches);
+      }
+    } catch (err) {
+      Sentry.captureException(err);
+      alert('Error fetching user data:');
+    }
+  };
+
   return (
     <>
       {/* Full-page light gray background */}
@@ -85,46 +129,34 @@ export default function YourConnection() {
               </>
             ) : (
               playerData.map((athlete) => {
-                // If the logged-in user is a “player”, we do NOT wrap the avatar in a Link
-                if (profile?.type === 'player') {
-                  return (
-                    <div key={athlete.id} className="flex flex-col justify-center items-center">
-                      <div className="rounded-lg p-1">
+                return (
+                  <div key={athlete.id} className="relative flex flex-col justify-center items-center">
+                    {/* "X" button to remove player */}
+                    <button
+                      onClick={() => handleRemovePlayer(athlete.id)}
+                      className="absolute -top-2 right-5 bg-radial-[at_50%_50%] from-white  to-white-900 to-[#FF4545] to-300% hover:to-200%
+                      text-red-500 rounded-full p-1  hover:scale-[1.1]  active:scale-[1.05] pointer:cursor"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+
+                    <Link href={`/profile/${athlete.id}`} className="flex flex-col items-center">
+                      <div className="rounded-lg p-1 border hover:border-[#6EB6B3] hover:bg-[#6EB6B3] active:scale-[0.98]">
                         <Image
                           src={athlete.avatar || '/images/default-avatar.png'}
                           alt={`${athlete.firstName} ${athlete.lastName}`}
                           width={80}  
                           height={80} 
-                          className="w-20 h-20 object-cover rounded-md cursor-default"
+                          className="object-cover rounded-md w-20 h-20 object-cover rounded-md"
                         />
                       </div>
                       <span className="mt-2 text-sm font-semibold text-gray-700 text-center">
                         {athlete.firstName} {athlete.lastName}
                       </span>
-                    </div>
-                  );
-                }
-
-                // Otherwise (profile.type === “coach”), wrap in a <Link> to /profile/[id]
-                return (
-                  <Link
-                    key={athlete.id}
-                    href={`/profile/${athlete.id}`}
-                    className="flex flex-col items-center"
-                  >
-                    <div className="rounded-lg p-1 hover:scale-[1.05] active:scale-[1.02]">
-                      <Image
-                        src={athlete.avatar || '/images/default-avatar.png'}
-                        alt={`${athlete.firstName} ${athlete.lastName}`}
-                        width={80}  
-                        height={80} 
-                        className="object-cover rounded-md w-20 h-20 object-cover rounded-md"
-                      />
-                    </div>
-                    <span className="mt-2 text-sm font-semibold text-gray-700 text-center">
-                      {athlete.firstName} {athlete.lastName}
-                    </span>
-                  </Link>
+                    </Link>
+                  </div>
                 );
               })
             )}

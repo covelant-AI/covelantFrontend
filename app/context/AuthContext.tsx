@@ -1,7 +1,13 @@
 'use client';
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import {Profile} from "@/util/interfaces"
-
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+  useCallback,
+} from 'react';
+import { Profile } from '@/util/interfaces';
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -23,89 +29,116 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// --- Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// --- Provider
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
 
+  // fetches the DB row for this email, or null if none exists
   const fetchUserType = useCallback(async (email: string) => {
     try {
       const res = await fetch(`/api/getUser?email=${encodeURIComponent(email)}`);
+      if (!res.ok) return null;
       const result = await res.json();
+      if (!result.data) return null;
 
       const { firstName, lastName, avatar } = result.data;
+      let type = '';
+      if (result.message === 'Player Data') type = 'player';
+      else if (result.message === 'Coach Data') type = 'coach';
+
+      // stash in session for quick UI use
       sessionStorage.setItem('email', email);
       sessionStorage.setItem('firstName', firstName);
       sessionStorage.setItem('lastName', lastName);
       sessionStorage.setItem('avatar', avatar);
-
-      let type = '';
-      if (result.message === 'Player Data') {
-        type = 'player';
-      } else if (result.message === 'Coach Data') {
-        type = 'coach';
-      }
       sessionStorage.setItem('type', type);
+
       return { firstName, lastName, avatar, type };
-    } catch (error) {
-      console.error('Error fetching user data:', error);
+    } catch (err) {
+      console.error('Error fetching user data:', err);
       return null;
     }
   }, []);
 
+  // when Firebase state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsub = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
-      if (currentUser) {
-        let email = currentUser.email;
-        if(!email) email = "Coach@covelant.com"  
-        setUser(currentUser);
 
-        const fetched = await fetchUserType(email);
-        if (fetched) {
-          setProfile({ email, ...fetched });
-        }
-      } else {
+      if (!currentUser) {
+        // logged out
         sessionStorage.clear();
         setUser(null);
         setProfile(null);
+        setLoading(false);
+        return;
       }
+
+      // logged in
+      setUser(currentUser);
+      const email = currentUser.email ?? '';
+      let fetched = await fetchUserType(email);
+
+      // if no DB row yet (new signup), create one
+      if (!fetched) {
+        // fall back to whatever data Firebase gives us
+        const displayName = currentUser.displayName || '';
+        const [firstName = '', lastName = ''] = displayName.split(' ');
+        const avatar = currentUser.photoURL || '/images/default-avatar.png';
+        const role = 'player'; // default—adjust as you like
+
+        try {
+          const createRes = await fetch('/api/createUser', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, role, firstName, lastName, avatar }),
+          });
+          if (!createRes.ok) throw new Error(`Status ${createRes.status}`);
+          const createData = await createRes.json();
+          if (
+            createData.message === 'Player created' ||
+            createData.message === 'Coach created'
+          ) {
+            // now fetch again
+            fetched = await fetchUserType(email);
+          }
+        } catch (err) {
+          console.error('Error creating user row after signup:', err);
+        }
+      }
+
+      if (fetched) {
+        setProfile({ email, ...fetched });
+      } else {
+        // still no profile? you can decide how to handle
+        setProfile(null);
+      }
+
       setLoading(false);
     });
-    return unsubscribe;
+
+    return unsub;
   }, [fetchUserType]);
 
+  // sign in with Google
   const signIn = useCallback(async () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      const currentUser = result.user;
-      const email = currentUser.email ?? '';
-      sessionStorage.setItem('email', email);
-
-      const fetched = await fetchUserType(email);
-      if (fetched) {
-        setProfile({ email, ...fetched });
-        setUser(currentUser);
-      }
-    } catch (error) {
-      console.error('Sign in failed:', error);
+      // onAuthStateChanged handler above will now fire and handle DB creation/fetch
+    } catch (err) {
+      console.error('Google sign-in failed:', err);
     }
-  }, [fetchUserType]);
+  }, []);
 
   const logOut = useCallback(async () => {
-    try {
-      sessionStorage.clear();
-      setUser(null);
-      setProfile(null);
-      await signOut(auth);
-    } catch (error) {
-      console.error('Sign out error:', error);
-    }
+    await signOut(auth);
+    sessionStorage.clear();
+    setUser(null);
+    setProfile(null);
   }, []);
 
   return (
@@ -115,10 +148,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-// --- Hook
 export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be inside AuthProvider');
+  return ctx;
 }
+
 
