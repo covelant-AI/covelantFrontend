@@ -40,6 +40,7 @@ export async function seedScorePoints() {
       { t: 13,  matchPoints: [30, 15]  },
       { t: 46,  matchPoints: [30, 30]  },
       { t: 70,  matchPoints: [40, 40]  },
+      { t: 80,  matchPoints: [50, 40]  },
       { t: 107, matchPoints: [ 0,  0]  },
     ];
 

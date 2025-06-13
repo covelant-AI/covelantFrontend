@@ -23,38 +23,65 @@ export async function seedMatchMetrics() {
       eventTimeSeconds: number;
     }> = [];
 
-    // helper to push ball & player speed every 2s in a given window
+    // helper to push ball & player speed at specific intervals with manual values
     function pushSpeeds(
-      start: number,
-      end: number,
-      ballRange: [number, number],
-      playerRange: [number, number]
+      intervals: { time: number; ballSpeed: number; playerSpeed: number }[]
     ) {
-      for (let t = start; t <= end; t += 2) {
-        // random between min/max
-        const bs =
-          ballRange[0] + Math.random() * (ballRange[1] - ballRange[0]);
-        const ps =
-          playerRange[0] + Math.random() * (playerRange[1] - playerRange[0]);
+      for (const interval of intervals) {
+        const { time, ballSpeed, playerSpeed } = interval;
+
         rows.push({
           metricType: MetricType.BALL_SPEED,
-          value: parseFloat(bs.toFixed(1)),
-          eventTimeSeconds: t,
+          value: parseFloat(ballSpeed.toFixed(1)),
+          eventTimeSeconds: time,
         });
+
         rows.push({
           metricType: MetricType.PLAYER_SPEED,
           playerId: undefined, // if you want per‐player, assign actual id
-          value: parseFloat(ps.toFixed(1)),
-          eventTimeSeconds: t,
+          value: parseFloat(playerSpeed.toFixed(1)),
+          eventTimeSeconds: time,
         });
       }
     }
 
-    // windows as specified
-    pushSpeeds(5, 10, [120, 130], [5, 7]);
-    pushSpeeds(30, 45, [110, 125], [8, 10]);   // player higher at ~40s
-    pushSpeeds(70, 89, [115, 135], [5, 7]);
-    pushSpeeds(105, 117, [120, 140], [5, 7]);
+    // Example intervals with manual values for ball speed and player speed
+    const intervals = [
+      { time: 5, ballSpeed: 193.4, playerSpeed: 0.2 }, 
+      { time: 7, ballSpeed: 32.7, playerSpeed: 1.4 }, 
+      { time: 8, ballSpeed: 29.6, playerSpeed: 12 }, 
+      { time: 9, ballSpeed: 68.3, playerSpeed: 4 }, 
+      { time: 10, ballSpeed: 102.7, playerSpeed: 11.2 }, 
+      { time: 12, ballSpeed: 43.2, playerSpeed: 4.3 }, 
+      { time: 30, ballSpeed: 184.7, playerSpeed: 0.1 }, 
+      { time: 32, ballSpeed: 43.1, playerSpeed: 4.3 }, 
+      { time: 33, ballSpeed: 86.2, playerSpeed: 2.4 }, 
+      { time: 34, ballSpeed: 51.5, playerSpeed: 9.7 }, 
+      { time: 37, ballSpeed: 88.4, playerSpeed: 2.1 }, 
+      { time: 40, ballSpeed: 68.7, playerSpeed: 0.8 }, 
+      { time: 41, ballSpeed: 148.2, playerSpeed: 8.9}, 
+      { time: 42, ballSpeed: 115.1, playerSpeed: 4.4}, 
+      { time: 43, ballSpeed: 88.4, playerSpeed: 6.9}, 
+      { time: 44, ballSpeed: 42.1, playerSpeed: 13.1}, 
+      { time: 70, ballSpeed: 175, playerSpeed: 0.2 }, 
+      { time: 72, ballSpeed: 39.2, playerSpeed: 8.4 }, 
+      { time: 74, ballSpeed: 53.1, playerSpeed: 2.1 }, 
+      { time: 75, ballSpeed: 77, playerSpeed: 8.4 },
+      { time: 77, ballSpeed: 61.2, playerSpeed: 10.6 },
+      { time: 79, ballSpeed: 28.1, playerSpeed: 10.2 },
+      { time: 106, ballSpeed: 195.1, playerSpeed: 0.2 }, 
+      { time: 107, ballSpeed: 142.5, playerSpeed: 0.3 }, 
+      { time: 108, ballSpeed: 88.4, playerSpeed: 0.6 }, 
+      { time: 109, ballSpeed: 45.1, playerSpeed: 4.7 }, 
+      { time: 110, ballSpeed: 83.3, playerSpeed: 1.2 }, 
+      { time: 111, ballSpeed: 22.3, playerSpeed: 7.7 }, 
+      { time: 113, ballSpeed: 66.9, playerSpeed: 6.6 }, 
+      { time: 116, ballSpeed: 111.3, playerSpeed: 1.2 }, 
+      { time: 117, ballSpeed: 47.9, playerSpeed: 0.8 },
+    ];
+
+    // Use the intervals to set speeds
+    pushSpeeds(intervals);
 
     // longest rally: constant 12s at beginning of each window
     [5, 30, 70, 105].forEach((t) => {
@@ -65,7 +92,7 @@ export async function seedMatchMetrics() {
       });
     });
 
-    // strikes efficiency: constant 5 hits/rally at same points
+    // strikes efficiency: constant 5 hits/rally at the same points
     [5, 30, 70, 105].forEach((t) => {
       rows.push({
         metricType: MetricType.STRIKES_EFF,
