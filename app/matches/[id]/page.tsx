@@ -62,6 +62,23 @@ const getVideoData = useCallback(async() => {
     setMarkers((prev: MatchEventData[]) => [...prev, newTag]);
   };
 
+  // delete tag
+  const handleDeleteTag = async (id: number) => {
+  try {
+    const res = await fetch("/api/deleteTag", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    setMarkers(prev => prev.filter(m => m.id !== id));
+  } catch (err) {
+    console.error("Failed to delete tag:", err);
+    alert("Could not delete tag. Please try again.");
+  }
+};
+
+
   // On mount, load video → then tags once we have videoId
   useEffect(() => {
     getVideoData();
@@ -89,7 +106,9 @@ const getVideoData = useCallback(async() => {
                 markers={markers}
                 videoStartTime={videoStart ?? "2025-06-01T14:30:00Z"}
                 onTimeUpdate={handleTimeUpdate}
+                onDeleteTag={handleDeleteTag} 
               />
+
               <MainTagManager
                 videoId={videoId}
                 timeStamp={currentVideoTime}

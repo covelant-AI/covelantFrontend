@@ -9,6 +9,7 @@ export default function CustomVideoPlayer({
   markers,
   durationOverride,
   onTimeUpdate,
+  onDeleteTag,
 }: CustomVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
@@ -17,10 +18,6 @@ export default function CustomVideoPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(durationOverride || 0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  
-  const toggleOpen = (i: number) => setOpenIndex((prev) => (prev === i ? null : i));
 
   // 1) Load metadata + time updates
   useEffect(() => {
@@ -137,6 +134,19 @@ export default function CustomVideoPlayer({
   };
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
+  //spacebar pause
+  useEffect(() => {
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.code === "Space") {
+      e.preventDefault(); // Prevent scrolling
+      togglePlay();
+    }
+  };
+  window.addEventListener("keydown", handleKeyDown);
+  return () => window.removeEventListener("keydown", handleKeyDown);
+}, []);
+
+
   return (
     <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
       {/* VIDEO */}
@@ -150,6 +160,7 @@ export default function CustomVideoPlayer({
           className="absolute inset-0 w-full h-full object-contain"
           preload="metadata"
           controls={false}
+          onClick={togglePlay}
         />
         <div className="absolute top-2 left-3 bg-black bg-opacity-60 px-2 py-1 rounded-xl text-white text-sm font-bold pointer-events-none">
           Covelant Tech
@@ -169,13 +180,12 @@ export default function CustomVideoPlayer({
         progressRef={progressRef}
         progressContainerRef={progressContainerRef}
         hoveredIndex={hoveredIndex}
-        openIndex={openIndex}
         onSeek={onSeek}
         onProgressMouseMove={onProgressMouseMove}
         onProgressMouseLeave={onProgressMouseLeave}
-        toggleOpen={toggleOpen}
         isPlaying={isPlaying}
         togglePlay={togglePlay}
+        onDeleteTag={onDeleteTag}
       />
 
     </div>

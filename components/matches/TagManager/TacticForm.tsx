@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect } from "react";
 import { parseTimeToSeconds, formatSeconds } from "@/util/services";
@@ -9,7 +8,7 @@ export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagMana
   const [tacticType, setTacticType] = useState<string>("SERVE_VOLLEY");
   const [eventTime, setEventTime] = useState<string>("00:00");
   const [condition, setCondition] = useState<string>("");
-  const [comment, setComment] = useState<string>(""); // new comment state
+  const [comment, setComment] = useState<string>(""); 
 
     useEffect(() => {
       setEventTime(formatSeconds(timeStamp));
@@ -46,7 +45,7 @@ export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagMana
   };
 
   return (
-    <div className="bg-white p-2 rounded-xl w-full">
+    <div className="bg-white p-2 rounded-xl w-full justify-center items-center">
       <div className="flex items-center justify-between p-2">
         <h3 className="text-black font-semibold text-lg">
           Tactical Tag
@@ -54,7 +53,8 @@ export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagMana
         <div className="w-4 h-4 bg-radial-[at_50%_50%] from-white-200 via-teal-400 to-teal-900 to-300% rounded-sm transform rotate-45 shadow-inner relative">
         </div>
       </div>
-            <div className="flex flex-col md:flex-row gap-4 w-full">
+      
+      <div className="flex flex-col md:flex-row gap-4 w-full">
       <div className="w-full flex flex-col lg:flex-row gap-6">
         {/* ─── Left Column: dropdown + time input ─── */}
         <div className="flex flex-col flex-none gap-4">

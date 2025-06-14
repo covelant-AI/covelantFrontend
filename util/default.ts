@@ -49,11 +49,11 @@ export const COLOR_MAP: Record<string, string> = {
   COMMENT: "#9CA3AF",   // gray
 };
 export const ICON_MAP: Record<string, string> = {
-  MATCH:   "/images/lables/lable-check.png",
-  TACTIC:  "/images/lables/lable-angle.png",
-  FOULS:   "/images/lables/lable-error.png",
-  PHYSICAL:"/images/lables/lable-time.png",
-  COMMENT: "/images/lables/lable-note.png",
+  MATCH:   "/images/lables/tag1.png",
+  TACTIC:  "/images/lables/tag2.png",
+  FOULS:   "/images/lables/tag3.png",
+  PHYSICAL:"/images/lables/tag4.png",
+  COMMENT: "/images/lables/tag5.png",
 };
 
 export const DEFAULT_STATS = [

@@ -165,6 +165,7 @@ export interface CustomVideoPlayerProps {
   durationOverride?: number;
   lablePath?: string;
   onTimeUpdate?: (currentTime: number) => void;
+  onDeleteTag: (id: number) => void;
 }
 
 

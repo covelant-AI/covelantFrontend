@@ -21,7 +21,7 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
       matchType,
       eventTimeSeconds: parseTimeToSeconds(eventTime),
       condition,
-      commentText: comment,
+      comment,
     };
       
       fetch('/api/createTag', {
@@ -47,7 +47,9 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
   return (
     <div className="bg-white p-2 rounded-xl w-full justify-center items-center">
       <div className="flex items-center justify-between p-2">
-        <h3 className="text-black font-semibold text-lg">Manual Tags</h3>
+        <h3 className="text-black font-semibold text-lg">
+          Manual Tags
+        </h3>
         <div className="w-4 h-4 bg-radial-[at_50%_50%] from-white-200 via-yellow-400 to-yellow-900 to-300% rounded-sm transform rotate-45 shadow-inner relative">
         </div>
       </div>
