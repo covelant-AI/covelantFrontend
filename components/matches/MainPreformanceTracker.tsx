@@ -104,8 +104,8 @@ export default function MainPreformanceTracker({
       {/* ─── Spacer pushes button to bottom ─── */}
       <div className="mt-auto">
         <button
-          className="w-full py-2 text-black font-semibold text-md rounded-xl">
-          AI analysis coming soon<br/><span className="text-xs">Covelant beta test 2025</span>
+          className="w-full py-2 text-black font-semibold text-sm rounded-xl">
+          Your Personal Video AI analysis is coming soon<br/><span className="text-xs">Covelant beta test 2025</span>
         </button>
       </div>
     </div>

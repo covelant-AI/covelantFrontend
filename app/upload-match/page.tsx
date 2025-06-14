@@ -36,7 +36,6 @@ export default function UploadMatchPage() {
       alert("Please upload a video before proceeding.");
       return;
     }
-    console.log(matchInfo)
     if (!matchInfo.playerOne || !matchInfo.playerTwo || !matchInfo.date || !matchInfo.fieldType || !matchInfo.matchType) {
       alert("Please fill in all match data fields.");
       return;
@@ -47,7 +46,6 @@ export default function UploadMatchPage() {
       videoURL,
       thumbnail: videoThumbnail,
     };
-    console.log(matchData)
     fetch('/api/creatematch', {
       method: 'POST',
       headers: {
@@ -60,7 +58,7 @@ export default function UploadMatchPage() {
        if (!data.success) {
         alert('Failed to create match. Please try again.');
       } 
-        router.push('/analysing');
+        router.push('/');
       })
       .catch((error) => {
         console.error('Error creating match:', error);
