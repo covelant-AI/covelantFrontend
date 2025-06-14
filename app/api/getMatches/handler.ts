@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const playerIdParam = searchParams.get('playerId');
-
+  
   if (!playerIdParam) {
     return NextResponse.json(
       { error: 'playerId query parameter is required' },

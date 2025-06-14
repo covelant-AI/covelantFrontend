@@ -9,12 +9,12 @@ import * as Sentry from "@sentry/nextjs";
 export default function VideoDashboard({ activePlayer, setActivePlayer }: Props) {
     const { profile } = useAuth();
     const [showMenu, setShowMenu] = useState<boolean>(false);
-    const [players, setPlayers] = useState<Player[]>([]); // Changed selectedPlayer to players to keep the list intact
+    const [players, setPlayers] = useState<Player[]>([]); 
     const [matches, setMatches] = useState<MatchDisplay[]>([]);
     const menuRef = useRef<HTMLDivElement>(null);
     const toggleMenu = () => { setShowMenu((prev) => !prev); };
 
-    // Retrieve the selected player from sessionStorage (if available) and update both activePlayer and players
+
     useEffect(() => {
         const storedPlayer = sessionStorage.getItem("selectedPlayer");
         if (storedPlayer) {
@@ -42,7 +42,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                     console.error('Error fetching user data:', result.error);
                     return;
                 }
-                setPlayers(result.connection); // Keep the full list of players
+                setPlayers(result.connection); 
 
                 // Only set activePlayer to the first player from the database if no player was retrieved from sessionStorage
                 if (!sessionStorage.getItem("selectedPlayer") && result.connection.length > 0) {
@@ -64,23 +64,25 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
 
         (async () => {
             try {
+                console.log("here is the activePlayer",activePlayer)
                 const res = await fetch(`/api/getMatches?playerId=${activePlayer.id}`);
                 const data = await res.json();
+                console.log(data)
                 const live: MatchDisplay[] = data.matches.map((m: Match) => {
-                    const selfEntry = m.playerMatches.find((pm: PlayerMatch) => pm.playerId === activePlayer.id);
-                    let opponentName = 'Unknown';
+                const selfEntry = m.playerMatches.find((pm: PlayerMatch) => pm.playerId === activePlayer.id);
+                let opponentName = 'Unknown';
 
-                    if (selfEntry?.opponent) {
-                        opponentName = `${selfEntry.opponent.firstName} ${selfEntry.opponent.lastName}`;
-                    } else if (selfEntry?.playerTwo) {
-                        opponentName = `${selfEntry.playerTwo.firstName} ${selfEntry.playerTwo.lastName}`;
-                    }
+                if (selfEntry?.opponent) {
+                    opponentName = `${selfEntry.opponent.firstName} ${selfEntry.opponent.lastName}`;
+                } else if (selfEntry?.playerTwo) {
+                    opponentName = `${selfEntry.playerTwo.firstName} ${selfEntry.playerTwo.lastName}`;
+                }
 
-                    return {
-                        id: m.id,
-                        title: `${activePlayer.firstName} ${activePlayer.lastName} vs ${opponentName}`,
-                        imageUrl: m.imageUrl,
-                    };
+                return {
+                    id: m.id,
+                    title: `${activePlayer.firstName} ${activePlayer.lastName} vs ${opponentName}`,
+                    imageUrl: m.imageUrl,
+                };
                 });
                 setMatches(live);
             } catch (err) {
@@ -105,7 +107,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
         <div className="col-span-1 lg:col-span-9 rounded-2xl shadow p-1 flex flex-col gap-2 bg-[#F8F8F8] my-5 justify-center">
             {/* Matches grid */}
             <div className="p-4 bg-[#FFFFFF] rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-2 max-h-[450px] overflow-y-auto">
-                {matches.length === 0 || activePlayer?.id === 1010101010101010101010101010 ? (
+                {matches.length === 0 ? (
                     <>
                         <div className='max-md:hidden'></div>
                         <div className="flex flex-col items-center justify-center h-100 bg-[#FFFFFF] rounded-lg">
@@ -148,7 +150,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
             <div className="flex flex-wrap items-center justify-between gap-4 px-4">
                 {/* Player selector */}
                 <div className="relative" ref={menuRef}>
-                    {profile?.type === "player" || activePlayer?.id === 1010101010101010101010101010 ? (<></>) : (
+                    {profile?.type === "player" ? (<></>) : (
                         <button
                             onClick={toggleMenu}
                             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full text-lg cursor-pointer hover:bg-gray-200"
@@ -170,13 +172,13 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                         <div className="absolute bottom-full mb-2 z-10 w-64 bg-white border border-gray-300 rounded-lg shadow-lg">
                             <div className="p-4 font-bold text-gray-700 text-xl">Players</div>
                             <ul className=" text-sm text-gray-600">
-                                {players.map((player) => ( // Change selectedPlayer to players
+                                {players.map((player) => ( 
                                     <li
                                         key={player.id}
                                         className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 cursor-pointer"
                                         onClick={() => {
                                             setActivePlayer(player);
-                                            sessionStorage.setItem("selectedPlayer", JSON.stringify(player));  // Save selected player to sessionStorage
+                                            sessionStorage.setItem("selectedPlayer", JSON.stringify(player));  
                                             setShowMenu(false);
                                         }}
                                     >

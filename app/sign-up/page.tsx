@@ -45,7 +45,12 @@ export default function SignUpPage(){
     try {
       const userCredential = await createUserWithEmailAndPassword(email, password);
       if (!userCredential) {
-        setErrorMessage('Failed to create user.');
+        setLoading(false);
+        resetMouseLoading()
+        document.body.style.cursor = 'default';
+        const button = document.querySelector('button[type="submit"]');
+        if (button) (button as HTMLButtonElement).style.cursor = 'pointer';
+        return setErrorMessage('Sorry this email is already in use, try another email');
       }
       const avatar = '/images/default-avatar.png'; // Default avatar URL
       const response = await fetch('/api/createUser', {
@@ -58,6 +63,15 @@ export default function SignUpPage(){
       });
 
       const data = await response.json();
+
+      if(data.message == "Player already exists") {
+        setLoading(false);
+        resetMouseLoading()
+        document.body.style.cursor = 'default';
+        const button = document.querySelector('button[type="submit"]');
+        if (button) (button as HTMLButtonElement).style.cursor = 'pointer';
+        return setErrorMessage('Sorry this email is already in use, try another email');
+      }
 
     if (data.message === 'Player created' || data.message === 'Coach created') {
       sessionStorage.setItem('user', 'true');
@@ -73,7 +87,20 @@ export default function SignUpPage(){
       setLastName('');
       setLoading(false);
       resetMouseLoading()
+      const waitUntilProfileIsReady = async () => {
+      let attempts = 0;
+      while (attempts < 20) { 
+        const storedEmail = sessionStorage.getItem('email');
+        if (storedEmail) {
+          break;
+        }
+        await new Promise(res => setTimeout(res, 100));
+        attempts++;
+      }
       router.push('/');
+    };
+    
+    waitUntilProfileIsReady();
     } else {
       setErrorMessage('Oops! Something went wrong on our end');
       setLoading(false);

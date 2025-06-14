@@ -69,7 +69,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(true);
 
       if (!currentUser) {
-        // logged out
         sessionStorage.clear();
         setUser(null);
         setProfile(null);
@@ -78,9 +77,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       // logged in
-      setUser(currentUser);
       const email = currentUser.email ?? '';
       let fetched = await fetchUserType(email);
+      setUser(currentUser);
 
       // if no DB row yet (new signup), create one
       if (!fetched) {
@@ -113,7 +112,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (fetched) {
         setProfile({ email, ...fetched });
       } else {
-        // still no profile? you can decide how to handle
         setProfile(null);
       }
 
@@ -135,10 +133,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const logOut = useCallback(async () => {
-    await signOut(auth);
     sessionStorage.clear();
+    localStorage.clear();
+
+    document.cookie.split(';').forEach((c) => { document.cookie = c
+    .replace(/^ +/, '')
+    .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');});
+
+    await signOut(auth);
     setUser(null);
     setProfile(null);
+    window.location.href = '/sign-in';
   }, []);
 
   return (

@@ -107,10 +107,7 @@ export default function TennisScoreBoard({
               </td>
               {/* Game points per set */}
               {row.gamePoints.map((gp, i) => (
-                <td
-                  key={i}
-                  className="py-1 px-4 text-center text-gray-700 font-bold"
-                >
+                <td key={i} className="py-1 px-4 text-center text-gray-700 font-bold">
                   {gp}
                 </td>
               ))}

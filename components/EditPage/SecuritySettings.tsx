@@ -12,7 +12,7 @@ export default function SecuritySettings() {
 
   async function handdleOnSubmit(currentPassword: string, newPassword: string, repeatPassword: string) {
     if (!user || !user.email) {
-      alert('User not logged in or email unavailable')
+      alert('you are not logged in or email unavailable')
       return
     }
     if (newPassword !== repeatPassword) {
@@ -21,13 +21,9 @@ export default function SecuritySettings() {
     }
 
     try {
-      // Create credential with current email and password
       const credential = EmailAuthProvider.credential(user.email, currentPassword)
 
-      // Reauthenticate user
       await reauthenticateWithCredential(user, credential)
-
-      // Update password
       await updatePassword(user, newPassword)
 
       alert('Password updated successfully!')
@@ -39,14 +35,13 @@ export default function SecuritySettings() {
       setRepeatPassword('')
     } catch (error) {
       if (error instanceof FirebaseError) { 
-        if (error.code === 'auth/wrong-password') {
+        if (error.code === 'auth/invalid-credential') {
           alert('Your current password is not correct');
         } else {
-          alert('Error updating password: ' + error.message);
+          alert('we are very sorry, but something went wrong on our end. Just refresh the page and it should be fine now :)');
         }
       } else {
-        // Handle unexpected errors
-        alert('An unexpected error occurred: ' + (error as Error).message);
+        alert('we are very sorry, but something went wrong on our end. Just refresh the page and it should be fine now :)');
       }
     }
   }
