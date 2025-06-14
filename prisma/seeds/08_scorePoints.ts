@@ -35,20 +35,19 @@ export async function seedScorePoints() {
     }
 
     // 3) Milestones and their R-scores (matchPoint)
-    const milestones = [
-      { t: 5,   matchPoints: [30,  0]  },
-      { t: 13,  matchPoints: [30, 15]  },
-      { t: 46,  matchPoints: [30, 30]  },
-      { t: 70,  matchPoints: [40, 40]  },
-      { t: 80,  matchPoints: [50, 40]  },
-      { t: 107, matchPoints: [ 0,  0]  },
-    ];
+const milestones = [
+  { t: 5,   matchPoints: [30,  0], gamePoints: { 1: [6, 4], 2: [5, 2] } },
+  { t: 13,  matchPoints: [30, 15], gamePoints: { 1: [6, 4], 2: [5, 2] } },
+  { t: 46,  matchPoints: [30, 30], gamePoints: { 1: [6, 4], 2: [5, 2] } },
+  { t: 70,  matchPoints: [40, 40], gamePoints: { 1: [6, 4], 2: [5, 2] } },
+  { t: 80,  matchPoints: [50, 40], gamePoints: { 1: [6, 4], 2: [5, 2] } },
+  { t: 118, matchPoints: [0,  0],  gamePoints: { 1: [6, 4], 2: [6, 2] } }, // p1 wins another game in set 2
+];
 
     // 4) The fixed gamePoint values per set:
     const gamePoints = {
       1: [6, 4],  // set 1: p1=6, p2=4
       2: [5, 2],
-      3: [6, 2]  
     };
 
     // 5) Build a flat list of rows to create
@@ -62,28 +61,31 @@ export async function seedScorePoints() {
     };
     const rows: SeedRow[] = [];
 
-    for (const { t, matchPoints } of milestones) {
-      const [mp1, mp2] = matchPoints;
+for (const { t, matchPoints, gamePoints } of milestones) {
+  const [mp1, mp2] = matchPoints;
 
-      // for each set (1 & 2), push p1 and p2 rows
-      for (const setNum of [1, 2] as const) {
-        const [gp1, gp2] = gamePoints[setNum];
-        rows.push({
-          ...p1,
-          setNumber: setNum,
-          gamePoint: gp1,
-          matchPoint: mp1,
-          eventTimeSeconds: t,
-        });
-        rows.push({
-          ...p2,
-          setNumber: setNum,
-          gamePoint: gp2,
-          matchPoint: mp2,
-          eventTimeSeconds: t,
-        });
-      }
-    }
+  for (const setNum of [1, 2, 3] as const) {
+    const gp = gamePoints[setNum] ?? [0, 0]; // fallback for undefined sets
+    const [gp1, gp2] = gp;
+
+    rows.push({
+      ...p1,
+      setNumber: setNum,
+      gamePoint: gp1,
+      matchPoint: mp1,
+      eventTimeSeconds: t,
+    });
+
+    rows.push({
+      ...p2,
+      setNumber: setNum,
+      gamePoint: gp2,
+      matchPoint: mp2,
+      eventTimeSeconds: t,
+    });
+  }
+}
+
 
     // 6) Persist to the database
     for (const row of rows) {

@@ -26,7 +26,7 @@ export default function NavBar() {
       )}
         <Link href="/">
           <Image
-            src="/images/logoBlack.png"
+            src="/icons/logoBlack.svg"
             alt="Covalent Logo"
             width={170}
             height={60} 

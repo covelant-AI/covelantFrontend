@@ -30,7 +30,7 @@ export default function Loading() {
     >
     <div className="flex flex-col items-center justify-center h-screen bg-white max-h-screen pt-10">
       <Image
-        src="/images/logoBlack.png"
+        src="/icons/logoBlack.svg"
         alt="Covalent Logo"
         width={270}
         height={160}

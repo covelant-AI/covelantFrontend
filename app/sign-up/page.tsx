@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/config';
 import { useRouter } from 'next/navigation';
+import { useMouseLoading } from '@/hooks/useMouseLoading';
+import {resetMouseLoading} from "@/util/services"
 import Image from 'next/image'
 import * as Sentry from "@sentry/nextjs";
 
@@ -16,9 +18,16 @@ export default function SignUpPage(){
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  useMouseLoading(loading);
 
   const handleSubmit = async (formData: React.FormEvent) => {
     formData.preventDefault();
+    
+    if (password.length < 6) {
+      setErrorMessage('Password must be at least 6 characters long');
+      return;
+    }
     
     if(password !== passwordConfirm){
       setErrorMessage('Your password & confirm password do not match');
@@ -31,6 +40,7 @@ export default function SignUpPage(){
     }
 
     setErrorMessage('');
+    setLoading(true);
     
     try {
       const userCredential = await createUserWithEmailAndPassword(email, password);
@@ -61,13 +71,17 @@ export default function SignUpPage(){
       setRole('');
       setFirstName('');
       setLastName('');
+      setLoading(false);
+      resetMouseLoading()
       router.push('/');
     } else {
       setErrorMessage('Oops! Something went wrong on our end');
+      setLoading(false);
     }
     } catch (error) {
       Sentry.captureException(error);
       setErrorMessage('Looks like password is too easy to guess, try a more complex password');
+      setLoading(false);
     }
   };
 
@@ -209,6 +223,10 @@ export default function SignUpPage(){
 
       <button
         type="submit"
+          onClick={(e) => {
+            document.body.style.cursor = 'wait';
+            e.currentTarget.style.cursor = 'wait';
+          }}
         className="w-full py-3 bg-[#42B6B1] text-white text-xl font-normal rounded-xl hover:bg-teal-600  cursor-pointer active:scale-[0.9]">
         Sign Up
       </button>

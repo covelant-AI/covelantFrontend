@@ -71,8 +71,8 @@ export default function TennisScoreBoard({
     () =>
       players.map((p) => ({
         name: `${p.firstName} ${p.lastName}`,
-        matchPoint: latestMatchPoint[p.id] || 0,
-        gamePoints: rounds.map((r) => latestGamePoints[p.id][r] || 0),
+        matchPoint: latestMatchPoint[p.id] ,
+        gamePoints: rounds.map((r) => latestGamePoints[p.id][r] ),
       })),
     [players, latestMatchPoint, latestGamePoints, rounds]
   );
@@ -103,7 +103,7 @@ export default function TennisScoreBoard({
               <td className="py-1 px-4 font-medium">{row.name}</td>
               {/* R (matchPoint) */}
               <td className="py-1 px-4 text-center font-bold">
-                {row.matchPoint}
+                {row.matchPoint === 50 ? "AD" : row.matchPoint}
               </td>
               {/* Game points per set */}
               {row.gamePoints.map((gp, i) => (

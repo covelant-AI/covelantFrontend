@@ -50,3 +50,10 @@ export function formatSeconds(sec: number): string {
   const s = total % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
+
+export function resetMouseLoading(){
+  document.body.style.cursor = 'default';
+  const button = document.querySelector('button[type="submit"]');
+  if (button) (button as HTMLButtonElement).style.cursor = 'pointer';
+}
+

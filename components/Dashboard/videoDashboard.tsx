@@ -38,7 +38,6 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                     }
                 );
                 const result = await res.json();
-                console.log(activePlayer)
                 if (result.error) {
                     console.error('Error fetching user data:', result.error);
                     return;

@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import {MetricPoint, AISummaryProps} from "@/util/interfaces"
+import { useAnimatedNumber } from '@/hooks/useAnimatedNumber';
 import Image from 'next/image';
 
 export default function AISummary({
@@ -15,22 +16,16 @@ export default function AISummary({
     return past.length ? past[past.length - 1].value : 0;
   };
 
-  const currentBallSpeed = useMemo(
-    () => pickLatest(ballSpeeds),
-    [ballSpeeds, eventTime]
-  );
-  const currentPlayerSpeed = useMemo(
-    () => pickLatest(playerSpeeds),
-    [playerSpeeds, eventTime]
-  );
-  const currentLongestRally = useMemo(
-    () => pickLatest(longestRallies),
-    [longestRallies, eventTime]
-  );
-  const currentStrikesEff = useMemo(
-    () => pickLatest(strikesEff),
-    [strikesEff, eventTime]
-  );
+  const rawBallSpeed = useMemo(() => pickLatest(ballSpeeds), [ballSpeeds, eventTime]);
+  const rawPlayerSpeed = useMemo(() => pickLatest(playerSpeeds), [playerSpeeds, eventTime]);
+  const rawLongestRally = useMemo(() => pickLatest(longestRallies), [longestRallies, eventTime]);
+  const rawStrikesEff = useMemo(() => pickLatest(strikesEff), [strikesEff, eventTime]);
+
+  const currentBallSpeed = useAnimatedNumber(rawBallSpeed);
+  const currentPlayerSpeed = useAnimatedNumber(rawPlayerSpeed);
+  const currentLongestRally = useAnimatedNumber(rawLongestRally);
+  const currentStrikesEff = useAnimatedNumber(rawStrikesEff);
+
 
   return (
     <div className="grid grid-cols-2 gap-3 pt-6 px-4">
@@ -49,7 +44,7 @@ export default function AISummary({
           <p className="text-sm text-black font-bold pl-4">Ball Speed</p>
         </span>
         <div className="mt-1 text-4xl font-semibold text-black">
-          {currentBallSpeed}
+          {currentBallSpeed.toFixed(1)}
           <span className="text-lg font-light">km/h</span>
         </div>
       </div>
@@ -69,7 +64,7 @@ export default function AISummary({
           <p className="text-sm text-black font-bold pl-4">Player Speed</p>
         </span>
         <div className="mt-1 text-4xl font-semibold text-black">
-          {currentPlayerSpeed}
+          {currentPlayerSpeed.toFixed(1)}
           <span className="text-lg font-light">km/h</span>
         </div>
       </div>
@@ -89,8 +84,8 @@ export default function AISummary({
           <p className="text-sm text-black font-bold pl-4">Longest Rally</p>
         </span>
         <div className="mt-1 text-4xl font-semibold text-black">
-          {currentLongestRally}
-          <span className="text-lg font-light">sec</span>
+          {Math.round(currentLongestRally)}
+          <span className="text-lg font-light">hit</span>
         </div>
       </div>
 
@@ -106,11 +101,11 @@ export default function AISummary({
               className="w-5 h-5"
             />
           </div>
-          <p className="text-sm text-black font-bold pl-4">Strikes eff.</p>
+          <p className="text-sm text-black font-bold pl-4">Win eff.</p>
         </span>
         <div className="mt-1 text-4xl font-semibold text-black">
-          {currentStrikesEff}
-          <span className="text-lg font-light">hits/rlly</span>
+          {currentStrikesEff.toFixed(1)}
+          <span className="text-lg font-light">%</span>
         </div>
       </div>
     </div>

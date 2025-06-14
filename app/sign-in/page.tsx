@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/config'; 
 import { useRouter } from 'next/navigation';
+import { useMouseLoading } from '@/hooks/useMouseLoading';
+import {resetMouseLoading} from "@/util/services"
 import Image from "next/image";
 import * as Sentry from "@sentry/nextjs";
 
@@ -13,18 +15,15 @@ export default function SignInPage(){
   const [error, setError]         = useState<string>('');
   const [signIn, user]   = useSignInWithEmailAndPassword(auth);
   const router                   = useRouter();
-
-  // whenever `user` becomes non-null, store email & navigate:
-  useEffect(() => {
-    if (user) {
-      router.push('/');
-    }
-  }, [user, router]);
+  const [loading, setLoading] = useState(false);
+  useMouseLoading(loading); 
+  
 
   const handleSubmit = (e: React.FormEvent) => {
     sessionStorage.setItem('email', email);
     e.preventDefault();
     setError('');
+    setLoading(true);
     signIn(email, password)
     .then((res) => {
       if(!res) setError('Incorrect email or password');
@@ -32,8 +31,17 @@ export default function SignInPage(){
     .catch((error) => {
       Sentry.captureException(error);
       setError('Incorrect email or password');
+    }).finally(() => {
+      resetMouseLoading()
+      setLoading(false);
     });
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8" style={{ backgroundImage: "url('/images/bg-signIn.png')", backgroundSize: 'cover', backgroundPosition: 'center'}}> 
@@ -51,8 +59,7 @@ export default function SignInPage(){
         <form onSubmit={handleSubmit} className='py-3'>
           <div className={`mb-6 flex items-center bg-[#F0F0F0] rounded-xl ${
                   error ? 'border-red-500 border-1' : ''}`}
-          >
-            
+          > 
             <Image
               src="/icons/mail.svg"
               alt="Email Icon"
@@ -106,6 +113,10 @@ export default function SignInPage(){
 
           <button
             type="submit"
+            onClick={(e) => {
+              document.body.style.cursor = 'wait';
+              e.currentTarget.style.cursor = 'wait';
+            }}
             className="w-full py-3 bg-[#42B6B1] text-white text-xl font-normal rounded-xl hover:bg-teal-600 cursor-pointer active:scale-[0.9]">
             Sign in
           </button>
