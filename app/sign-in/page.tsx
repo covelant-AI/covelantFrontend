@@ -20,11 +20,12 @@ export default function SignInPage(){
   
 
   const handleSubmit = (e: React.FormEvent) => {
-    sessionStorage.setItem('email', email);
+    const normalizedEmail = email.toLowerCase();
+    sessionStorage.setItem('email', normalizedEmail);
     e.preventDefault();
     setError('');
     setLoading(true);
-    signIn(email, password)
+    signIn(normalizedEmail, password)
     .then((res) => {
       if(!res) setError('Incorrect email or password');
     })

@@ -64,10 +64,8 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
 
         (async () => {
             try {
-                console.log("here is the activePlayer",activePlayer)
                 const res = await fetch(`/api/getMatches?playerId=${activePlayer.id}`);
                 const data = await res.json();
-                console.log(data)
                 const live: MatchDisplay[] = data.matches.map((m: Match) => {
                 const selfEntry = m.playerMatches.find((pm: PlayerMatch) => pm.playerId === activePlayer.id);
                 let opponentName = 'Unknown';

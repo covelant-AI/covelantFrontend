@@ -39,11 +39,13 @@ export default function SignUpPage(){
       return;
     }
 
+    const normalizedEmail = email.toLowerCase();
+
     setErrorMessage('');
     setLoading(true);
     
     try {
-      const userCredential = await createUserWithEmailAndPassword(email, password);
+      const userCredential = await createUserWithEmailAndPassword(normalizedEmail, password);
       if (!userCredential) {
         setLoading(false);
         resetMouseLoading()
@@ -52,14 +54,14 @@ export default function SignUpPage(){
         if (button) (button as HTMLButtonElement).style.cursor = 'pointer';
         return setErrorMessage('Sorry this email is already in use, try another email');
       }
-      const avatar = '/images/default-avatar.png'; // Default avatar URL
+      const avatar = '/images/default-avatar.png'; 
       const response = await fetch('/api/createUser', {
         method: 'POST',
         headers: new Headers( {
           'Content-Type': 'application/json',
           Accept: 'application/json', 
       }),
-        body: JSON.stringify({ email, role, firstName, lastName, avatar }),
+        body: JSON.stringify({ normalizedEmail, role, firstName, lastName, avatar }),
       });
 
       const data = await response.json();
@@ -75,7 +77,7 @@ export default function SignUpPage(){
 
     if (data.message === 'Player created' || data.message === 'Coach created') {
       sessionStorage.setItem('user', 'true');
-      sessionStorage.setItem('email', email);
+      sessionStorage.setItem('email', normalizedEmail);
       sessionStorage.setItem('firstName', firstName);
       sessionStorage.setItem('lastName', lastName);
       sessionStorage.setItem('avatar', avatar);

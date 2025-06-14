@@ -4,12 +4,12 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
-  const { email, role } = data;
+  const { normalizedEmail, role } = data;
 
   try {
     // Check if user already exists as player or coach
-    const existingPlayer = await prisma.player.findFirst({ where: { email } });
-    const existingCoach = await prisma.coach.findFirst({ where: { email } });
+    const existingPlayer = await prisma.player.findFirst({ where: { email: normalizedEmail } });
+    const existingCoach = await prisma.coach.findFirst({ where: { email: normalizedEmail } });
 
     if (existingPlayer || existingCoach) {
       return NextResponse.json({ message: 'Player already exists' }, { status: 400 });
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     if (role === 'player') {
       await prisma.player.create({
         data: {
-          email,
+          email: normalizedEmail,
           firstName: data.firstName,
           lastName: data.lastName,
           avatar: data.avatar || '/images/default-avatar.png', 
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     if (role === 'coach') {
       await prisma.coach.create({
         data: {
-          email,
+          email: normalizedEmail,
           firstName: data.firstName,
           lastName: data.lastName,
           avatar: data.avatar || '/images/default-avatar.png', 
