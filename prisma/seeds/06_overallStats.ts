@@ -11,8 +11,17 @@ export function getRandomAvgDuration(): number {
 }
 
 export async function seedOverallStats(playerId: number) {
-  await prisma.overallStats.create({
-    data: {
+  await prisma.overallStats.upsert({
+    where: { playerId },
+    update: {
+      wins: getRandomInt(0, 20),
+      losses: getRandomInt(0, 20),
+      setsWon: getRandomInt(0, 60),
+      setsLost: getRandomInt(0, 60),
+      totalMatches: getRandomInt(1, 40),
+      avgMatchDuration: getRandomAvgDuration(),
+    },
+    create: {
       playerId,
       wins: getRandomInt(0, 20),
       losses: getRandomInt(0, 20),
