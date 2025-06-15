@@ -1,13 +1,12 @@
 import Image from 'next/image'
 import { useAuth } from '@/app/context/AuthContext';
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { PlayerSelectorProps } from '@/util/interfaces'
 import * as Sentry from "@sentry/nextjs";
 import { Player } from '@/util/interfaces'
 
 export default function StaticPlayerDisplay({onSelect}: PlayerSelectorProps){
     const {profile} = useAuth();
-    const [userData, setUserData] = useState<Player>()
 
     useEffect(() => {
         if (!profile?.email) return
@@ -18,7 +17,6 @@ export default function StaticPlayerDisplay({onSelect}: PlayerSelectorProps){
           .then((r) => r.json())
           .then((result) => {
             if (result.error) throw new Error("something went wrong, refresh the page");
-            setUserData(result.data)
             onSelect(result.data as Player)
           })
           .catch((err) => Sentry.captureException(err))
