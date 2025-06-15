@@ -105,7 +105,7 @@ export default function MainPreformanceTracker({
       <div className="mt-auto">
         <button
           className="w-full py-2 text-black font-semibold text-sm rounded-xl">
-          Your Personal Video AI analysis is coming soon<br/><span className="text-xs">Covelant beta test 2025</span>
+          Full AU suppot is not available in this demo<br/><span className="text-xs">Covelant beta test 2025</span>
         </button>
       </div>
     </div>
