@@ -118,7 +118,7 @@ export default function SignUpPage(){
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8" style={{ backgroundImage: "url('/images/bg-signIn.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
   <div className="bg-[#F9F9F9] p-8 rounded-3xl shadow-lg w-full max-w-md">
     <Image
-      src="/icons/signUp.svg"
+      src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FsignUp.svg?alt=media&token=a2503719-1a1e-456c-b372-ce529c9be10c"
       alt="Sign Up Icon"
       width={80}
       height={80}
@@ -156,7 +156,7 @@ export default function SignUpPage(){
       </span>
       <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
         <Image
-          src="/icons/mail.svg"
+          src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FMail.svg?alt=media&token=25782677-5e2a-40a6-8c7f-20b67cb9c742"
           alt="Email Icon"
           width={24}
           height={24}
@@ -176,7 +176,7 @@ export default function SignUpPage(){
 
       <div className="my-4 flex items-center bg-[#F0F0F0] rounded-xl">
         <Image
-          src="/icons/lock.svg"
+          src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Flock.svg?alt=media&token=b9ab81a5-f4d4-4e51-8de9-ad93c30ced5c"
           alt="Email Icon"
           width={24}
           height={24}
@@ -196,7 +196,7 @@ export default function SignUpPage(){
 
       <div className="mb-6 flex items-center bg-[#F0F0F0] rounded-xl">
         <Image
-          src="/icons/lock.svg"
+          src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Flock.svg?alt=media&token=b9ab81a5-f4d4-4e51-8de9-ad93c30ced5c"
           alt="Password Icon"
           width={24}
           height={24}

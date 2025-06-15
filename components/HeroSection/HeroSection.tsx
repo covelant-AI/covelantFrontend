@@ -23,7 +23,8 @@ export default function HeroSection(){
             <Link href="/upload-match">
                 <button className="flex items-center bg-[#42B6B1] text-white py-2 px-7 rounded-lg font-semibold mb-2 
                 cursor-pointer hover:bg-teal-600 transition-colors duration-100 active:scale-95 transition-transform">
-                  <Image className="w-5 h-5 mr-4" src="./icons/upload.svg" width={50} height={50} alt="Upload Icon" />
+                  <Image className="w-5 h-5 mr-4" src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Fupload.svg?alt=media&token=dfda23e3-1367-4a90-b6e2-c5f2dd829831" 
+                  width={50} height={50} alt="Upload Icon" />
                   Upload Match
                 </button>
               </Link>

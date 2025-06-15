@@ -58,7 +58,7 @@ export default function NavProfile(){
             className={`w-6 h-6 hover:cursor-pointer transition-transform duration-300 ${
               rotated ? 'rotate-90' : ''
             }`}
-            src="/icons/settings.svg"
+            src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Fsettings.svg?alt=media&token=f80dd536-386e-431d-a67e-646d91ea6bae"
             alt="Settings Icon"
             width={24}
             height={24}

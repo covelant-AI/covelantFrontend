@@ -87,7 +87,7 @@ export default function InvitePage() {
               className="border border-[#9ED8D5] rounded-xl px-4 text-black font-semibold hover:bg-teal-50 
                          transition flex flex-row justify-between items-center cursor-pointer"
             >
-              <Image src="/images/link.png" alt="Link" width={24} height={24} className="pr-2" />
+              <Image src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2FLink.png?alt=media&token=6468552d-40fd-4027-99b7-90846d406851" alt="Link" width={24} height={24} className="pr-2" />
               <span>{copied ? 'Copied!' : 'Copy Link'}</span>
             </button>
         </div>

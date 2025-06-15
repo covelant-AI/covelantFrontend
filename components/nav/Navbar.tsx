@@ -21,12 +21,12 @@ export default function NavBar() {
             hover:scale-105 active:scale-95
           "
         >
-          <Image src="/icons/backArrow.svg" alt="Back" width={20} height={20} />
+          <Image src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FBackArrow.svg?alt=media&token=f4695bb5-dfd2-4733-9755-32748dbc86b8" alt="Back" width={20} height={20} />
         </button>
       )}
         <Link href="/">
           <Image
-            src="/icons/logoBlack.svg"
+            src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Flogoblack.svg?alt=media&token=85bf4e35-fa7a-416f-9b7a-bb10cf105536"
             alt="Covalent Logo"
             width={170}
             height={60} 

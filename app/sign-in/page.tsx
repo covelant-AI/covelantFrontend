@@ -62,7 +62,7 @@ export default function SignInPage(){
                   error ? 'border-red-500 border-1' : ''}`}
           > 
             <Image
-              src="/icons/mail.svg"
+              src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FMail.svg?alt=media&token=25782677-5e2a-40a6-8c7f-20b67cb9c742"
               alt="Email Icon"
               width={24}
               height={24}
@@ -83,7 +83,7 @@ export default function SignInPage(){
           <div className={`my-4 flex items-center bg-[#F0F0F0] rounded-xl ${
                   error ? 'border-red-500 border-1' : ''}`}>
             <Image
-              src="/icons/lock.svg"
+              src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Flock.svg?alt=media&token=b9ab81a5-f4d4-4e51-8de9-ad93c30ced5c"
               alt="Password Icon"
               width={24}
               height={24}
