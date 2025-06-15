@@ -21,6 +21,7 @@ for (const m of matches) {
     value: number;
     eventTimeSeconds: number;
   }> = [];
+  let i = 0
 
     // new function to push all metric types
     function pushMetrics(
@@ -60,7 +61,7 @@ for (const m of matches) {
     }
 
         // Example intervals with manual values for ball speed and player speed
-    const intervals = [
+    const intervalsArray = [[
       { time: 6, ballSpeed: 193.4, playerSpeed: 0.2, longestRally: 1, strikesEff: 70}, 
       { time: 7, ballSpeed: 32.7, playerSpeed: 1.4, longestRally: 2, strikesEff: 81.9 }, 
       { time: 8, ballSpeed: 29.6, playerSpeed: 12, longestRally: 2, strikesEff: 63 }, 
@@ -96,7 +97,41 @@ for (const m of matches) {
       { time: 116, ballSpeed: 111.3, playerSpeed: 1.2, longestRally: 8, strikesEff: 33.3  }, 
       { time: 117, ballSpeed: 47.9, playerSpeed: 0.8, longestRally: 9, strikesEff: 97.9  },
       { time: 119, ballSpeed: 0, playerSpeed: 0, longestRally: 0, strikesEff: 0  }, 
-    ];
+    ],
+    [
+      { time: 1, ballSpeed: 193.4, playerSpeed: 0.2, longestRally: 1, strikesEff: 70}, 
+      { time: 2, ballSpeed: 32.7, playerSpeed: 1.4, longestRally: 2, strikesEff: 81.9 }, 
+      { time: 3, ballSpeed: 29.6, playerSpeed: 12, longestRally: 2, strikesEff: 63 }, 
+      { time: 4, ballSpeed: 68.3, playerSpeed: 4, longestRally: 2, strikesEff: 42.8 }, 
+      { time: 5, ballSpeed: 88.7, playerSpeed: 3.2, longestRally: 3, strikesEff: 77.4 }, 
+      { time: 6, ballSpeed: 72.2, playerSpeed: 7.3, longestRally: 4, strikesEff: 1.2  }, 
+      { time: 6, ballSpeed: 0, playerSpeed: 0, longestRally: 0, strikesEff: 0 }, 
+      { time: 30, ballSpeed: 184.7, playerSpeed: 0.1, longestRally: 1, strikesEff: 74.5  }, 
+      { time: 31, ballSpeed: 43.1, playerSpeed: 4.3, longestRally: 2, strikesEff: 88.9 }, 
+      { time: 33, ballSpeed: 86.2, playerSpeed: 2.4, longestRally: 3, strikesEff: 55.7 },
+    ],
+    [
+      { time: 49, ballSpeed: 193.4, playerSpeed: 0.2, longestRally: 1, strikesEff: 70}, 
+      { time: 48, ballSpeed: 32.7, playerSpeed: 1.4, longestRally: 2, strikesEff: 81.9 }, 
+      { time: 47, ballSpeed: 29.6, playerSpeed: 12, longestRally: 2, strikesEff: 63 }, 
+      { time: 46, ballSpeed: 68.3, playerSpeed: 4, longestRally: 2, strikesEff: 42.8 }, 
+      { time: 40, ballSpeed: 88.7, playerSpeed: 3.2, longestRally: 3, strikesEff: 77.4 }, 
+      { time: 41, ballSpeed: 72.2, playerSpeed: 7.3, longestRally: 4, strikesEff: 1.2  }, 
+      { time: 43, ballSpeed: 0, playerSpeed: 0, longestRally: 0, strikesEff: 0 }, 
+      { time: 40, ballSpeed: 184.7, playerSpeed: 0.1, longestRally: 1, strikesEff: 74.5  }, 
+      { time: 41, ballSpeed: 43.1, playerSpeed: 4.3, longestRally: 2, strikesEff: 88.9 }, 
+      { time: 43, ballSpeed: 86.2, playerSpeed: 2.4, longestRally: 3, strikesEff: 55.7 },
+    ]
+  
+  ]
+
+    const intervals = intervalsArray[i]
+
+    if (!intervals) {
+      console.warn(`No milestone array for match index ${i} — skipping.`);
+      break;
+    }
+
 
     // Use the intervals to set speeds
     pushMetrics(intervals);
@@ -111,6 +146,7 @@ for (const m of matches) {
         eventTimeSeconds: row.eventTimeSeconds,
       },
     });
+    i++
   }
 
 

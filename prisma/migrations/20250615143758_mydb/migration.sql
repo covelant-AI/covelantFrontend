@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "EventCategory" AS ENUM ('MATCH', 'TACTIC', 'FOULS', 'PHYSICAL', 'COMMENT');
+CREATE TYPE "EventCategory" AS ENUM ('MATCH', 'TACTIC', 'FOULS', 'PHYSICAL', 'NOTE');
 
 -- CreateEnum
 CREATE TYPE "MatchEventType" AS ENUM ('FIRST_SERVE', 'SECOND_SERVE', 'BREAK_POINT', 'GAME_POINT', 'SET_POINT', 'TIEBREAK', 'START_OF_SET');
@@ -15,6 +15,9 @@ CREATE TYPE "PhysicalEventType" AS ENUM ('FATIGUE_SIGN', 'SLOW_RECOVERY', 'INJUR
 
 -- CreateEnum
 CREATE TYPE "ConditionType" AS ENUM ('UNDER_PRESSURE', 'CONFIDENT', 'FOCUSED', 'LOST_FOCUS', 'MOMENTUM_SHIFT', 'CLUTCH_PLAY', 'FATIGUE_SIGNS');
+
+-- CreateEnum
+CREATE TYPE "NoteEventType" AS ENUM ('GENERAL', 'GREAT', 'POOR', 'IMPORTANT');
 
 -- CreateEnum
 CREATE TYPE "MetricType" AS ENUM ('BALL_SPEED', 'PLAYER_SPEED', 'LONGEST_RALLY', 'STRIKES_EFF', 'NOTE');
@@ -153,7 +156,7 @@ CREATE TABLE "MatchEvent" (
     "tacticType" "TacticEventType",
     "foulType" "FoulsEventType",
     "physicalType" "PhysicalEventType",
-    "commentText" TEXT,
+    "noteType" "NoteEventType",
     "condition" "ConditionType",
     "eventTimeSeconds" DOUBLE PRECISION NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
