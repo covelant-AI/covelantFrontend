@@ -19,7 +19,7 @@ export default function StaticPlayerDisplay({onSelect}: PlayerSelectorProps){
           .then((result) => {
             if (result.error) throw new Error("something went wrong, refresh the page");
             setUserData(result.data)
-            onSelect(userData as Player)
+            onSelect(result.data as Player)
           })
           .catch((err) => Sentry.captureException(err))
   
