@@ -25,7 +25,7 @@ async function main() {
 
   // Seed Matches for Player1 and opponents
   const videoUrl = "https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/videos%2Fvideoplayback%20(25).mp4?alt=media&token=41090c42-db4e-491e-8135-98835e45c160";
-  const imageUrl = "https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/thumbnails%2Fundefined_1749246733891_videoplayback%20(25).mp4?alt=media&token=8ff9b209-3ad3-4d77-85bf-dab5c8c585fe";
+  const imageUrl = "https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/thumbnails%2Fundefined_1749818684964_videoplayback%20(25).mp4?alt=media&token=fa84f8b2-68a6-4f67-aaa2-cf536f82a4d2";
 
   const michaelLlodra = players.find(p => p.firstName === "Michael" && p.lastName === "Llodra");
   const andyMurray = players.find(p => p.firstName === "Andy" && p.lastName === "Murray");
