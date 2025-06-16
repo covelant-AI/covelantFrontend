@@ -134,19 +134,6 @@ export default function CustomVideoPlayer({
   };
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
-  //spacebar pause
-  useEffect(() => {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.code === "Space") {
-      e.preventDefault(); // Prevent scrolling
-      togglePlay();
-    }
-  };
-  window.addEventListener("keydown", handleKeyDown);
-  return () => window.removeEventListener("keydown", handleKeyDown);
-}, []);
-
-
   return (
     <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
       {/* VIDEO */}
