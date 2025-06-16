@@ -5,6 +5,7 @@ import TennisScoreBoard from "@/components/matches/TennisScoreBoard"
 import {MainPerformanceTrackerProps, MatchMetric, EventRecord} from "@/util/interfaces"
 import AISummery from "@/components/matches/AISummary"
 import Image from "next/image";
+import Link from "next/link";
 
 
 export default function MainPreformanceTracker({
@@ -100,13 +101,18 @@ export default function MainPreformanceTracker({
           eventTime={matchTime}
         />
       </div>
+      
         
       {/* ─── Spacer pushes button to bottom ─── */}
-      <div className="mt-auto">
-        <button
-          className="w-full py-2 text-black font-semibold text-sm rounded-xl">
-          Full AU suppot is not available in this demo<br/><span className="text-xs">Covelant beta test 2025</span>
-        </button>
+      <div className="mt-auto px-4">
+        <p className="text-xs text-black text-center mb-4">Full AI support is not available in this demo</p>
+        <Link href="/demo-note">
+          <button className="w-full py-2 border border-teal-600 text-black font-semibold text-md rounded-xl hover:bg-teal-600 
+            hover:text-white transition-colors duration-300 cursor-pointer mb-4">
+            View full version features
+          </button>
+        </Link>
+        <p className="text-xs text-black text-center">Covelant beta 2025</p>
       </div>
     </div>
 
