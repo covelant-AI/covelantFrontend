@@ -4,7 +4,7 @@ import RadialBlurBg from '@/components/UI/RadialBlur';
 export default function Loading() {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white max-h-screen pt-10">
-      <h1 className="absolute text-3xl font-normal text-center text-gray-600 mb-20">
+      <h1 className="absolute text-3xl font-normal text-center text-gray-700 mb-20">
         Establishing Neural network Link<br />Please Wait...
       </h1>
       <RadialBlurBg

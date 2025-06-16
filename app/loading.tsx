@@ -30,7 +30,7 @@ export default function Loading() {
     >
     <div className="flex flex-col items-center justify-center h-screen bg-white max-h-screen pt-10">
       <Image
-        src="/icons/logoBlack.svg"
+        src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Flogoblack.svg?alt=media&token=85bf4e35-fa7a-416f-9b7a-bb10cf105536"
         alt="Covalent Logo"
         width={270}
         height={160}
