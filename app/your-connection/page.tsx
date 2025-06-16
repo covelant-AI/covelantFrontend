@@ -142,7 +142,7 @@ export default function YourConnection() {
                       </svg>
                     </button>
 
-                    <Link href={`/profile/${athlete.id}`} className="flex flex-col items-center">
+                    {/* <Link href={`/profile/${athlete.id}`} className="flex flex-col items-center"> */}
                       <div className="rounded-lg p-1 border hover:border-[#6EB6B3] hover:bg-[#6EB6B3] active:scale-[0.98]">
                         <Image
                           src={athlete.avatar || '/images/default-avatar.png'}
@@ -155,7 +155,7 @@ export default function YourConnection() {
                       <span className="mt-2 text-sm font-semibold text-gray-700 text-center">
                         {athlete.firstName} {athlete.lastName}
                       </span>
-                    </Link>
+                    {/* </Link> */}
                   </div>
                 );
               })
