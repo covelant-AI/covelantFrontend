@@ -31,7 +31,6 @@ export default function MainPreformanceTracker({
     const res = await fetch(`/api/getMatchData?id=${videoId}`);
     const json = await res.json();
 
-    console.log("Match Data:", json.data);
     if (res.ok) {
       setBallSpeeds(json.data.ballSpeeds);
       setPlayerSpeeds(json.data.playerSpeeds);
