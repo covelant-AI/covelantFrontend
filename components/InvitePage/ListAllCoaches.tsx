@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from '@/app/context/AuthContext';
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import {Coach} from "@/util/interfaces"
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 import Image from 'next/image'
 
@@ -23,12 +25,19 @@ export default function ListAllCoaches(){
         }).then((response) => response.json())
         .then((result)=> {
           if(result.error){
-            console.error('Error fetching user data:', result.error);
+            Sentry.captureException(result.error);
           }
           setPlayerData(()=> result.data);
         })
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        toast.error(Msg, {
+          data: {
+            title: 'Internal Server Error',
+            message: 'There was an error while loading the page. Please try refreshing the page or come back later.',
+          },
+          position: 'bottom-right',
+        })
+        Sentry.captureException(error);
       }
     };
 
@@ -42,14 +51,31 @@ export default function ListAllCoaches(){
           body: JSON.stringify({ coach: clickedPlayer, email: profile?.email }),
         })
     
-        if (!res.ok) Sentry.captureException(res);
+        if (!res.ok){
+          toast.error(Msg, {
+          data: {
+            title: 'Internal Server Error',
+            message: 'There was an error while adding user. Please try refreshing the page or come back later.',
+          },
+          position: 'bottom-right',
+        })
+        }
         
-        alert('Coach has been added!')
+        toast.success("Coach invited successfully!", {
+          position: 'bottom-right',
+        })
+
         setSelectedIds((prev) => new Set(prev).add(clickedPlayer.id))
         
       } catch (error) {
-        Sentry.captureException(error);
-        alert('Error inviting player')
+        toast.error(Msg, {
+          data: {
+            title: 'Internal Server Error',
+            message: 'Something went wrong on our end, we are looking into. Thank you for your patience.',
+          },
+          position: 'bottom-right',
+        })
+        Sentry.captureException(error)
       }
     }
 

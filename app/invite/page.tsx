@@ -9,6 +9,8 @@ import PlayerSelector from '@/components/InvitePage/PlayerSelector'
 import RadialBlurBg from "@/components/UI/RadialBlur";
 import {PlayerData} from "@/util/interfaces"
 import {inviteUrl} from "@/util/default"
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 
 export default function InvitePage() {
@@ -23,8 +25,14 @@ export default function InvitePage() {
         setCopied(true)
         setTimeout(() => setCopied(false), 2000) 
       } catch (err) {
+        toast.error(Msg, {
+          data: {
+            title: 'Failed to copy link',
+            message: 'There was an error copying the invite link. Please copy it here at https://www.covelant.com/sign-up',
+          },
+          position: 'bottom-right',
+        })
         Sentry.captureException(err);
-        alert('Failed to copy link')
       }
     }
 
@@ -34,8 +42,14 @@ export default function InvitePage() {
         setTimeout(() => setInvited(false), 2000)
       }
       catch(err){
+        toast.error(Msg, {
+          data: {
+            title: 'Failed to Invite user',
+            message: 'There was an error inviting the user. You can invite them manually here at https://www.covelant.com/sign-up',
+          },
+          position: 'bottom-right',
+        })
         Sentry.captureException(err);
-        alert('failed to invite User')
       }
     }
 
@@ -47,11 +61,29 @@ export default function InvitePage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ player: playerOne, email: profile?.email }),
           })
-          if (!res.ok) throw new Error('Failed to add player')
+          
+          if (!res.ok){
+            toast.error(Msg, {
+            data: {
+              title: 'Failed to Invite user',
+              message: 'There was a server error while inviting the user. You can invite them manually here at https://www.covelant.com/sign-up',
+            },
+            position: 'bottom-right',
+          })
+          }
+          
+          toast.success("Player added successfully!", {
+          position: 'bottom-right',})
 
         } catch (error) {
+          toast.error(Msg, {
+            data: {
+              title: 'Failed to Invite user',
+              message: 'There was a server error while inviting the user. You can invite them manually here at https://www.covelant.com/sign-up',
+            },
+            position: 'bottom-right',
+          })
           Sentry.captureException(error);
-          alert('Error inviting User')
         }
     }
     

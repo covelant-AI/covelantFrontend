@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { User, GetUsersSearch, PlayerSelectorProps, Player } from '@/util/interfaces'
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 
 export default function PlayerSelector({onSelect}: PlayerSelectorProps){
@@ -26,6 +28,13 @@ export default function PlayerSelector({onSelect}: PlayerSelectorProps){
         const data: GetUsersSearch = await res.json()
         setSuggestions(data.data)
       } catch (err) {
+        toast.warning(Msg, {
+          data: {
+            title: 'Player does not exist',
+            message: 'Suggestion: Copy the invite link and send it to them so they can sign up first, then you can invite them',
+          },
+          position: 'bottom-right',
+        })
         Sentry.captureException(err);
       }
     }

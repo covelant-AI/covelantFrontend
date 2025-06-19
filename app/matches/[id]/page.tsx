@@ -10,6 +10,8 @@ import {Player, MatchEventData} from "@/util/interfaces"
 import {defaultPlayer} from "@/util/default"
 import Loading from "../loading"
 import { useParams  } from 'next/navigation'
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 
 
@@ -48,7 +50,6 @@ const getVideoData = useCallback(async() => {
     const res = await fetch(`/api/getTags?id=${videoId}`);
     const json = await res.json();
     if (json.data.length !== 0) {
-      console.log(json.data)
       setMarkers(json.data)
     } else {
       setMarkers([])
@@ -70,11 +71,22 @@ const getVideoData = useCallback(async() => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
     });
-    if (!res.ok) throw new Error(`Status ${res.status}`);
+    if (!res.ok)
+    {
+      toast.error("Something went wrong while deleting the tag", {
+        position: 'bottom-right',
+      })
+    }
     setMarkers(prev => prev.filter(m => m.id !== id));
   } catch (err) {
-    console.error("Failed to delete tag:", err);
-    alert("Could not delete tag. Please try again.");
+    toast.error(Msg, {
+      data: {
+        title: 'Error deleting tag',
+        message: 'There was a problem with our servers while deleting the tag. Please try again later.',
+      },
+      position: 'bottom-right',
+    })
+    Sentry.captureException(err);
   }
 };
 

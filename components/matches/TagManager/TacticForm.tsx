@@ -3,6 +3,10 @@ import React, { useState, useEffect } from "react";
 import { parseTimeToSeconds, formatSeconds } from "@/util/services";
 import { TACTIC_TYPES, CONDITION_OPTIONS } from "@/util/types";
 import {MainTagManagerProps} from "@/util/interfaces"
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
+import * as Sentry from "@sentry/nextjs";
+
 
 export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagManagerProps) {
   const [tacticType, setTacticType] = useState<string>("SERVE_VOLLEY");
@@ -37,10 +41,17 @@ export default function TacticForm({ videoId, timeStamp, onAddTag }: MainTagMana
         alert('Failed to create Tag.');
       } 
         onAddTag(data.event);
+        setComment("");
       })
       .catch((error) => {
-        console.error('Error creating match:', error);
-        alert('Failed to create match. Please try again.');
+        toast.error(Msg, {
+          data: {
+            title: 'Error creating Tactic tag',
+            message: 'There was a problem with our servers while creating the tag. Please try again later or contact support.',
+          },
+          position: 'bottom-right',
+        })
+        Sentry.captureException(error);
       });
   };
 

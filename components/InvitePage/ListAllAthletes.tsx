@@ -4,6 +4,8 @@ import { useAuth } from '@/app/context/AuthContext';
 import Image from 'next/image'
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import {PlayerData} from "@/util/interfaces"
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 
 
@@ -30,6 +32,13 @@ export default function ListAllAthletes(){
           setPlayerData(()=> result.data);
         })
       } catch (error) {
+        toast.error(Msg, {
+          data: {
+            title: 'Internal Server Error',
+            message: 'There was an error while loading the page. Please try refreshing the page or come back later.',
+          },
+          position: 'bottom-right',
+        })
         Sentry.captureException(error);
       }
     };
@@ -44,17 +53,32 @@ export default function ListAllAthletes(){
           body: JSON.stringify({ player: clickedPlayer, email: profile?.email }),
         })
     
-        if (!res.ok) throw new Error('Failed to add player')
+        if (!res.ok) {
+          toast.error(Msg, {
+          data: {
+            title: 'Internal Server Error',
+            message: 'There was an error while adding user. Please try refreshing the page or come back later.',
+          },
+          position: 'bottom-right',
+        })
+        }
         
-        alert('Athlete has been added!')
+       toast.success("Player invited successfully", {
+          position: 'bottom-right',
+        })
         setSelectedIds((prev) => new Set(prev).add(clickedPlayer.id))
         
       } catch (error) {
-        console.error(error)
-        alert('Error inviting player')
+        toast.error(Msg, {
+          data: {
+            title: 'Internal Server Error',
+            message: 'Something went wrong on our end, we are looking into. Thank you for your patience.',
+          },
+          position: 'bottom-right',
+        })
+        Sentry.captureException(error);
       }
     }
-
 
     useEffect(() => {
       if (profile) {

@@ -6,6 +6,9 @@ import UploadVideo from "@/components/UploadPage/uploadVideo";
 import MatchData from "@/components/UploadPage/MatchData";
 import { Player } from '@/util/interfaces'
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
+import * as Sentry from "@sentry/nextjs";
 
 
 export default function UploadMatchPage() {
@@ -33,11 +36,23 @@ export default function UploadMatchPage() {
 
   function handleSubmit(){
     if (!videoURL || !videoThumbnail) {
-      alert("Please upload a video before proceeding.");
+      toast.warning(Msg, {
+        data: {
+          title: 'Upload a video before proceeding.',
+          message: 'Please upload a video to analyze. Make sure it is and .mp4 format and less than 100MB in size.',
+        },
+        position: 'bottom-right',
+      })
       return;
     }
     if (!matchInfo.playerOne || !matchInfo.playerTwo || !matchInfo.date || !matchInfo.fieldType || !matchInfo.matchType) {
-      alert("Please fill in all match data fields.");
+      toast.warning(Msg, {
+        data: {
+          title: 'Missing Match Information',
+          message: 'Please make sure to add both players, Select Match Type, Select Court, and Date before proceeding.',
+        },
+        position: 'bottom-right',
+      })
       return;
     }
 
@@ -56,13 +71,27 @@ export default function UploadMatchPage() {
       .then((response) => response.json())
       .then((data) => {
        if (!data.success) {
-        alert('Failed to create match. Please try again.');
+        toast.warning(Msg, {
+        data: {
+          title: 'Failed to upload match',
+          message: 'Something went wrong while uploading your match. Please try again later.',
+        },
+        position: 'bottom-right',
+      })
       } 
-        router.push('/');
+      toast.success("Match uploaded successfully!",{
+          position: 'bottom-right',})
+      router.push('/');
       })
       .catch((error) => {
-        console.error('Error creating match:', error);
-        alert('Failed to create match. Please try again.');
+        toast.error(Msg, {
+          data: {
+            title: 'Error uploading your video',
+            message: 'There was a problem uploading your video. Please try again later or contact support.',
+          },
+          position: 'bottom-right',
+        })
+        Sentry.captureException(error);
       });
   }
 

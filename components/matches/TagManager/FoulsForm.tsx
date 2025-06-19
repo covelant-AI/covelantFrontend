@@ -3,6 +3,10 @@ import React, { useState, useEffect } from "react";
 import { parseTimeToSeconds, formatSeconds } from "@/util/services";
 import { FOULS_TYPES, CONDITION_OPTIONS } from "@/util/types";
 import {MainTagManagerProps} from "@/util/interfaces"
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
+import * as Sentry from "@sentry/nextjs";
+
 
 export default function FoulsForm({ videoId, timeStamp, onAddTag }: MainTagManagerProps) {
   const [foulType, setFoulType] = useState<string>("UNFORCED_ERROR");
@@ -38,10 +42,17 @@ export default function FoulsForm({ videoId, timeStamp, onAddTag }: MainTagManag
         alert('Failed to create Tag.');
       } 
         onAddTag(data.event);
+        setComment("");
       })
       .catch((error) => {
-        console.error('Error creating match:', error);
-        alert('Failed to create match. Please try again.');
+        toast.error(Msg, {
+          data: {
+            title: 'Error Creating Fouls tag',
+            message: 'There was a problem with our servers while creating the tag. Please try again later or contact support.',
+          },
+          position: 'bottom-right',
+        })
+        Sentry.captureException(error);
       });
   };
 

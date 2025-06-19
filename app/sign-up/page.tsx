@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useMouseLoading } from '@/hooks/useMouseLoading';
 import {resetMouseLoading} from "@/util/services"
 import Image from 'next/image'
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 
 export default function SignUpPage(){
@@ -26,16 +28,19 @@ export default function SignUpPage(){
     
     if (password.length < 6) {
       setErrorMessage('Password must be at least 6 characters long');
+      resetMouseLoading()
       return;
     }
     
     if(password !== passwordConfirm){
       setErrorMessage('Your password & confirm password do not match');
+      resetMouseLoading()
       return;
     }
 
     if(!role){
       setErrorMessage('please select either Player or Coache');
+      resetMouseLoading()
       return;
     }
 
@@ -99,6 +104,9 @@ export default function SignUpPage(){
         await new Promise(res => setTimeout(res, 100));
         attempts++;
       }
+      toast.success("Sign up successful, ready for take off!",{
+        position: 'bottom-right',
+      })
       router.push('/');
     };
     
@@ -109,7 +117,7 @@ export default function SignUpPage(){
     }
     } catch (error) {
       Sentry.captureException(error);
-      setErrorMessage('Looks like password is too easy to guess, try a more complex password');
+      setErrorMessage('Looks like we are having some server issues right now, please try again later');
       setLoading(false);
     }
   };

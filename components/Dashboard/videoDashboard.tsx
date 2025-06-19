@@ -47,7 +47,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                 // Only set activePlayer to the first player from the database if no player was retrieved from sessionStorage
                 if (!sessionStorage.getItem("selectedPlayer") && result.connection.length > 0) {
                     setActivePlayer(result.connection[0]);
-                    sessionStorage.setItem("selectedPlayer", JSON.stringify(result.connection[0]));  // Save the first player from the database to sessionStorage
+                    sessionStorage.setItem("selectedPlayer", JSON.stringify(result.connection[0]));  
                 }
             } catch (err) {
                 Sentry.captureException(err);

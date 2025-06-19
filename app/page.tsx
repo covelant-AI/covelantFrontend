@@ -17,7 +17,7 @@ export default function Home() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 2.2, ease: "easeOut" }}>
+      transition={{ duration: 1.5, ease: "easeOut" }}>
       <NavBar />
       <HeroSection />
       <HomeDashboard />

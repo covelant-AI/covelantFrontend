@@ -6,6 +6,8 @@ import {MainPerformanceTrackerProps, MatchMetric, EventRecord} from "@/util/inte
 import AISummery from "@/components/matches/AISummary"
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 
 
 export default function MainPreformanceTracker({
@@ -38,7 +40,13 @@ export default function MainPreformanceTracker({
       setStrikesEff(json.data.strikesEff);
       setScorePoints(json.data.scorePoints)
     } else {
-      console.error("Failed to load tags:", json);
+      toast.error(Msg, {
+      data: {
+        title: 'Error loading tags',
+        message: 'There was a problem with our servers while loading the tag. Please try again later or refresh the page.',
+      },
+      position: 'bottom-right',
+    })
     }
   }
 

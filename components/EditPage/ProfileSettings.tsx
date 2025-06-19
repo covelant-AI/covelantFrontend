@@ -236,7 +236,7 @@ const handleChangePicture = () => {
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>
+  if (loading) return <p className="text-center mt-10">Loading...<br/>If it takes too long please refresh the page</p>
 
   return (
     <div className="px-20 py-4 max-w-2xl mx-auto flex flex-col gap-4 text-sm text-gray-700">

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useMouseLoading } from '@/hooks/useMouseLoading';
 import {resetMouseLoading} from "@/util/services"
 import Image from "next/image";
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 
 
@@ -27,7 +29,18 @@ export default function SignInPage(){
     setLoading(true);
     signIn(normalizedEmail, password)
     .then((res) => {
-      if(!res) setError('Incorrect email or password');
+      if(!res){
+        return toast.error(Msg, {
+          data: {
+            title: 'Incorrect Email or Password',
+            message: 'Please check your credentials and try again.',
+          },
+          position: 'bottom-right',
+        })
+      }
+      toast.success("Sign in successful, ready for take off", {
+        position: 'bottom-right',
+      });
     })
     .catch((error) => {
       Sentry.captureException(error);

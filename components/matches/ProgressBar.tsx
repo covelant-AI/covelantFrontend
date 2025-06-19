@@ -1,6 +1,9 @@
 import React, { MouseEvent, useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Pen , Check , X,Trash2  } from "lucide-react";
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
+import * as Sentry from "@sentry/nextjs";
 
 export interface ProgressBarProps {
   duration: number;
@@ -75,8 +78,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       });
       setEditingIndex(null);
     } catch (err) {
-      console.error("Failed to update tag:", err);
-      alert("Could not save comment. Please try again.");
+      toast.error(Msg, {
+        data: {
+          title: 'Error updating tag',
+          message: 'There was a problem with our servers while updating the tag. Please try again later.',
+        },
+        position: 'bottom-right',
+      })
+      Sentry.captureException(err);
     }
   };
 
@@ -133,7 +142,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
                 toggleOpen(i); // Only open if it's not already open
               }
             }}
-            className={`absolute w-[12px] h-[12px] transform rotate-45 rounded-sm border ${
+            className={`absolute w-[10px] h-[10px] transform rotate-45 rounded-xs border cursor-pointer ${
               openIndex === i
                 ? "border-[#6EB6B3] bg-white cursor-pointer"
                 : "border-black"
@@ -172,7 +181,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           <div
             onMouseMove={e => e.stopPropagation()}
             ref={bubbleRef}
-            className="absolute top-8 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-1 shadow-lg max-w-xs"
+            className="absolute top-8 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-1 shadow-lg max-w-xs z-10"
             style={{ left: `calc(${(localMarks[openIndex].offsetSeconds / duration) * 100}% - 6px)` }}
           >
             <div className="flex items-center justify-between">
