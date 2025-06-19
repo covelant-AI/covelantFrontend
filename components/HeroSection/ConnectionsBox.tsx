@@ -25,7 +25,9 @@ export default function ConnectionBox(){
           }
         )
         const result = await res.json()
-        if (result.error) Sentry.captureException(result.error)
+        if (result.error){ 
+          Sentry.captureException(result.error)
+        }
 
         if (profile.type === 'coach') {
           setPlayerData(result.connection)
@@ -34,7 +36,6 @@ export default function ConnectionBox(){
         }
       } catch (err) {
         Sentry.captureException(err);
-        alert('Error fetching user data:')
       }
     }
 
@@ -83,8 +84,8 @@ export default function ConnectionBox(){
       </>: <>
       <div className="flex items-center space-x-2 mr-6">
           {(playerCount < 3 ? safePlayerData : safePlayerData.slice(0, 3)).map((player) => (
-            // <Link key={player.id} href={`/profile/${player.id}`}>
-              // <button className='cursor-pointer active:scale-[0.9] hover:scale-[1.05]'>
+            <Link key={player.id} href={`/demo-note`}>
+              <button className='cursor-pointer active:scale-[0.9] hover:scale-[1.05]'>
                 <div key={player.id} className="w-12 h-12 rounded-xl overflow-hidden ">
                 <div className="relative w-full h-full">
                   <Image
@@ -96,8 +97,8 @@ export default function ConnectionBox(){
                   />
                 </div>
                 </div>
-              // </button>
-            // </Link>
+              </button>
+            </Link>
           ))}
 
           <Link href="/your-connection">

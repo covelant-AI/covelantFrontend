@@ -9,7 +9,7 @@ export async function DELETE(req: NextRequest) {
     const email = url.searchParams.get('email');
     const { id } = await req.json();
 
-    if (!email || !id ) {
+    if (!email || !id) {
       return NextResponse.json(
         { message: "Email, coachId, and playerId are required" },
         { status: 400 }
@@ -19,10 +19,16 @@ export async function DELETE(req: NextRequest) {
     // 1. Check if the email belongs to a player or a coach
     const player = await prisma.player.findFirst({
       where: { email: email },
+      include: {
+        coaches: true, // Get the list of coaches associated with the player
+      },
     });
 
     const coach = await prisma.coach.findFirst({
       where: { email: email },
+      include: {
+        players: true, // Get the list of players associated with the coach
+      },
     });
 
     // 2. If email matches a player
@@ -37,12 +43,18 @@ export async function DELETE(req: NextRequest) {
             },
           },
         },
+        include: {
+          coaches: true, // Return the updated list of coaches
+        },
       });
 
-          return NextResponse.json(
-      { message: "Player removed successfully" },
-      { status: 200 }
-    );
+      return NextResponse.json(
+        {
+          message: "Player removed successfully",
+          coaches: updatedPlayer.coaches, // Return the updated coach list
+        },
+        { status: 200 }
+      );
     }
 
     // 3. If email matches a coach
@@ -57,12 +69,18 @@ export async function DELETE(req: NextRequest) {
             },
           },
         },
+        include: {
+          players: true, // Return the updated list of players
+        },
       });
 
-    return NextResponse.json(
-      { message: "Player removed successfully" },
-      { status: 200 }
-    );
+      return NextResponse.json(
+        {
+          message: "Player removed successfully",
+          players: updatedCoach.players, // Return the updated player list
+        },
+        { status: 200 }
+      );
     }
 
     // If email does not match a player or coach
@@ -71,7 +89,6 @@ export async function DELETE(req: NextRequest) {
       { status: 404 }
     );
   } catch (error) {
-    console.error("Error removing player from coach's list:", error);
     return NextResponse.json(
       {
         message: "Error removing player from coach's list",

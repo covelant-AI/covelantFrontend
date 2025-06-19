@@ -2,15 +2,14 @@ import React, { useEffect, useRef, useState } from 'react'
 import { storage, ref, uploadBytesResumable, getDownloadURL } from '@/app/firebase/config';
 import Image from 'next/image';
 import { useAuth } from '@/app/context/AuthContext';
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 
 export default function ProfileSettings() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false);
   const { profile } = useAuth();
-  
-
-  // Extend form to include avatar
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -21,7 +20,6 @@ export default function ProfileSettings() {
     avatar: '/images/default-avatar.png',
   })
   const [initialForm, setInitialForm] = useState(form);
-
   const fileInputRef = useRef<HTMLInputElement>(null)
 
 
@@ -35,7 +33,17 @@ export default function ProfileSettings() {
     })
       .then((r) => r.json())
       .then((result) => {
-        if (result.error) throw new Error(result.error);
+        if (result.error){
+          toast.error(Msg, {
+            data: {
+              title: 'Error fetching your profile',
+              message: 'Seams like we cannot fetch your profile data right now. Try checking your internet or try again later.',
+            },
+            position: 'bottom-right',
+          })
+          Sentry.captureException(result.error);
+          return;
+        } 
         const loadedForm = {
           firstName: result.data.firstName || '',
           lastName: result.data.lastName || '',
@@ -48,7 +56,16 @@ export default function ProfileSettings() {
         setForm(loadedForm);
         setInitialForm(loadedForm);
       })
-      .catch((err) => Sentry.captureException(err))
+      .catch((err) => {
+        toast.error(Msg, {
+          data: {
+            title: 'Error fetching your profile',
+            message: 'Seams like we cannot fetch your profile data right now. Try checking your internet or try again later.',
+          },
+          position: 'bottom-right',
+        })
+        Sentry.captureException(err)
+      })
       .finally(() => setLoading(false))
   }, [profile?.email])
 
@@ -74,7 +91,6 @@ export default function ProfileSettings() {
   const handleSave = async () => {
     if (uploading) return;
     if (!profile?.type) {
-      console.error('Missing profile.type, cannot save')
       return
     }
 
@@ -85,10 +101,28 @@ export default function ProfileSettings() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-      if (!response.ok) throw new Error('Failed to update user data')
+      if (!response.ok) {
+        toast.error(Msg, {
+          data: {
+            title: 'Failed to update profile',
+            message: 'Seams like we cannot update your profile data right now. Try checking your internet or try again later.',
+          },
+          position: 'bottom-right',
+        })
+      }
       // hard reload on success
+      toast.success('Profile updated successfully!', {
+        position: 'bottom-right',
+      })
       window.location.reload()
     } catch (error) {
+      toast.error(Msg, {
+        data: {
+          title: 'Server Error',
+          message: 'There seems to be an error on our side, the error has been logged and we will fix it immidiatly. Please try again later.',
+        },
+        position: 'bottom-right',
+      })
       Sentry.captureException(error)
     }
   }
@@ -106,10 +140,30 @@ export default function ProfileSettings() {
         body: JSON.stringify(payload),
       })
         .then((res) => {
-          if (!res.ok) throw new Error()
+          if (!res.ok){
+            toast.error(Msg, {
+              data: {
+                title: 'Failed to delete picture',
+                message: 'Seams like we cannot delete your profile picture right now. Try checking your internet or try again later.',
+              },
+              position: 'bottom-right',
+            })
+          }
+          toast.success('Profile picture deleted successfully!', {
+            position: 'bottom-right',
+          })
           window.location.reload()
         })
-        .catch(console.error)
+        .catch( (error) => {
+          toast.error(Msg, {
+            data: {
+              title: 'Server Error',
+              message: 'There seems to be an error on our side, the error has been logged and we will fix it immidiatly. Please try again later.',
+            },
+            position: 'bottom-right',
+          })
+          Sentry.captureException(error)
+        })
     }
   }
 
@@ -128,7 +182,13 @@ const handleChangePicture = () => {
 
     try {
       if (!file.type.startsWith('image/')) {
-        console.error('Selected file is not an image.');
+        toast.error(Msg, {
+          data: {
+            title: 'Selected file is not an image',
+            message: 'The image you selected is not a valid image file. Please select a valid image file.',
+          },
+          position: 'bottom-right',
+        })
         return;
       }
 
@@ -141,18 +201,37 @@ const handleChangePicture = () => {
         'state_changed',
         () => {/* progress… */},
         (error) => {
-          console.error('Avatar upload failed:', error);
+          toast.error(Msg, {
+            data: {
+              title: 'Upload failed',
+              message: 'There was an error uploading your image. Please try again later.',
+            },
+            position: 'bottom-right',
+          })
+          Sentry.captureException(error);
           setUploading(false);
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           setForm(prev => ({ ...prev, avatar: downloadURL }));
           URL.revokeObjectURL(localUrl);
+          toast.success('Image is ready for upload, Click save!',
+            {
+              position: 'bottom-right',
+            }
+          );
           setUploading(false);  // <-- unlock when real URL is set
         }
       );
     } catch (err) {
-      console.error('Error during file upload:', err);
+      toast.error(Msg, {
+        data: {
+          title: 'Upload Error',
+          message: 'There was an error uploading your image. Please try again later.',
+        },
+        position: 'bottom-right',
+      })
+      Sentry.captureException(err);
       setUploading(false);
     }
   };

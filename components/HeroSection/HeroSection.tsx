@@ -29,7 +29,6 @@ export default function HeroSection(){
                 </button>
               </Link>
             </div>
-
           <ConnectionBox/>
         </div>
     )

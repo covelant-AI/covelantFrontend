@@ -39,7 +39,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                 );
                 const result = await res.json();
                 if (result.error) {
-                    console.error('Error fetching user data:', result.error);
+                    Sentry.captureException(result.error);
                     return;
                 }
                 setPlayers(result.connection); 
@@ -102,9 +102,9 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
     }, []);
 
     return (
-        <div className="col-span-1 lg:col-span-9 rounded-2xl shadow p-1 flex flex-col gap-2 bg-[#F8F8F8] my-5 justify-center">
+        <div className="col-span-1 lg:col-span-9 rounded-2xl shadow p-1 flex flex-col gap-2 bg-[#F8F8F8] justify-center z-1">
             {/* Matches grid */}
-            <div className="p-4 bg-[#FFFFFF] rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-2 max-h-[450px] overflow-y-auto">
+            <div className="p-4 bg-[#FFFFFF] rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-2 max-h-[450px] overflow-y-auto h-110">
                 {matches.length === 0 ? (
                     <>
                         <div className='max-md:hidden'></div>

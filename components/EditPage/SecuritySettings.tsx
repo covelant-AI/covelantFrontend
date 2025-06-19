@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { useAuth } from '@/app/context/AuthContext'
 import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth'
 import { FirebaseError } from 'firebase/app';
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
+import * as Sentry from "@sentry/nextjs";
 
 export default function SecuritySettings() {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
@@ -11,39 +14,62 @@ export default function SecuritySettings() {
   const { user } = useAuth()
 
   async function handdleOnSubmit(currentPassword: string, newPassword: string, repeatPassword: string) {
+
     if (!user || !user.email) {
-      alert('you are not logged in or email unavailable')
-      return
-    }
-    if (newPassword !== repeatPassword) {
-      alert('New passwords do not match')
-      return
+      toast.error(Msg, {
+        data: {
+          title: 'Mismatch Passwords',
+          message: 'Looks like the new password and repeat password do not match. Please try again.',
+        },
+        position: 'bottom-right',
+      })
     }
 
-    try {
-      const credential = EmailAuthProvider.credential(user.email, currentPassword)
+    if (newPassword !== repeatPassword) {
+      toast.error(Msg, {
+        data: {
+          title: 'Mismatch Passwords',
+          message: 'Looks like the new password and repeat password do not match. Please try again.',
+        },
+        position: 'bottom-right',
+      })
+    }
+
+   try {
+     const credential = EmailAuthProvider.credential(user.email, currentPassword)
 
       await reauthenticateWithCredential(user, credential)
       await updatePassword(user, newPassword)
 
-      alert('Password updated successfully!')
+       toast.success('Password updated successfully!')
 
-      // Reset form and hide password change inputs
-      setIsChangingPassword(false)
-      setCurrentPassword('')
-      setNewPassword('')
-      setRepeatPassword('')
-    } catch (error) {
-      if (error instanceof FirebaseError) { 
-        if (error.code === 'auth/invalid-credential') {
-          alert('Your current password is not correct');
-        } else {
-          alert('we are very sorry, but something went wrong on our end. Just refresh the page and it should be fine now :)');
-        }
-      } else {
-        alert('we are very sorry, but something went wrong on our end. Just refresh the page and it should be fine now :)');
-      }
-    }
+       // Reset form and hide password change inputs
+       setIsChangingPassword(false)
+       setCurrentPassword('')
+       setNewPassword('')
+       setRepeatPassword('')
+     } catch (error) {
+       if (error instanceof FirebaseError) { 
+         if (error.code === 'auth/invalid-credential') {
+            toast.error(Msg, {
+              data: {
+                title: 'Authentication denied',
+                message: 'Looks like the current password is incorrect. Please try again.',
+              },
+              position: 'bottom-right',
+            })
+         } else {
+            toast.error(Msg, {
+              data: {
+                title: 'Access denied',
+                message: 'password have been attempted to change to many times. Please try again later.',
+              },
+              position: 'bottom-right',
+            })
+             Sentry.captureException(error)
+         }
+       }
+     }
   }
 
   return (
@@ -151,4 +177,3 @@ export default function SecuritySettings() {
     </div>
   )
 }
-

@@ -5,7 +5,10 @@ import { PlayerData } from '@/util/interfaces';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
+import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
+
 
 export default function YourConnection() {
   const [playerData, setPlayerData] = useState<PlayerData[]>([]);
@@ -27,7 +30,15 @@ export default function YourConnection() {
           }
         );
         const result = await res.json();
-        if (result.error) throw new Error(result.error);
+        if (result.error){
+          toast.error(Msg, {
+            data: {
+              title: 'Error Fetching Data',
+              message: 'Seams like we cannot your Data right now. Try checking your internet or try again later.',
+            },
+            position: 'bottom-right',
+          })
+        }
 
         if (profile.type === 'coach') {
           setPlayerData(result.connection);
@@ -35,6 +46,13 @@ export default function YourConnection() {
           setPlayerData(result.connection[0].coaches);
         }
       } catch (err) {
+        toast.error(Msg, {
+          data: {
+            title: 'Server Error',
+            message: 'Something went wrong while retrieving the data from our servers. Try checking your internet or try again later.',
+          },
+          position: 'bottom-right',
+        })
         Sentry.captureException(err);
       }
     };
@@ -43,25 +61,65 @@ export default function YourConnection() {
   }, [profile?.type, profile?.email]);
 
   // Delete player from the connection list
-  const handleRemovePlayer = async (playerId: number) => {
-    try {
-      const res = await fetch(`/api/deleteConnection?email=${profile?.email}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: playerId,
-        }),
+const handleRemovePlayer = async (playerId: number) => {
+  try {
+    const res = await fetch(`/api/deleteConnection?email=${profile?.email}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: playerId,
+      }),
+    });
+
+    if (res.status !== 200) {
+      toast.error(Msg, {
+        data: {
+          title: 'Failed to remove player',
+          message: 'Failed to remove player from your connection list. Please try again later.',
+        },
+        position: 'bottom-right',
       });
-
-      if (!res.ok) throw new Error("Failed to remove player");
-
-      // Re-fetch the data to reflect the removal in the UI
-      await fetchUserData();
-    } catch (error) {
-      console.error("Error removing player:", error);
-      alert("Could not remove player. Please try again.");
+      return;
     }
-  };
+
+    toast.success('Player removed successfully!', {
+      position: "bottom-right"
+    });
+
+    const updatedData = await res.json();
+    const selectedPlayer = sessionStorage.getItem('selectedPlayer');
+    
+    if (selectedPlayer) {
+      const selectedPlayerObj = JSON.parse(selectedPlayer);
+      let isSelectedPlayerValid = false;
+
+      if (updatedData.players) {
+        isSelectedPlayerValid = updatedData.players.some((player: { id: number }) => player.id === selectedPlayerObj.id);
+      }
+
+      if (updatedData.coaches && !isSelectedPlayerValid) {
+        isSelectedPlayerValid = updatedData.coaches.some((coach: { id: number }) => coach.id === selectedPlayerObj.id);
+      }
+
+      if (!isSelectedPlayerValid) {
+        sessionStorage.removeItem('selectedPlayer');
+      }
+    }
+
+    await fetchUserData();
+
+  } catch (error) {
+    toast.error(Msg, {
+      data: {
+        title: 'Error',
+        message: 'There was an error removing the player. Please try again later.',
+      },
+      position: 'bottom-right',
+    });
+    Sentry.captureException(error);
+  }
+};
+
 
   // Re-fetch user data after deletion
   const fetchUserData = async () => {
@@ -81,8 +139,14 @@ export default function YourConnection() {
         setPlayerData(result.connection[0].coaches);
       }
     } catch (err) {
+      toast.error(Msg, {
+        data: {
+          title: 'Error Fetching Data',
+          message: 'There was an error fetching the updated data. Please try again later.',
+        },
+        position: 'bottom-right',
+      });
       Sentry.captureException(err);
-      alert('Error fetching user data:');
     }
   };
 
@@ -142,7 +206,7 @@ export default function YourConnection() {
                       </svg>
                     </button>
 
-                    {/* <Link href={`/profile/${athlete.id}`} className="flex flex-col items-center"> */}
+                    <Link href={`/demo-note`} className="flex flex-col items-center">
                       <div className="rounded-lg p-1 border hover:border-[#6EB6B3] hover:bg-[#6EB6B3] active:scale-[0.98]">
                         <Image
                           src={athlete.avatar || '/images/default-avatar.png'}
@@ -155,7 +219,7 @@ export default function YourConnection() {
                       <span className="mt-2 text-sm font-semibold text-gray-700 text-center">
                         {athlete.firstName} {athlete.lastName}
                       </span>
-                    {/* </Link> */}
+                    </Link>
                   </div>
                 );
               })
