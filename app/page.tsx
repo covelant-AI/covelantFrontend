@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { useAuth } from './context/AuthContext';
 import SignInPage from './sign-in/page';
 import Loading from './loading';
-import NavBar from '@/components/nav/Navbar'
 import HeroSection from '@/components/HeroSection/HeroSection'
 import HomeDashboard from '@/components/Dashboard/HomeDashboard';
 
@@ -18,7 +17,6 @@ export default function Home() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1.5, ease: "easeOut" }}>
-      <NavBar />
       <HeroSection />
       <HomeDashboard />
     </motion.div>

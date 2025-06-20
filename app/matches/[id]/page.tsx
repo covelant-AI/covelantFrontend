@@ -2,7 +2,6 @@
 import { useEffect, useState, useCallback  } from "react";
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "@/app/firebase/config";
-import NavBar from "@/components/nav/Navbar";
 import CustomVideoPlayer from "@/components/matches/CustomVideoPlayer"
 import MainTagManager from "@/components/matches/TagManager/MainTagManager"
 import MainPreformanceTracker from "@/components/matches/MainPreformanceTracker"
@@ -106,8 +105,6 @@ const getVideoData = useCallback(async() => {
   if (loading) return <Loading/>;
 
   return (
-    <>
-    <NavBar/>
       <div className="bg-white h-screen overflow-x-hidden pt-25">
           <div className="px-10 md:px-40 lg:px-30 xl:px-50 2xl:px-60 bg-white">
           <div className="flex flex-col lg:flex-row mt-8 w-full gap-4">
@@ -142,7 +139,6 @@ const getVideoData = useCallback(async() => {
           </div>
         </div>
       </div>
-    </>
   );
 };
 

@@ -1,5 +1,4 @@
 'use client';
-import NavBar from '@/components/nav/Navbar';
 import Link from 'next/link';
 import { PlayerData } from '@/util/interfaces';
 import { useState, useEffect } from 'react';
@@ -153,8 +152,7 @@ const handleRemovePlayer = async (playerId: number) => {
   return (
     <>
       {/* Full-page light gray background */}
-      <div className="bg-gray-100 min-h-screen pt-40">
-        <NavBar />
+      <div className="bg-gray-100 min-h-screen pt-40 px-4">
 
         {/* Page title */}
         <h2 className="text-3xl font-bold text-center pt-8 text-gray-800">
@@ -194,7 +192,7 @@ const handleRemovePlayer = async (playerId: number) => {
             ) : (
               playerData.map((athlete) => {
                 return (
-                  <div key={athlete.id} className="relative flex flex-col justify-center items-center">
+                  <div key={athlete.id} className="relative flex flex-col justify-center items-center max-w-[150px]">
                     {/* "X" button to remove player */}
                     <button
                       onClick={() => handleRemovePlayer(athlete.id)}
