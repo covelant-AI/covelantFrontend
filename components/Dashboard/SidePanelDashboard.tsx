@@ -43,10 +43,11 @@ export default function SidePanelDashboard({ activePlayer }: SidePanelDashboardP
   }, [activePlayer, getMatchOutcome]);
 
     return (
-        <div className="col-span-3 flex justify-center">
-          <div className="bg-white rounded-2xl px-2 flex flex-col items-center gap-4 w-[60%] lg:w-[120%] xl:w-[90%] z-1">
+        <div className="lg:col-span-3 flex justify-center max-sm:px-2 px-2">
+          <div className="bg-[#FEFEFE] rounded-2xl z-1 flex flex-row space-x-4 mt-2 w-full lg:space-y-2 lg:flex-col lg:space-x-4 max-sm:flex-col max-sm:space-y-4">
           {/* Profile + status icons */}
-          {profile?.type == "player" ? <div className='bg-gray-100 w-full rounded-2xl p-1'>
+          {profile?.type == "player" ? 
+          <div className='bg-gray-100 w-full rounded-2xl p-1'>
             <div className="flex flex-col w-full gap-4 bg-[#FFFFFF] p-4 rounded-2xl">
                 <span className='flex flex-row items-center gap-4'>
                   <div className="w-18 h-18 rounded-2xl overflow-hidden flex justify-center items-center">
