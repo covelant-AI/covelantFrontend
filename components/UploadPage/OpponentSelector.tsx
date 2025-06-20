@@ -102,8 +102,8 @@ export default function OpponentSelector({
 return (
   <div
     ref={containerRef}
-    className="flex-1 border border-gray-200 rounded-xl flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 cursor-pointer relative">
-    <div className="flex flex-col items-center gap-2 w-full">
+    className="border border-gray-200 rounded-xl flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 cursor-pointer">
+    <div className="flex flex-col items-center">
       {selected ? (
         <div className="h-45 w-full flex items-center justify-center text-black font-bold">
           {(
@@ -128,7 +128,6 @@ return (
       ) : (
         <>
           {!showCreateForm ? (
-            // NEW: Two buttons side by side
             <div className="flex flex-col gap-4 w-full px-4 justify-center">
               <button
                 className="flex items-center justify-center px-4 py-2 bg-white border border-[#E7E7E7] 
@@ -156,7 +155,6 @@ return (
               </button>
             </div>
           ) : (
-            // Create form remains unchanged
             <form
               className="flex flex-col gap-2 p-2 bg-white text-black rounded-md shadow-md w-full"
               onSubmit={handleCreateSubmit}
@@ -205,7 +203,7 @@ return (
     </div>
 
     {searchOpen && !selected && !showCreateForm && (
-      <div className="absolute -top-10 left-0 right-0 bg-gray-100 h-full rounded-xl mt-1 z-10 pb-20 mt-10">
+      <div className="bg-gray-100 rounded-xl mt-1 z-10 pb-20 mt-10 md:top-76 lg:top-75 max-[360]:max-w-40 max-[360]:top-160 absolute w-full max-w-[150] min-h-[150] shadow-lg">
         {/* search input with magnifier icon */}
         <div className="flex items-center px-2 py-2 bg-white border-b border-gray-200 rounded-lg">
           <Image src="/icons/search.svg" alt="Search" width={20} height={20} />

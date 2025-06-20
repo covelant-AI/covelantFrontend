@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react'
-import NavBar from '@/components/nav/Navbar'
 import Sidebar from '@/components/EditPage/Sidebar'
 import ProfileSettings from '@/components/EditPage/ProfileSettings'
 import SecuritySettings from '@/components/EditPage/SecuritySettings'
@@ -12,14 +11,12 @@ import RadialBlurBg from '@/components/UI/RadialBlur'
 export default function EditProfile(){
     const [activePage, setActivePage] = useState('Profile Settings')
     
-    
     return(
         <>
-        <NavBar />
         <div className="relative min-h-screen flex justify-center items-center bg-white px-4 overflow-hidden">
-          <div className="flex bg-white rounded-xl shadow-lg max-w-4xl w-full min-h-[520px] z-10">
+          <div className="flex max-md:flex-col max-md:justify-center max-md:items-center bg-white rounded-2xl shadow-lg max-w-4xl w-full min-h-[520px] z-10">
             <Sidebar activePage={activePage} setActivePage={setActivePage} />
-            <main className="flex-1 p-10">
+            <main className="flex-1 p-10 max-md:w-full max-md:p-4">
               {activePage === 'Profile Settings' && <ProfileSettings />}
               {activePage === 'Security Settings' && <SecuritySettings />}
               {activePage === 'Account Preferences' && <AccountPreferences/>}

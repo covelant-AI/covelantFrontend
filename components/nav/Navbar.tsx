@@ -10,7 +10,7 @@ export default function NavBar() {
   const path = usePathname();
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 px-20 xl:px-50 py-2 flex items-center justify-between backdrop-blur-lg border border-[#F9F9F9]/20 rounded-b-xl pt-6">
+    <nav className="fixed top-0 left-0 w-full flex items-center justify-between backdrop-blur-lg border border-[#F9F9F9]/20 rounded-b-xl z-50 px-20 pt-6 max-sm:px-4 xl:px-50 py-2">
       <div className="flex flex-row justify-center items-center">
       {path !== "/" && (
         <button

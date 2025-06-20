@@ -239,7 +239,7 @@ const handleChangePicture = () => {
   if (loading) return <p className="text-center mt-10">Loading...<br/>If it takes too long please refresh the page</p>
 
   return (
-    <div className="px-20 py-4 max-w-2xl mx-auto flex flex-col gap-4 text-sm text-gray-700">
+    <div className="px-20 py-4 max-w-2xl mx-auto flex flex-col gap-4 text-sm text-gray-700 max-md:px-4 max-md:py-6">
       {/* hidden file input */}
       <input
         type="file"
@@ -250,8 +250,8 @@ const handleChangePicture = () => {
       />
 
       {/* Profile picture and buttons */}
-      <div className="col-span-1 flex flex-row justify-center items-center space-x-4">
-        <div className="w-24 h-24 rounded-full overflow-hidden shadow-lg">
+      <div className="col-span-1 flex flex-row justify-center items-center space-x-4 max-md:flex-col max-md:items-center">
+        <div className="w-24 h-24 rounded-full overflow-hidden shadow-lg max-md:mb-4 max-md:mr-0">
          <Image
             src={form.avatar || '/images/default-avatar.png'}
             alt="Profile"
@@ -278,7 +278,7 @@ const handleChangePicture = () => {
 
       {/* Form inputs */}
       <div className="flex flex-col gap-4 justify-center gap-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">
           <span>
             <div className="mb-1">
               <label className="text-right pr-2 text-gray-400">Name</label>
@@ -309,7 +309,7 @@ const handleChangePicture = () => {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">
           <span>
             <div className="mb-1">
               <label className="text-right pr-2 text-gray-400">Age</label>
@@ -340,7 +340,7 @@ const handleChangePicture = () => {
           </span>
         </div>
 
-        {profile?.type==="player"? <div className="grid grid-cols-2 gap-4">
+        {profile?.type==="player"? <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">
           <span>
             <div className="mb-1">
               <label className="text-right pr-2 text-gray-400">Dominant Hand</label>

@@ -43,7 +43,7 @@ export default function ConnectionBox(){
   }, [profile?.type, profile?.email])
   
   return (
-    <div className="flex flex-col  z-10">
+    <div className="flex flex-col z-10">
       <div className="pb-2 items-start">
           {profile?.type == "player" ? 
           <p className="font-semibold text-[#3E3E3E] text-md pl-2">Your Coach</p> 
@@ -51,11 +51,11 @@ export default function ConnectionBox(){
           <p className="font-semibold text-[#3E3E3E] text-md pl-2">Your Players</p>
           }
       </div>
-      <div className="flex items-center justify-center space-x-2 bg-[#F9F9F9] border border-[#E7E7E7] p-2 rounded-2xl">
+      <div className="flex items-center justify-center flex-wrap p-2 space-x-2 bg-[#F9F9F9] border border-[#E7E7E7] rounded-2xl">
       {playerCount === 0 ? 
       <>
         <div className="flex items-center justify-between px-1 py-1 gap-6">
-          <div className='p-2 rounded-xl bg-[#42B6B1]'>
+          <div className='p-2 rounded-xl bg-[#42B6B1] hidden sm:block'>
             <Image className="w-7 h-7 bg-[#42B6B1] justify-center" src="/images/default-avatar.png" width={50} height={50} alt="Upload Icon" />
           </div>
           <div>
@@ -82,7 +82,7 @@ export default function ConnectionBox(){
           </Link>
         </div>
       </>: <>
-      <div className="flex items-center space-x-2 mr-6">
+      <div className="flex items-center space-x-2 mr-6 max-sm:mx-2">
           {(playerCount < 3 ? safePlayerData : safePlayerData.slice(0, 3)).map((player) => (
             <Link key={player.id} href={`/demo-note`}>
               <button className='cursor-pointer active:scale-[0.9] hover:scale-[1.05]'>

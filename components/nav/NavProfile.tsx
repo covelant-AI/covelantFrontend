@@ -34,19 +34,19 @@ export default function NavProfile(){
 
     
   return (
-    <div className="relative flex flex-row items-center space-x-4">
+    <div className="relative flex flex-row items-center space-x-4 max-sm:space-x-0">
       <Image
-        className="w-12 h-12 rounded-xl object-cover"
+        className="w-12 h-12 rounded-xl object-cover hidden sm:block"
         src={profile?.avatar || '/images/default-avatar.png'}
         alt="User Avatar"
         width={48}
         height={48}
       />
       <div>
-        <div className="font-semibold text-xl">
+        <div className="font-semibold text-xl hidden sm:block">
           {profile?.firstName || "Edit"} {profile?.lastName || "profile here→"}
         </div>
-        <div className="text-sm text-gray-500">{profile?.type || ""}</div>
+        <div className="text-sm text-gray-500 hidden sm:block">{profile?.type || ""}</div>
       </div>
       <div className="pl-4 relative" ref={menuRef}>
         <button

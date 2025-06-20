@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export default function HeroSection(){
     return(
-        <div className="relative overflow-hidden flex justify-between items-center px-20 xl:px-60 pt-60 pb-8 bg-[#F9F9F9] border-[#E7E7E7] max-md:flex-col max-md:items-start">
+        <div className="relative overflow-hidden flex justify-between items-center px-20 pt-60 pb-8 xl:px-60 bg-[#F9F9F9]  max-md:flex-col max-md:items-start max-sm:px-4 max-sm:pt-35">
           <RadialBlurBg 
               background={'radial-gradient(50% 50% at 50% 50%,rgba(8, 113, 151, 0.1) 61%,rgba(0, 180, 174, 0.12) 78%,rgba(176, 198, 255, 0) 100%)'}
               width={"auto"} 

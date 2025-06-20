@@ -96,21 +96,12 @@ export default function UploadMatchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-20 py-10">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-20 py-10 max-md:px-4">
       {/* Header */}
       <div className="mb-8 text-center flex flex-col items-center">
-        <div className="w-screen flex justify-start px-40">
-            <Link href="/">
-                <button className="px-6 py-4 rounded-xl bg-white shadow-md hover:bg-gray-100 transition-colors 
-                    duration-100 hover:scale-105 hover:cursor-pointer active:scale-95 transition-transform">
-                  <Image src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FBackArrow.svg?alt=media&token=f4695bb5-dfd2-4733-9755-32748dbc86b8"
-                   alt="Back" width={20} height={20} />
-                </button>
-            </Link>
-        </div>
         <span>
-        <h1 className="text-5xl font-bold text-gray-900">Upload Match Video</h1>
-        <p className="text-lg text-gray-400 mt-2">
+        <h1 className="text-5xl font-bold text-gray-900 max-md:text-2xl max-md:mt-20">Upload Match Video</h1>
+        <p className="text-lg text-gray-400 mt-2 max-md:text-sm">
           Pick a video of a match you would like to analyze and <br/> make sure that the video satisfies the requirements.
         </p>
         </span>
@@ -126,8 +117,9 @@ export default function UploadMatchPage() {
           }}
         />
 
-        {/* Match Data Section */}
-        <MatchData onDataChange={handleMatchDataChange} />
+      {/* Match Data Section */}
+      <MatchData onDataChange={handleMatchDataChange} />
+      
       </div>
       {/* Next Button */}
         <button onClick={handleSubmit} className="bg-[#4DBAB5] mt-6 text-xl px-20 py-2 rounded-xl cursor-pointer 

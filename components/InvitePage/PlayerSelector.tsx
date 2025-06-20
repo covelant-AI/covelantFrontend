@@ -77,10 +77,11 @@ export default function PlayerSelector({onSelect}: PlayerSelectorProps){
   return (
     <div
       ref={containerRef}
-      className="flex-1 border border-gray-200 rounded-xl flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 cursor-pointer relative"
+      className="flex-1 min-w-25 border border-gray-200 rounded-xl 
+      flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 cursor-pointer relative max-lg:max-w-[250px]"
       onClick={() => setSearchOpen(true)}
     >
-      <div className="flex flex-col items-center gap-2 w-full">
+      <div className="flex flex-col items-center gap-2 w-full max-[360px]:py-10 ">
         {selected ? (
         <div className="h-45 w-full flex items-center justify-center text-black font-bold">
           {(
@@ -120,7 +121,7 @@ export default function PlayerSelector({onSelect}: PlayerSelectorProps){
                 />
               </svg>
             </button>
-            <span className="text-sm text-black">Search User</span>
+            <span className="text-sm text-black">Search Player</span>
           </>
         )}
       </div>

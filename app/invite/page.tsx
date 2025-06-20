@@ -1,5 +1,4 @@
 'use client';
-import NavBar from "@/components/nav/Navbar"
 import Image from 'next/image'
 import { useState} from 'react'
 import { useAuth } from '@/app/context/AuthContext';
@@ -89,7 +88,6 @@ export default function InvitePage() {
     
   return (
     <>
-    <NavBar/>
     <RadialBlurBg 
         background={'radial-gradient(50% 30% at 50% 50%,rgba(8, 113, 151, 0.1) 37%,rgba(0, 180, 174, 0.13) 38%,rgba(176, 198, 255, 0) 100%)'}
         width={"auto"} 
