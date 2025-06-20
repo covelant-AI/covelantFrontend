@@ -106,7 +106,7 @@ const getVideoData = useCallback(async() => {
 
   return (
       <div className="bg-white h-screen overflow-x-hidden pt-25">
-          <div className="px-10 md:px-40 lg:px-30 xl:px-50 2xl:px-60 bg-white">
+          <div className="px-10 md:px-40 lg:px-30 2xl:px-40 2xl:px-60 bg-white">
           <div className="flex flex-col lg:flex-row mt-8 w-full gap-4">
             {/* video + tags on top / left */}
             <div className="w-full lg:w-2/3 space-y-4 mx-auto flex flex-col items-center">

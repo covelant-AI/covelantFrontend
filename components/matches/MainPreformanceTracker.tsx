@@ -62,13 +62,13 @@ export default function MainPreformanceTracker({
         <div className="flex items-center justify-between p-8 relative bg-gradient-to-b from-white via-gray-50 via-white to-[#9ED8D5] overflow-hidden
              [clip-path:polygon(0_0,100%_0,100%_85%,50%_100%,0_85%)]">
           {/* Left avatar */}
-          <div className="w-18 h-18 rounded-full overflow-hidden flex justify-center items-center">
+          <div className="w-18 h-18 rounded-xl overflow-hidden flex justify-center items-center">
             <Image
                src={rightPlayer?.avatar || "/images/default-avatar.png"}
                alt={rightPlayer?.firstName || "Player One"}
                width={64}  // Equivalent to w-16 (16 * 4px = 64px)
                height={64} // Equivalent to h-16 (16 * 4px = 64px)
-               className="ring-2 ring-gray-100 object-cover w-full h-full"
+               className="ring-2 ring-gray-100 object-cover w-25 h-25"
              />
            </div>
 
@@ -85,13 +85,13 @@ export default function MainPreformanceTracker({
           </div>
 
           {/* Right avatar */}
-          <div className="w-18 h-18 rounded-full overflow-hidden flex justify-center items-center">
+          <div className="w-18 h-18 rounded-xl overflow-hidden flex justify-center items-center">
             <Image
               src={leftPlayer.avatar || "/images/default-avatar.png"}
               alt={leftPlayer.firstName || "Player Two"}
               width={64}  // Equivalent to w-16 (16 * 4px = 64px)
               height={64} // Equivalent to h-16 (16 * 4px = 64px)
-              className="ring-2 ring-gray-100 object-cover w-full h-full"
+              className="ring-2 ring-gray-100 object-cover w-25 h-full"
             />
           </div>
         </div>

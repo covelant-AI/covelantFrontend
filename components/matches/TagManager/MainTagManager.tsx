@@ -40,7 +40,7 @@ export default function MainTagManager({
       {/* header: inline tabs on md+, hamburger on sm */}
       <div className="flex items-center justify-center border-b border-gray-200 pb-2">
         {/* md+ inline */}
-        <div className="hidden md:flex flex-wrap gap-2">
+        <div className="hidden md:flex flex-wrap gap-3 justify-center w-full">
           {tabs.map((tab, idx) => (
             <button
               key={tab}
