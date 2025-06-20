@@ -24,7 +24,7 @@ export default function StaticPlayerDisplay({onSelect}: PlayerSelectorProps){
       }, [])
 
     return(
-      <div className="flex-1 border border-gray-200 rounded-xl flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 relative">
+      <div className="flex-1 min-w-25 border border-gray-200 rounded-xl flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 relative">
           <div className="flex flex-col items-center gap-2 w-full">
               <div className="h-45 w-full flex items-center justify-center text-black font-bold">
                   <div className="relative w-full h-full rounded-xl overflow-hidden">

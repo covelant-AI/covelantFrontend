@@ -25,9 +25,9 @@ export default function MatchData({ onDataChange }: MatchDataProps) {
       <h2 className="text-xl font-bold mb-4 text-black">Match Data</h2>
 
       {/* Player Selection */}
-      <div className="flex justify-between gap-4 mb-4 px-4">
+      <div className="flex justify-between gap-4 max-sm:gap-1 mb-4 px-4 max-[360]:flex-col">
         {profile?.type === "player" ? <StaticPlayerDisplay onSelect={setPlayerOne}/>: <PlayerSelector onSelect={setPlayerOne} />}
-        <div className="flex items-center font-bold text-gray-400">VS</div>
+        <div className="flex items-center font-bold text-gray-400 max-[360]:justify-center">VS</div>
         <OpponentSelector onSelect={setPlayerTwo} />
       </div>
 
