@@ -111,8 +111,44 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
   };
 
   return (
+    <>
+    {/* For small screens, show only the upload button */}
+    <div className="md:hidden w-full items-center justify-center flex flex-col mb-2">
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        className="flex items-center px-20 py-3 border border-dashed border-r-2 bg-[#FEFEFE] w-full justify-center text-black font-bold text-lg rounded-t-lg hover:bg-gray-100 transition-colors duration-300 active:scale-95 transition-transform"
+        style={uploadProgress === 100 ? { borderColor: "#6EB6B3", borderStyle: "solid", borderWidth: "1px" } : {}}
+      >
+        <Image 
+          className="w-4 h-5 mr-5" 
+          src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Fupload2.png?alt=media&token=e1f0ff19-b255-4721-a378-ef6bdcb9f69b" 
+          width={50} height={50} 
+          alt="Upload Icon" 
+        />
+        Upload Match
+      </button>
+      
+      {/* Display the video filename and progress bar */}
+      {thumbnail && (
+        <div className="md:hidden w-full border border-[#6EB6B3] rounded-b-lg p-4">
+          <div className="text-center text-black font-bold">
+            <p className="text-sm">{uploadProgress===100 ? "File Uploaded: " + "CovMatch[#].mp4" : "Uploading..."}</p>
+            {/* Only show the progress bar if uploading */}
+            {uploadProgress < 100 && (
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                <div
+                  className="bg-[#4DBAB5] h-2.5 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+
     <div
-      className={`relative flex items-center justify-center border-2 border-dashed ${
+      className={`max-md:hidden relative flex items-center justify-center border-2 border-dashed ${
         highlight ? "border-blue-400 bg-blue-50" : "border-[#4DBAB5] bg-gray-100"
       } rounded-xl p-6 h-[420px] cursor-pointer transition-colors duration-300 w-full max-w-xl overflow-hidden`}
       onClick={() => fileInputRef.current?.click()}
@@ -122,7 +158,7 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
         setHighlight(true);
       }}
       onDragLeave={() => setHighlight(false)}
-    >
+      >
       {!thumbnail ? (
         <div className="text-center text-black">
           <Image className="mx-auto mb-4" src="/icons/UploadMatch.svg" alt="upload" width={80} height={50} />
@@ -136,14 +172,14 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
             src={thumbnail}
             alt="Video Thumbnail"
             className="absolute inset-0 w-full h-full object-cover rounded-xl"
-          />
+            />
           {uploadProgress < 100 && (
             <div className="absolute bottom-6 left-6 right-6">
               <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
                 <div
                   className="bg-[#4DBAB5] h-2.5 rounded-full transition-all duration-300"
                   style={{ width: `${uploadProgress}%` }}
-                ></div>
+                  ></div>
               </div>
               <p className="text-sm text-white text-center">
                 Uploading... {uploadProgress.toFixed(0)}%
@@ -159,8 +195,9 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
         accept="video/*"
         className="hidden"
         onChange={handleFileChange}
-      />
+        />
     </div>
+  </>
   );
 }
 
