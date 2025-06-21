@@ -1,5 +1,4 @@
 "use client";
-import type { Metadata } from "next";
 import { geistSans, geistMono, cairo } from "../lib/fonts";
 import {AuthProvider} from "./context/AuthContext";
 import NavBar from '@/components/nav/Navbar'
