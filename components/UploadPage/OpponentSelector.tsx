@@ -102,21 +102,21 @@ export default function OpponentSelector({
 return (
   <div
     ref={containerRef}
-    className="border border-gray-200 rounded-xl flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 cursor-pointer">
-    <div className="flex flex-col items-center">
+    className="flex-1 border border-gray-200 rounded-xl flex flex-col items-center justify-center h-45 shadow-md bg-gray-100 hover:border-cyan-400 cursor-pointer">
+    <div className="flex flex-col items-center w-full">
       {selected ? (
         <div className="h-45 w-full flex items-center justify-center text-black font-bold">
           {(
-          <div className="relative w-full h-full rounded-xl overflow-hidden">
-            <Image
-              src={selected.avatar || '/images/default-avatar.png'}
-              alt="unavailable"
-              fill
-              style={{ objectFit: 'cover' }}
-            />
-          </div>
+            <div className="relative w-full h-full rounded-xl overflow-hidden">
+              <Image
+                src={selected.avatar || "/images/default-avatar.png"}
+                alt="User"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+            </div>
           )}
-          <div className="absolute bottom-2 flex items-center text-black bg-gray-400 bg-opacity-50 rounded px-2">
+          <div className="absolute bottom-85  md:bottom-102 max-[360px]:bottom-30 flex items-center text-black bg-gray-400 bg-opacity-50 rounded px-2">
             <button
               onClick={clearSelection}
               className="text-red hover:text-gray-300 text-xl cursor-pointer pb-1 active:scale-[0.9]"
@@ -203,7 +203,7 @@ return (
     </div>
 
     {searchOpen && !selected && !showCreateForm && (
-      <div className="bg-gray-100 rounded-xl mt-1 z-10 pb-20 mt-10 md:top-76 lg:top-75 max-[360]:max-w-40 max-[360]:top-160 absolute w-full max-w-[150] min-h-[150] shadow-lg">
+      <div className="bg-gray-100 rounded-xl mt-1 z-10 pb-20 mt-10 md:top-76 lg:top-75 2xl:top-85 max-[360]:max-w-40 max-[360]:top-160 absolute w-full max-w-[150] min-h-[150] shadow-lg">
         {/* search input with magnifier icon */}
         <div className="flex items-center px-2 py-2 bg-white border-b border-gray-200 rounded-lg">
           <Image src="/icons/search.svg" alt="Search" width={20} height={20} />
