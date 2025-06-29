@@ -12,8 +12,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
+  // List of routes where the navbar should not be displayed
   const hideNavbarRoutes = ['/sign-in', '/sign-up'];
-  const showNavbar = !hideNavbarRoutes.includes(pathname);
+  const isMatchesPage = /^\/matches\/[^/]+$/.test(pathname); 
+  const showNavbar = !hideNavbarRoutes.includes(pathname) && !isMatchesPage;
 
   return (
     <html lang="en">

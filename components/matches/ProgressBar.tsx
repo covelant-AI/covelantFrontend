@@ -110,6 +110,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   useEffect(() => {
     setLocalMarks(marks);
   }, [marks]);
+  
 
   return (
     <div className="flex items-center rounded-xl px-3 py-3 gap-3 bg-gray-100">
