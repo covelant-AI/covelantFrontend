@@ -26,7 +26,6 @@ export default function Matches() {
   const [markers, setMarkers] = useState<MatchEventData[]>([]);
   const params = useParams<{ id: string }>()
   const router = useRouter();
-  const path = usePathname();
   
 // 1) Fetch video metadata & download URL
 const getVideoData = useCallback(async() => {
@@ -127,7 +126,8 @@ const getVideoData = useCallback(async() => {
                 markers={markers}
                 videoStartTime={videoStart ?? "2025-06-01T14:30:00Z"}
                 onTimeUpdate={handleTimeUpdate}
-                onDeleteTag={handleDeleteTag} 
+                onDeleteTag={handleDeleteTag}
+                timeStamp={currentVideoTime}
               />
 
               <MainTagManager

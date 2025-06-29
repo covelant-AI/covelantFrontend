@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useState, useEffect, useMemo, MouseEvent } from "react";
-import { ProgressBar } from "./ProgressBar";
+import {ProgressBar}  from "./ProgressBar";
 import { CustomVideoPlayerProps, MatchEventData } from "@/util/interfaces";
 import { COLOR_MAP, ICON_MAP } from "@/util/default";
 
@@ -9,15 +9,18 @@ export default function CustomVideoPlayer({
   markers,
   durationOverride,
   onTimeUpdate,
+  timeStamp,
   onDeleteTag,
 }: CustomVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressContainerRef = useRef<HTMLDivElement>(null);
+  const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(durationOverride || 0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [lastHoveredTime, setLastHoveredTime] = useState<number>(0);
 
   // 1) Load metadata + time updates
   useEffect(() => {
@@ -28,6 +31,7 @@ export default function CustomVideoPlayer({
     };
     const onTime = () => {
       const t = v.currentTime;
+      setCurrentTime(t);
       if (progressRef.current && duration > 0) {
         progressRef.current.value = ((t / duration) * 100).toString();
       }
@@ -132,7 +136,21 @@ export default function CustomVideoPlayer({
     });
     setHoveredIndex(found);
   };
+  
   const onProgressMouseLeave = () => setHoveredIndex(null);
+
+  // 7) Detect tag hover when currentTime is close to tag's time
+  useEffect(() => {
+    const closestMarker = marksWithOffsets.find((m) => {
+      return Math.abs(m.offsetSeconds - currentTime) < 1; // If current time is close to a tag's time
+    });
+
+    if (closestMarker) {
+      const tagIndex = marksWithOffsets.findIndex((m) => m.id === closestMarker.id);
+      setHoveredIndex(tagIndex); // Set the closest marker as hovered
+      setTimeout(() => setHoveredIndex(null), 5000); // Hide after 5 seconds
+    }
+  }, [currentTime, marksWithOffsets]);
 
   return (
     <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
@@ -149,9 +167,6 @@ export default function CustomVideoPlayer({
           controls={false}
           onClick={togglePlay}
         />
-        <div className="absolute top-2 left-3 bg-black bg-opacity-60 px-2 py-1 rounded-xl text-white text-sm font-bold pointer-events-none">
-          Covelant Tech
-        </div>
         <div
           className="absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded"
           onClick={toggleFullscreen}
@@ -173,6 +188,7 @@ export default function CustomVideoPlayer({
         isPlaying={isPlaying}
         togglePlay={togglePlay}
         onDeleteTag={onDeleteTag}
+        currentTime={currentTime}
       />
 
     </div>
