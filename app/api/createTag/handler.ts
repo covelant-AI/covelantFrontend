@@ -7,7 +7,6 @@ import {
   TacticEventType,
   FoulsEventType,
   PhysicalEventType,
-  NoteEventType,
   ConditionType,
 } from "../../../generated/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -27,6 +26,7 @@ export async function POST(req: NextRequest) {
       physicalType,
       noteType,
       condition,
+      customCondition,
       comment,
       eventTimeSeconds,
     } = data as {
@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
       physicalType?: string;
       noteType?: string;
       condition?: string;
+      customCondition?: string;
       comment?: string;
       eventTimeSeconds?: number;
     };
@@ -154,16 +155,14 @@ export async function POST(req: NextRequest) {
         break;
 
       case EventCategory.NOTE:
-        // NOTE events use noteType instead of subtype + no condition
-        if (!noteType || !Object.values(NoteEventType).includes(noteType as any)) {
+        if (!noteType) {
           return NextResponse.json(
             { message: "A valid noteType is required for NOTE events" },
             { status: 400 }
           );
         }
-        payload.noteType = noteType as NoteEventType;
-        // explicitly clear any condition
-        payload.condition = null;
+        payload.noteType = noteType;
+        payload.customCondition = customCondition;
         break;
 
       default:

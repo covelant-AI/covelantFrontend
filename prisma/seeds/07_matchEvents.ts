@@ -7,7 +7,6 @@ import {
   TacticEventType,
   FoulsEventType,
   PhysicalEventType,
-  NoteEventType,
   ConditionType,
 } from "../../generated/prisma";
 
@@ -33,7 +32,7 @@ export async function seedMatchEvents() {
       category: EventCategory.MATCH,
       matchType: MatchEventType.FIRST_SERVE,
       condition: ConditionType.FOCUSED,
-      comment: "AI: Excelent start to the game",
+      comment: "AI: Excellent start to the game",
       eventTimeSeconds: 10.0,
     }});
 
@@ -63,22 +62,21 @@ export async function seedMatchEvents() {
       category: EventCategory.PHYSICAL,
       physicalType: PhysicalEventType.FATIGUE_SIGN,
       condition: ConditionType.CLUTCH_PLAY,
-      comment: "AI: you seam to exhibit signs of injury",      
+      comment: "AI: You seem to exhibit signs of injury",      
       eventTimeSeconds: 117.2,
     }});
 
-    // NOTE event: GENERAL
+    // NOTE event with customCondition
     await prisma.matchEvent.create({ data: {
       matchId,
       category: EventCategory.NOTE,
-      noteType: NoteEventType.IMPORTANT,
-      condition: ConditionType.FOCUSED,
-      comment: "AI: I would recommend you watch this sequence for further analysis",      
-      eventTimeSeconds: 105.0,
+      noteType: "Strategy Change",  // Custom note type
+      customCondition: "Player needs to focus more on consistency",
+      comment: "AI: Focus on keeping the ball in play and reducing errors.",
+      eventTimeSeconds: 150.0,
     }});
+
   }
 
   console.log("MatchEvent seeding completed.");
 }
-
-

@@ -81,15 +81,6 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
                 </option>
               ))}
             </select>
-
-            {/* 2) Event time input (shows video timestamp) */}
-            <input
-              type="text"
-              className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-1 text-sm w-24 h-11 text-center font-bold text-black max-sm:w-full "
-              placeholder="00:00"
-              value={eventTime}
-              onChange={(e) => setEventTime(e.target.value)}
-            />
           </div>
 
           <div className="flex items-center gap-3">
