@@ -4,6 +4,7 @@ import { ProgressBar } from "./ProgressBar";
 import { CustomVideoPlayerProps, MatchEventData } from "@/util/interfaces";
 import { COLOR_MAP, ICON_MAP } from "@/util/default";
 import Image from 'next/image';
+import { Fullscreen } from "lucide-react";
 
 export default function CustomVideoPlayer({
   src,
@@ -22,6 +23,8 @@ export default function CustomVideoPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(durationOverride || 0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [lastClickTime, setLastClickTime] = useState<number>(0);  // Time of last click
+  const [clickCount, setClickCount] = useState<number>(0); 
   const [lastHoveredTime, setLastHoveredTime] = useState<number>(0);
 
   // 1) Load metadata + time updates
@@ -75,12 +78,10 @@ export default function CustomVideoPlayer({
     if (!document.fullscreenElement) {
       c.requestFullscreen().then(() => {
         setIsFullscreen(true);
-        console.log("Fullscreen enabled");
       });
     } else {
       document.exitFullscreen().then(() => {
         setIsFullscreen(false);
-        console.log("Fullscreen disabled");
       });
     }
   };
@@ -133,29 +134,44 @@ export default function CustomVideoPlayer({
         } => x !== null
       );
   }, [markers]);
-// 6) Skip to Previous Tag
-const skipToPreviousTag = () => {
-  const closestTag = marksWithOffsets
-    .filter((m) => m.offsetSeconds < currentTime) // Get tags before current time
-    .sort((a, b) => b.offsetSeconds - a.offsetSeconds)[0]; // Get the closest one
 
-  if (closestTag) {
-    setCurrentTime(closestTag.offsetSeconds-5);  // Set the video to the previous tag's time
-    if (videoRef.current) videoRef.current.currentTime = closestTag.offsetSeconds;
-  }
-};
+  // 6) Skip to Previous Tag
+  const skipToPreviousTag = () => {
+    const now = Date.now(); 
 
-// 7) Skip to Next Tag
-const skipToNextTag = () => {
-  const closestTag = marksWithOffsets
-    .filter((m) => m.offsetSeconds > currentTime) // Get tags after current time
-    .sort((a, b) => a.offsetSeconds - b.offsetSeconds)[0]; // Get the closest one
+    if (now - lastClickTime < 500) { // 500ms buffer time (can be adjusted)
+      setClickCount((prev) => prev + 1); 
+    } else {
+      setClickCount(1); // Reset the click count if the user waits too long
+    }
 
-  if (closestTag) {
-    setCurrentTime(closestTag.offsetSeconds-5);  // Set the video to the next tag's time
-    if (videoRef.current) videoRef.current.currentTime = closestTag.offsetSeconds;
-  }
-};
+    setLastClickTime(now); 
+
+    const previousTags = marksWithOffsets
+      .filter((m) => m.offsetSeconds < currentTime)
+      .sort((a, b) => b.offsetSeconds - a.offsetSeconds);
+
+    if (previousTags.length > 0) {
+      const skipIndex = Math.min(clickCount, previousTags.length - 1);
+      const closestTag = previousTags[skipIndex];
+
+      // Update current time
+      setCurrentTime(closestTag.offsetSeconds - 5); 
+      if (videoRef.current) videoRef.current.currentTime = closestTag.offsetSeconds;
+    }
+  };
+
+  // 7) Skip to Next Tag
+  const skipToNextTag = () => {
+    const closestTag = marksWithOffsets
+      .filter((m) => m.offsetSeconds > currentTime) // Get tags after current time
+      .sort((a, b) => a.offsetSeconds - b.offsetSeconds)[0]; // Get the closest one
+
+    if (closestTag) {
+      setCurrentTime(closestTag.offsetSeconds-5);  // Set the video to the next tag's time
+      if (videoRef.current) videoRef.current.currentTime = closestTag.offsetSeconds;
+    }
+  };
 
   // 8) Hover detection
   const onProgressMouseMove = (e: MouseEvent<HTMLDivElement>) => {
@@ -174,6 +190,21 @@ const skipToNextTag = () => {
     setHoveredIndex(found);
   };
 
+  // 9) detec tag hover when currentTime is close to tag's time
+  useEffect(() => {
+    const closestMarker = marksWithOffsets.find((m, i) => {
+      return Math.abs(m.offsetSeconds - currentTime) < 1; 
+    });
+
+    if (closestMarker && currentTime - lastHoveredTime >= 3) {
+      const tagIndex = marksWithOffsets.findIndex((m) => m.id === closestMarker.id);
+      setHoveredIndex(tagIndex);
+      setLastHoveredTime(currentTime); // Set the time of the last hover
+      setTimeout(() => setHoveredIndex(null), 5000); 
+    }
+  }, [currentTime, lastHoveredTime, marksWithOffsets]);
+
+
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
   return (
@@ -191,65 +222,60 @@ const skipToNextTag = () => {
           controls={false}
           onClick={togglePlay}
         />
-        <div
-          className={isFullscreen
-            ? "absolute bottom-15 right-3 cursor-pointer hover:scale-[1.05] active:scale-[1.01]  bg-opacity-60 px-2 py-1 rounded-lg"
-            : "absolute bottom-2 right-3 cursor-pointer hover:scale-[1.05] active:scale-[1.01] bg-opacity-60 px-2 py-1 rounded-lg"}
-          onClick={toggleFullscreen}>
-          <span className="text-white text-lg hover:scale-[1.15]">
-              <Image
-                src="/icons/fullscreen.svg"
-                alt="Toggle fullscreen"
-                width={24}   // Set the desired width
-                height={24}  // Set the desired height
-                className="text-white text-lg hover:scale-[1.15]"
-              />
-          </span>
-        </div>
+          <div
+            className={isFullscreen
+              ? "absolute bottom-15 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg"
+              : "absolute bottom-2 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg"}
+            onClick={toggleFullscreen}>
+            <span className="text-white text-lg flex flex-row justify-center items-center space-x-2">
+              <div className="text-white text-sm">
+                {Math.floor(currentTime / 60)}:
+                {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
+                {Math.floor(duration / 60)}:
+                {String(Math.floor(duration % 60)).padStart(2, "0")}
+              </div>
+                <Image
+                  src="/icons/fullscreen.svg"
+                  alt="Toggle fullscreen"
+                  width={24}  
+                  height={24}  
+                  className="text-white text-lg hover:scale-[1.15] active:scale-[1.05] "
+                />
+            </span>
+          </div>
         
-        {/* Arrows for navigating to the previous/next tag */}
-        <div
-          className={isFullscreen
-            ? "absolute bottom-15 left-3 flex justify-center space-x-1"
-            : "absolute bottom-2 left-3 flex justify-center space-x-1"}>
-          <button 
-            onClick={skipToPreviousTag} 
-            className="px-4 py-2  text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
-            <Image 
-              src="/icons/leftSkip.svg" 
-              alt="Skip to previous tag" 
-              width={24} 
-              height={24} 
-            />
-          </button>
-          <button 
-            onClick={skipToNextTag} 
-            className="px-4 py-2  text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
-            <Image 
-              src="/icons/rightSkip.svg" 
-              alt="Skip to next tag" 
-              width={24} 
-              height={24} 
-            />
-          </button>
-        </div>
+          {/* Arrows for navigating to the previous/next tag */}
+          <div
+            className={isFullscreen
+              ? "absolute bottom-15 left-3 flex justify-center space-x-1"
+              : "absolute bottom-2 left-3 flex justify-center space-x-3"}>
+            <button onClick={togglePlay} className="text-white p-1 text-2xl hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+              {isPlaying ? "❚❚" : "►"}
+            </button>
 
-        {isFullscreen?
-          <ProgressBar
-          duration={duration}
-          marks={marksWithOffsets}
-          progressRef={progressRef}
-          progressContainerRef={progressContainerRef}
-          hoveredIndex={hoveredIndex}
-          onSeek={onSeek}
-          onProgressMouseMove={onProgressMouseMove}
-          onProgressMouseLeave={onProgressMouseLeave}
-          isPlaying={isPlaying}
-          togglePlay={togglePlay}
-          onDeleteTag={onDeleteTag}
-          currentTime={currentTime}
-          isFullscreen={isFullscreen} />
-          : <></> }
+            <button 
+              onClick={skipToPreviousTag} 
+              className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+              <Image 
+                src="/icons/leftSkip.svg" 
+                alt="Skip to previous tag" 
+                width={24} 
+                height={24} 
+              />
+            </button>
+            
+            <button 
+              onClick={skipToNextTag} 
+              className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+              <Image 
+                src="/icons/rightSkip.svg" 
+                alt="Skip to next tag" 
+                width={24} 
+                height={24} 
+              />
+            </button>
+
+          </div>
         </div>
 
       {/* VIDEO & TAG CONTROLS */}
@@ -262,10 +288,7 @@ const skipToNextTag = () => {
         onSeek={onSeek}
         onProgressMouseMove={onProgressMouseMove}
         onProgressMouseLeave={onProgressMouseLeave}
-        isPlaying={isPlaying}
-        togglePlay={togglePlay}
         onDeleteTag={onDeleteTag}
-        currentTime={currentTime}
         isFullscreen={isFullscreen}
       />
     </div>

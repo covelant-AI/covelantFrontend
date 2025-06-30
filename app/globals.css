@@ -157,10 +157,3 @@ body {
   animation: fadeInAndBlurOut 500ms ease-out forwards;
 }
 
-
-.fixed.bottom-0.w-full {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 9999; /* Ensure it's above other content */
-}

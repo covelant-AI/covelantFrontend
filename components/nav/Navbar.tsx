@@ -11,7 +11,7 @@ export default function NavBar() {
   const path = usePathname();
   const { user } = useAuth()
 
-  const hideNavbarRoutes = ['/sign-in', '/sign-up'];
+  const hideNavbarRoutes = ['/sign-in', '/sign-up','/coming-soon'];
   const isMatchesPage = /^\/matches\/[^/]+$/.test(path);
 
   const showNavbar = !hideNavbarRoutes.includes(path) && !isMatchesPage && user;

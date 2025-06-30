@@ -59,7 +59,7 @@ export default function ReturnBackPage() {
           <Link href="/">
             <button className="bg-gradient-to-r from-[#8A9EFF] to-[#00B4AE] text-white font-bold py-3 px-6 
             rounded-xl shadow-lg hover:shadow-xl hover:scale-103 transition-scale transition-shadow duration-600 cursor-pointer">
-                Return to Demo
+                Return to App
             </button>
           </Link>
         </div>
