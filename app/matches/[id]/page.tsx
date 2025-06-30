@@ -106,7 +106,7 @@ const getVideoData = useCallback(async() => {
   if (loading) return <Loading/>;
 
   return (
-      <div className="bg-white h-screen overflow-x-hidden pt-4 max-md:pt-10">
+      <div className="bg-white h-screen overflow-x-hidden pt-10 max-md:pt-10">
           <div className="px-10 md:px-40 lg:px-30 2xl:px-40 2xl:px-60 bg-white">
           <button
             onClick={() => router.back()}

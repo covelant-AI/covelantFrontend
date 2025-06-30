@@ -28,7 +28,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   }, [marks]);
 
   return (
-    <div className="flex items-center rounded-xl px-3 py-3 gap-3 bg-gray-100">
+    <div
+      className={`flex items-center rounded-xl px-3 py-3 gap-3 bg-gray-100 ${
+        isFullscreen ? 'fixed bottom-0 w-full z-50 bg-gray-700 ' : '' 
+      }`}>
       {/* Play/Pause Button */}
       <button onClick={togglePlay} className="text-black text-lg">
         {isPlaying ? "❚❚" : "►"}

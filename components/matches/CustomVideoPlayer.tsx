@@ -178,12 +178,28 @@ export default function CustomVideoPlayer({
           onClick={togglePlay}
         />
         <div
-          className="absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded-lg"
+          className={isFullscreen? `absolute bottom-15 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded-lg`:
+            "absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded-lg"}
           onClick={toggleFullscreen}
         >
-
-          <span className="text-white text-lg ">⛶</span>
+          <span className="text-white text-lg">⛶</span>
         </div>
+        {isFullscreen?
+        <ProgressBar
+        duration={duration}
+        marks={marksWithOffsets}
+        progressRef={progressRef}
+        progressContainerRef={progressContainerRef}
+        hoveredIndex={hoveredIndex}
+        onSeek={onSeek}
+        onProgressMouseMove={onProgressMouseMove}
+        onProgressMouseLeave={onProgressMouseLeave}
+        isPlaying={isPlaying}
+        togglePlay={togglePlay}
+        onDeleteTag={onDeleteTag}
+        currentTime={currentTime}
+        isFullscreen={isFullscreen} 
+      />: <></> }
       </div>
 
       {/* VIDEO & TAG CONTROLS */}
