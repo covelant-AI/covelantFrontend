@@ -112,14 +112,13 @@ export default function MainPreformanceTracker({
         
       {/* ─── Spacer pushes button to bottom ─── */}
       <div className="mt-auto px-4">
-        <p className="text-xs text-black text-center mb-4">Full AI support is not available in this demo</p>
-        <Link href="/demo-note">
+        <Link href="/coming-soon">
           <button className="w-full py-2 border border-teal-600 text-black font-semibold text-md rounded-xl hover:bg-teal-600 
             hover:text-white transition-colors duration-300 cursor-pointer mb-4">
-            View full version features
+            View AI support features
           </button>
         </Link>
-        <p className="text-xs text-black text-center">Covelant beta 2025</p>
+        <p className="text-xs text-black text-center">Covelant 2025</p>
       </div>
     </div>
 

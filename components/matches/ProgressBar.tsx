@@ -11,10 +11,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   onSeek,
   onProgressMouseMove,
   onProgressMouseLeave,
-  isPlaying,
-  togglePlay,
   onDeleteTag,
-  currentTime,
   isFullscreen,
 }) => {
   const [localMarks, setLocalMarks] = useState(marks);
@@ -29,18 +26,12 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
   return (
     <div
-      className={`flex items-center rounded-xl px-3 py-3 gap-3 bg-gray-100 ${
-        isFullscreen ? 'fixed bottom-0 w-full z-50 bg-gray-700 ' : '' 
-      }`}>
-      {/* Play/Pause Button */}
-      <button onClick={togglePlay} className="text-black text-lg">
-        {isPlaying ? "❚❚" : "►"}
-      </button>
+      className="flex items-center py-2 gap-3">
 
       {/* Progress Bar Container */}
       <div
         ref={progressContainerRef}
-        className="relative flex-1 h-2 flex items-center"
+        className="relative flex-1 h-4 flex items-center"
         onMouseMove={onProgressMouseMove}
         onMouseLeave={onProgressMouseLeave}
       >
@@ -49,7 +40,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           ref={progressRef}
           defaultValue={0}
           onChange={onSeek}
-          className="w-full h-1 bg-gray-700 rounded-3xl cursor-pointer accent-[#6EB6B3]"
+          className="w-full h-[6] rounded-6xl cursor-pointer accent-[#6EB6B3]"
         />
 
         {/* Diamonds */}
@@ -69,7 +60,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
                 : "border-black"
             }`}
             style={{
-              left: `calc(${(m.offsetSeconds / duration) * 100 * 0.97}% + 6px)`,
+              left: `calc(${(m.offsetSeconds / duration) * 100 * 0.98 }% + 3px)`,
               top: "-14px",
               backgroundColor: openIndex === i ? "#FFF" : m.color,
               transition: "background-color 0.2s, border-color 0.2s",
@@ -97,13 +88,6 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           toggleBubble={toggleOpen}
         />
       </div>
-
-      <div className="text-black text-xs whitespace-nowrap">
-        {Math.floor(currentTime / 60)}:
-        {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
-        {Math.floor(duration / 60)}:
-        {String(Math.floor(duration % 60)).padStart(2, "0")}
-      </div>
     </div>
   );
 };
@@ -127,9 +111,6 @@ export interface ProgressBarProps {
   onSeek: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onProgressMouseMove: (e: MouseEvent<HTMLDivElement>) => void;
   onProgressMouseLeave: () => void;
-  isPlaying: boolean;
-  togglePlay: () => void;
   onDeleteTag: (id: number) => void;
-  currentTime:number;
   isFullscreen: boolean;
 }

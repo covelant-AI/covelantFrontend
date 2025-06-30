@@ -58,7 +58,8 @@ export default function SignInPage(){
   }, [user, router]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8" style={{ backgroundImage: "url('/images/bg-signIn.png')", backgroundSize: 'cover', backgroundPosition: 'center'}}> 
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8" 
+    style={{ backgroundImage: "url('/images/bg-signIn.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}> 
       <div className="bg-[#F9F9F9] p-8 rounded-3xl shadow-lg w-full max-w-md">
         <div className="relative mx-auto w-20 h-20">
           <Image

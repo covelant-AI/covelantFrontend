@@ -119,6 +119,7 @@ const getVideoData = useCallback(async() => {
           <Image src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FBackArrow.svg?alt=media&token=f4695bb5-dfd2-4733-9755-32748dbc86b8" alt="Back" width={20} height={20} />
           </button>
           <div className="flex flex-col lg:flex-row mt-8 w-full gap-4">
+            
             {/* video + tags on top / left */}
             <div className="w-full lg:w-2/3 space-y-4 mx-auto flex flex-col items-center">
               <CustomVideoPlayer

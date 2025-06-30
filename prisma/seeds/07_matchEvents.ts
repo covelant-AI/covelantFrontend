@@ -70,7 +70,7 @@ export async function seedMatchEvents() {
     await prisma.matchEvent.create({ data: {
       matchId,
       category: EventCategory.NOTE,
-      noteType: "Strategy Change",  // Custom note type
+      noteType: "Inconsistant",  // Custom note type
       customCondition: "Player needs to focus more on consistency",
       comment: "AI: Focus on keeping the ball in play and reducing errors.",
       eventTimeSeconds: 150.0,

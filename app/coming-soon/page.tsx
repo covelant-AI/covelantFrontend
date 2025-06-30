@@ -31,15 +31,15 @@ export default function DemoNotePage() {
             }`}
             />
         <div className="z-10 px-18 py-42 max-w-xl">
-          <h1 className="text-7xl text-black font-semibold mb-6">
-            Instant Feedback. Better Plays.
+          <h1 className="text-7xl text-black font-semibold mb-6 text-center">
+            Next Update <span className="font-bold text-8xl text-white">GENESIS</span><br/>Coming Soon 
           </h1>
         </div>
       </div>
     </div>
     <div className=" bg-white">
         <div className="w-full h-[4px] bg-gray-600"></div>
-        <h2 className="text-9xl max-lg:text-2xl font-bold text-black text-center pt-10">Full Application</h2>
+        <h2 className="text-7xl max-lg:text-2xl font-bold text-black text-center pt-10">Instant Feedback.<br/> Better Plays.</h2>
         <div className="mx-auto px-4 py-12">
         {adStepsData().map((step, index) => (
             <ExplainedStepCard
