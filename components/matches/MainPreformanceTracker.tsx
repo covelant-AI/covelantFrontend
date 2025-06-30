@@ -59,7 +59,7 @@ export default function MainPreformanceTracker({
       {/* ─── Main content ─── */}
       <div className="space-y-4">
         {/* Top row: avatars + live badge + timer */}
-        <div className="flex items-center justify-between p-8 relative bg-gradient-to-b from-white via-gray-50 via-white to-[#9ED8D5] overflow-hidden
+        <div className="flex items-center justify-between p-8 relative bg-gradient-to-b from-white to-gray-200 overflow-hidden
              [clip-path:polygon(0_0,100%_0,100%_85%,50%_100%,0_85%)]">
           {/* Left avatar */}
           <div className="w-18 h-18 rounded-xl overflow-hidden flex justify-center items-center">

@@ -163,6 +163,7 @@ export interface CustomVideoPlayerProps {
   videoStartTime: string;
   markers: MatchEventData[];
   durationOverride?: number;
+  timeStamp?: number; 
   lablePath?: string;
   onTimeUpdate?: (currentTime: number) => void;
   onDeleteTag: (id: number) => void;

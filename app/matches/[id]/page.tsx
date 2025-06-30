@@ -8,9 +8,10 @@ import MainPreformanceTracker from "@/components/matches/MainPreformanceTracker"
 import {Player, MatchEventData} from "@/util/interfaces"
 import {defaultPlayer} from "@/util/default"
 import Loading from "../loading"
-import { useParams  } from 'next/navigation'
+import { useParams,useRouter,usePathname  } from 'next/navigation'
 import { toast } from 'react-toastify';
 import {Msg} from '@/components/UI/ToastTypes';
+import Image from "next/image";
 import * as Sentry from "@sentry/nextjs";
 
 
@@ -24,6 +25,7 @@ export default function Matches() {
   const [playerTwo, setPlayerTwo] = useState<Player>(defaultPlayer)
   const [markers, setMarkers] = useState<MatchEventData[]>([]);
   const params = useParams<{ id: string }>()
+  const router = useRouter();
   
 // 1) Fetch video metadata & download URL
 const getVideoData = useCallback(async() => {
@@ -89,7 +91,6 @@ const getVideoData = useCallback(async() => {
   }
 };
 
-
   // On mount, load video → then tags once we have videoId
   useEffect(() => {
     getVideoData();
@@ -105,8 +106,18 @@ const getVideoData = useCallback(async() => {
   if (loading) return <Loading/>;
 
   return (
-      <div className="bg-white h-screen overflow-x-hidden pt-25">
+      <div className="bg-white h-screen overflow-x-hidden pt-10 max-md:pt-10">
           <div className="px-10 md:px-40 lg:px-30 2xl:px-40 2xl:px-60 bg-white">
+          <button
+            onClick={() => router.back()}
+            className="absolute top-4 left-4 z-50
+              px-4 py-4 rounded-xl bg-white shadow-md 
+              hover:bg-gray-100 transition-colors duration-100 
+              hover:scale-105 active:scale-95
+            "
+          >
+          <Image src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FBackArrow.svg?alt=media&token=f4695bb5-dfd2-4733-9755-32748dbc86b8" alt="Back" width={20} height={20} />
+          </button>
           <div className="flex flex-col lg:flex-row mt-8 w-full gap-4">
             {/* video + tags on top / left */}
             <div className="w-full lg:w-2/3 space-y-4 mx-auto flex flex-col items-center">
@@ -115,7 +126,8 @@ const getVideoData = useCallback(async() => {
                 markers={markers}
                 videoStartTime={videoStart ?? "2025-06-01T14:30:00Z"}
                 onTimeUpdate={handleTimeUpdate}
-                onDeleteTag={handleDeleteTag} 
+                onDeleteTag={handleDeleteTag}
+                timeStamp={currentVideoTime}
               />
 
               <MainTagManager

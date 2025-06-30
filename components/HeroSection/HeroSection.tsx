@@ -15,7 +15,7 @@ export default function HeroSection(){
               left={'5vh'}
             />
 
-          <div className="flex flex-col items-start space-x-2 z-10">
+          <div className="flex flex-col items-start space-x-2 z-1">
             {/* left hand side */}
             <div className="pb-4">
                 <p className="font-semibold text-[#3E3E3E] text-md">Your Actions</p>

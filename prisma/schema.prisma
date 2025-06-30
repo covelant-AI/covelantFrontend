@@ -143,6 +143,7 @@ enum TacticEventType {
   CROSS_COURT_RALLY
   DOWN_THE_LINE_SHOT
   OPPONENT_PULLED_WIDE
+  RETURN
 }
 
 /// FOULS event types
@@ -173,14 +174,6 @@ enum ConditionType {
   MOMENTUM_SHIFT
   CLUTCH_PLAY
   FATIGUE_SIGNS
-}
-
-/// NOTE event types
-enum NoteEventType {
-  GENERAL
-  GREAT
-  POOR
-  IMPORTANT
 }
 
 /// Points scored in matches
@@ -244,16 +237,18 @@ model MatchEvent {
   // PHYSICAL
   physicalType     PhysicalEventType?
   // NOTE
-  noteType         NoteEventType?
+  noteType         String?
 
   // Shared condition across all categories
   condition        ConditionType?
+  customCondition  String?  @default("")
 
   eventTimeSeconds Float
   createdAt        DateTime          @default(now())
 
   @@index([matchId, category])
 }
+
 
 
 

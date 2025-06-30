@@ -140,3 +140,27 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Add this CSS to your global styles or a dedicated CSS module */
+@keyframes fadeInAndBlurOut {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.animate-circle {
+  animation: fadeInAndBlurOut 500ms ease-out forwards;
+}
+
+
+.fixed.bottom-0.w-full {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 9999; /* Ensure it's above other content */
+}

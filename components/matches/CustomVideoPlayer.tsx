@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useState, useEffect, useMemo, MouseEvent } from "react";
-import { ProgressBar } from "./ProgressBar";
+import {ProgressBar}  from "./ProgressBar";
 import { CustomVideoPlayerProps, MatchEventData } from "@/util/interfaces";
 import { COLOR_MAP, ICON_MAP } from "@/util/default";
 
@@ -9,15 +9,19 @@ export default function CustomVideoPlayer({
   markers,
   durationOverride,
   onTimeUpdate,
+  timeStamp,
   onDeleteTag,
 }: CustomVideoPlayerProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressContainerRef = useRef<HTMLDivElement>(null);
+  const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(durationOverride || 0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [lastHoveredTime, setLastHoveredTime] = useState<number>(0);
 
   // 1) Load metadata + time updates
   useEffect(() => {
@@ -28,6 +32,7 @@ export default function CustomVideoPlayer({
     };
     const onTime = () => {
       const t = v.currentTime;
+      setCurrentTime(t);
       if (progressRef.current && duration > 0) {
         progressRef.current.value = ((t / duration) * 100).toString();
       }
@@ -61,9 +66,17 @@ export default function CustomVideoPlayer({
   const toggleFullscreen = () => {
     const c = containerRef.current;
     if (!c) return;
-    if (!document.fullscreenElement)
-      c.requestFullscreen().then(() => setIsPlaying(true));
-    else document.exitFullscreen().then(() => setIsPlaying(false));
+    if (!document.fullscreenElement) {
+      c.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+        console.log("Fullscreen enabled");
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+        console.log("Fullscreen disabled");
+      });
+    }
   };
 
   // 5) Convert DB markers to include `comment`
@@ -132,32 +145,61 @@ export default function CustomVideoPlayer({
     });
     setHoveredIndex(found);
   };
+  
   const onProgressMouseLeave = () => setHoveredIndex(null);
+
+  // 7) Detect tag hover when currentTime is close to tag's time
+  useEffect(() => {
+    const closestMarker = marksWithOffsets.find((m, i) => {
+      return Math.abs(m.offsetSeconds - currentTime) < 1; 
+    });
+
+    if (closestMarker && currentTime - lastHoveredTime >= 5) {
+      const tagIndex = marksWithOffsets.findIndex((m) => m.id === closestMarker.id);
+      setHoveredIndex(tagIndex);
+      setLastHoveredTime(currentTime); // Set the time of the last hover
+      setTimeout(() => setHoveredIndex(null), 5000); 
+    }
+  }, [currentTime, lastHoveredTime, marksWithOffsets]);
 
   return (
     <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
       {/* VIDEO */}
       <div
         ref={containerRef}
-        className="relative bg-black rounded-t-2xl overflow-hidden pt-[56.25%]"
+        className="relative rounded-2xl overflow-hidden pt-[56.25%]"
       >
         <video
           ref={videoRef}
           src={src}
-          className="absolute inset-0 w-full h-full object-contain"
+          className="absolute inset-0 w-full h-full object-contain z-0"
           preload="metadata"
           controls={false}
           onClick={togglePlay}
         />
-        <div className="absolute top-2 left-3 bg-black bg-opacity-60 px-2 py-1 rounded-xl text-white text-sm font-bold pointer-events-none">
-          Covelant Tech
-        </div>
         <div
-          className="absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded"
+          className={isFullscreen? `absolute bottom-15 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded-lg`:
+            "absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded-lg"}
           onClick={toggleFullscreen}
         >
           <span className="text-white text-lg">⛶</span>
         </div>
+        {isFullscreen?
+        <ProgressBar
+        duration={duration}
+        marks={marksWithOffsets}
+        progressRef={progressRef}
+        progressContainerRef={progressContainerRef}
+        hoveredIndex={hoveredIndex}
+        onSeek={onSeek}
+        onProgressMouseMove={onProgressMouseMove}
+        onProgressMouseLeave={onProgressMouseLeave}
+        isPlaying={isPlaying}
+        togglePlay={togglePlay}
+        onDeleteTag={onDeleteTag}
+        currentTime={currentTime}
+        isFullscreen={isFullscreen} 
+      />: <></> }
       </div>
 
       {/* VIDEO & TAG CONTROLS */}
@@ -173,8 +215,9 @@ export default function CustomVideoPlayer({
         isPlaying={isPlaying}
         togglePlay={togglePlay}
         onDeleteTag={onDeleteTag}
+        currentTime={currentTime}
+        isFullscreen={isFullscreen} 
       />
-
     </div>
   );
 }
