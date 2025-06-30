@@ -1,8 +1,9 @@
 "use client";
 import React, { useRef, useState, useEffect, useMemo, MouseEvent } from "react";
-import {ProgressBar}  from "./ProgressBar";
+import { ProgressBar } from "./ProgressBar";
 import { CustomVideoPlayerProps, MatchEventData } from "@/util/interfaces";
 import { COLOR_MAP, ICON_MAP } from "@/util/default";
+import Image from 'next/image';
 
 export default function CustomVideoPlayer({
   src,
@@ -50,8 +51,13 @@ export default function CustomVideoPlayer({
   const togglePlay = () => {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) { v.play(); setIsPlaying(true); }
-    else        { v.pause(); setIsPlaying(false); }
+    if (v.paused) {
+      v.play();
+      setIsPlaying(true);
+    } else {
+      v.pause();
+      setIsPlaying(false);
+    }
   };
 
   // 3) Seek
@@ -86,7 +92,6 @@ export default function CustomVideoPlayer({
         const offsetSeconds = m.eventTimeSeconds;
         if (typeof offsetSeconds !== "number") return null;
 
-        // title label
         let label = "";
         switch (m.category) {
           case "MATCH":
@@ -101,13 +106,13 @@ export default function CustomVideoPlayer({
           case "PHYSICAL":
             label = m.physicalType!;
             break;
-          case "NOTE":         
-            label = m.noteType ;
+          case "NOTE":
+            label = m.noteType;
             break;
         }
 
         return {
-          id: m.id, 
+          id: m.id,
           offsetSeconds,
           color: COLOR_MAP[m.category] || "#9CA3AF",
           label,
@@ -118,7 +123,7 @@ export default function CustomVideoPlayer({
       })
       .filter(
         (x): x is {
-          id:number;
+          id: number;
           offsetSeconds: number;
           color: string;
           label: string;
@@ -128,8 +133,31 @@ export default function CustomVideoPlayer({
         } => x !== null
       );
   }, [markers]);
+// 6) Skip to Previous Tag
+const skipToPreviousTag = () => {
+  const closestTag = marksWithOffsets
+    .filter((m) => m.offsetSeconds < currentTime) // Get tags before current time
+    .sort((a, b) => b.offsetSeconds - a.offsetSeconds)[0]; // Get the closest one
 
-  // 6) Hover detection
+  if (closestTag) {
+    setCurrentTime(closestTag.offsetSeconds-5);  // Set the video to the previous tag's time
+    if (videoRef.current) videoRef.current.currentTime = closestTag.offsetSeconds;
+  }
+};
+
+// 7) Skip to Next Tag
+const skipToNextTag = () => {
+  const closestTag = marksWithOffsets
+    .filter((m) => m.offsetSeconds > currentTime) // Get tags after current time
+    .sort((a, b) => a.offsetSeconds - b.offsetSeconds)[0]; // Get the closest one
+
+  if (closestTag) {
+    setCurrentTime(closestTag.offsetSeconds-5);  // Set the video to the next tag's time
+    if (videoRef.current) videoRef.current.currentTime = closestTag.offsetSeconds;
+  }
+};
+
+  // 8) Hover detection
   const onProgressMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!progressContainerRef.current || duration <= 0) {
       setHoveredIndex(null);
@@ -145,22 +173,8 @@ export default function CustomVideoPlayer({
     });
     setHoveredIndex(found);
   };
-  
+
   const onProgressMouseLeave = () => setHoveredIndex(null);
-
-  // 7) Detect tag hover when currentTime is close to tag's time
-  useEffect(() => {
-    const closestMarker = marksWithOffsets.find((m, i) => {
-      return Math.abs(m.offsetSeconds - currentTime) < 1; 
-    });
-
-    if (closestMarker && currentTime - lastHoveredTime >= 5) {
-      const tagIndex = marksWithOffsets.findIndex((m) => m.id === closestMarker.id);
-      setHoveredIndex(tagIndex);
-      setLastHoveredTime(currentTime); // Set the time of the last hover
-      setTimeout(() => setHoveredIndex(null), 5000); 
-    }
-  }, [currentTime, lastHoveredTime, marksWithOffsets]);
 
   return (
     <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
@@ -178,29 +192,65 @@ export default function CustomVideoPlayer({
           onClick={togglePlay}
         />
         <div
-          className={isFullscreen? `absolute bottom-15 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded-lg`:
-            "absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded-lg"}
-          onClick={toggleFullscreen}
-        >
-          <span className="text-white text-lg">⛶</span>
+          className={isFullscreen
+            ? "absolute bottom-15 right-3 cursor-pointer hover:scale-[1.05] active:scale-[1.01]  bg-opacity-60 px-2 py-1 rounded-lg"
+            : "absolute bottom-2 right-3 cursor-pointer hover:scale-[1.05] active:scale-[1.01] bg-opacity-60 px-2 py-1 rounded-lg"}
+          onClick={toggleFullscreen}>
+          <span className="text-white text-lg hover:scale-[1.15]">
+              <Image
+                src="/icons/fullscreen.svg"
+                alt="Toggle fullscreen"
+                width={24}   // Set the desired width
+                height={24}  // Set the desired height
+                className="text-white text-lg hover:scale-[1.15]"
+              />
+          </span>
         </div>
+        
+        {/* Arrows for navigating to the previous/next tag */}
+        <div
+          className={isFullscreen
+            ? "absolute bottom-15 left-3 flex justify-center space-x-1"
+            : "absolute bottom-2 left-3 flex justify-center space-x-1"}>
+          <button 
+            onClick={skipToPreviousTag} 
+            className="px-4 py-2  text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+            <Image 
+              src="/icons/leftSkip.svg" 
+              alt="Skip to previous tag" 
+              width={24} 
+              height={24} 
+            />
+          </button>
+          <button 
+            onClick={skipToNextTag} 
+            className="px-4 py-2  text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+            <Image 
+              src="/icons/rightSkip.svg" 
+              alt="Skip to next tag" 
+              width={24} 
+              height={24} 
+            />
+          </button>
+        </div>
+
         {isFullscreen?
-        <ProgressBar
-        duration={duration}
-        marks={marksWithOffsets}
-        progressRef={progressRef}
-        progressContainerRef={progressContainerRef}
-        hoveredIndex={hoveredIndex}
-        onSeek={onSeek}
-        onProgressMouseMove={onProgressMouseMove}
-        onProgressMouseLeave={onProgressMouseLeave}
-        isPlaying={isPlaying}
-        togglePlay={togglePlay}
-        onDeleteTag={onDeleteTag}
-        currentTime={currentTime}
-        isFullscreen={isFullscreen} 
-      />: <></> }
-      </div>
+          <ProgressBar
+          duration={duration}
+          marks={marksWithOffsets}
+          progressRef={progressRef}
+          progressContainerRef={progressContainerRef}
+          hoveredIndex={hoveredIndex}
+          onSeek={onSeek}
+          onProgressMouseMove={onProgressMouseMove}
+          onProgressMouseLeave={onProgressMouseLeave}
+          isPlaying={isPlaying}
+          togglePlay={togglePlay}
+          onDeleteTag={onDeleteTag}
+          currentTime={currentTime}
+          isFullscreen={isFullscreen} />
+          : <></> }
+        </div>
 
       {/* VIDEO & TAG CONTROLS */}
       <ProgressBar
@@ -216,9 +266,8 @@ export default function CustomVideoPlayer({
         togglePlay={togglePlay}
         onDeleteTag={onDeleteTag}
         currentTime={currentTime}
-        isFullscreen={isFullscreen} 
+        isFullscreen={isFullscreen}
       />
     </div>
   );
 }
-
