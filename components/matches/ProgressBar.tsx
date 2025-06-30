@@ -15,6 +15,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   togglePlay,
   onDeleteTag,
   currentTime,
+  isFullscreen,
 }) => {
   const [localMarks, setLocalMarks] = useState(marks);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -127,4 +128,5 @@ export interface ProgressBarProps {
   togglePlay: () => void;
   onDeleteTag: (id: number) => void;
   currentTime:number;
+  isFullscreen: boolean;
 }

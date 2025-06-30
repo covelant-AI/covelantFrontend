@@ -12,6 +12,7 @@ export default function CustomVideoPlayer({
   timeStamp,
   onDeleteTag,
 }: CustomVideoPlayerProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -65,9 +66,17 @@ export default function CustomVideoPlayer({
   const toggleFullscreen = () => {
     const c = containerRef.current;
     if (!c) return;
-    if (!document.fullscreenElement)
-      c.requestFullscreen().then(() => setIsPlaying(true));
-    else document.exitFullscreen().then(() => setIsPlaying(false));
+    if (!document.fullscreenElement) {
+      c.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+        console.log("Fullscreen enabled");
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+        console.log("Fullscreen disabled");
+      });
+    }
   };
 
   // 5) Convert DB markers to include `comment`
@@ -141,37 +150,39 @@ export default function CustomVideoPlayer({
 
   // 7) Detect tag hover when currentTime is close to tag's time
   useEffect(() => {
-    const closestMarker = marksWithOffsets.find((m) => {
-      return Math.abs(m.offsetSeconds - currentTime) < 1; // If current time is close to a tag's time
+    const closestMarker = marksWithOffsets.find((m, i) => {
+      return Math.abs(m.offsetSeconds - currentTime) < 1; 
     });
 
-    if (closestMarker) {
+    if (closestMarker && currentTime - lastHoveredTime >= 5) {
       const tagIndex = marksWithOffsets.findIndex((m) => m.id === closestMarker.id);
-      setHoveredIndex(tagIndex); // Set the closest marker as hovered
-      setTimeout(() => setHoveredIndex(null), 5000); // Hide after 5 seconds
+      setHoveredIndex(tagIndex);
+      setLastHoveredTime(currentTime); // Set the time of the last hover
+      setTimeout(() => setHoveredIndex(null), 5000); 
     }
-  }, [currentTime, marksWithOffsets]);
+  }, [currentTime, lastHoveredTime, marksWithOffsets]);
 
   return (
     <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
       {/* VIDEO */}
       <div
         ref={containerRef}
-        className="relative bg-black rounded-t-2xl overflow-hidden pt-[56.25%]"
+        className="relative rounded-2xl overflow-hidden pt-[56.25%]"
       >
         <video
           ref={videoRef}
           src={src}
-          className="absolute inset-0 w-full h-full object-contain"
+          className="absolute inset-0 w-full h-full object-contain z-0"
           preload="metadata"
           controls={false}
           onClick={togglePlay}
         />
         <div
-          className="absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded"
+          className="absolute bottom-2 right-3 cursor-pointer bg-black bg-opacity-60 px-2 py-1 rounded-lg"
           onClick={toggleFullscreen}
         >
-          <span className="text-white text-lg">⛶</span>
+
+          <span className="text-white text-lg ">⛶</span>
         </div>
       </div>
 
@@ -189,8 +200,8 @@ export default function CustomVideoPlayer({
         togglePlay={togglePlay}
         onDeleteTag={onDeleteTag}
         currentTime={currentTime}
+        isFullscreen={isFullscreen} 
       />
-
     </div>
   );
 }
