@@ -57,3 +57,53 @@ export function resetMouseLoading(){
   if (button) (button as HTMLButtonElement).style.cursor = 'pointer';
 }
 
+export const formattedMatchEventType = {
+  FIRST_SERVE: "First Serve",
+  SECOND_SERVE: "Second Serve",
+  BREAK_POINT: "Break Point",
+  GAME_POINT: "Game Point",
+  SET_POINT: "Set Point",
+  TIEBREAK: "Tiebreak",
+  START_OF_SET: "Start of Set",
+};
+
+export const formattedTacticEventType = {
+  SERVE_VOLLEY: "Serve Volley",
+  BASELINE_RALLY: "Baseline Rally",
+  DROP_SHOT: "Drop Shot",
+  NET_PLAY: "Net Play",
+  CROSS_COURT_RALLY: "Cross Court Rally",
+  DOWN_THE_LINE_SHOT: "Down the Line Shot",
+  OPPONENT_PULLED_WIDE: "Opponent Pulled Wide",
+  RETURN: "Return",
+};
+
+export const formattedFoulsEventType = {
+  UNFORCED_ERROR: "Unforced Error",
+  FORCED_ERROR: "Forced Error",
+  DOUBLE_FAULT: "Double Fault",
+  FOOT_FAULT: "Foot Fault",
+  NET_TOUCH: "Net Touch",
+  RACKET_VIOLATION: "Racket Violation",
+};
+
+export const formattedPhysicalEventType = {
+  FATIGUE_SIGN: "Fatigue Sign",
+  SLOW_RECOVERY: "Slow Recovery",
+  INJURY_CONCERN: "Injury Concern",
+  GOOD_MOVEMENT: "Good Movement",
+  POOR_FOOTWORK: "Poor Footwork",
+};
+
+export const formattedConditionType = {
+  UNDER_PRESSURE: "Under Pressure",
+  CONFIDENT: "Confident",
+  FOCUSED: "Focused",
+  LOST_FOCUS: "Lost Focus",
+  MOMENTUM_SHIFT: "Momentum Shift",
+  CLUTCH_PLAY: "Clutch Play",
+  FATIGUE_SIGNS: "Fatigue Signs",
+};
+
+
+

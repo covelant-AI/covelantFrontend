@@ -17,6 +17,7 @@ interface ExpandedBubbleProps {
   duration: number;
   onDeleteTag: (id: number) => void;
   toggleBubble: (index: number | null) => void;  
+  isFullscreen: boolean;
 }
 
 const ExpandedBubble: React.FC<ExpandedBubbleProps> = ({
@@ -25,6 +26,7 @@ const ExpandedBubble: React.FC<ExpandedBubbleProps> = ({
   duration,
   onDeleteTag,
   toggleBubble,
+  isFullscreen,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [draft, setDraft] = useState<string>('');
@@ -93,24 +95,33 @@ const ExpandedBubble: React.FC<ExpandedBubbleProps> = ({
   return (
     <div
       ref={bubbleRef}
-      className="absolute top-8 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-1 shadow-lg max-w-xs z-10"
-      style={{ left: `calc(${(currentMark.offsetSeconds / duration) * 100}% - 6px)` }}
+      className={ isFullscreen?
+        `absolute bottom-20 left-4 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-2 shadow-lg max-w-xs z-10`:
+        `absolute top-8 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-1 shadow-lg max-w-xs z-10`
+      }
+      style={isFullscreen ? {} : { left: `calc(${(currentMark.offsetSeconds / duration) * 100}% - 0px)` }}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Image src={currentMark.lablePath} alt="" width={16} height={16} />
-          <span className="text-sm font-bold text-black ">{currentMark.label}</span>
+      <div className="flex flex-row items-center justify-between pb-4">
+          <div className='flex flex-row space-x-4'>
+            <span className='max-w-7'>
+          <Image src={currentMark.lablePath} alt="" width={50} height={40} />
+          </span>
+          <div className='flex flex-row space-x-4'>
+            <div className='flex flex-col'>
+              <p className="text-lg font-bold text-black">{currentMark.label}</p>
+              {currentMark.condition && (
+              <h3 className="text-md font-semibold text-gray-400 text-left">{currentMark.condition}</h3>
+              )}
+            </div>
+        </div>
         </div>
         <button onClick={() => onDeleteTag(currentMark.id)} className="p-3">
           <Trash2 size={16} className="text-red-700 hover:text-red-800 hover:scale-[1.1] cursor-pointer" />
         </button>
       </div>
+      
 
       {/* Edit / Save / Cancel */}
-      {currentMark.condition && (
-        <h3 className="text-md font-semibold text-gray-400 text-center">{currentMark.condition}</h3>
-      )}
-
       {editingIndex === openIndex ? (
         <textarea
           className="w-full bg-gray-100 border border-gray-200 rounded-2xl p-2 text-sm text-black min-w-60 min-h-40"

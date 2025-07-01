@@ -4,7 +4,13 @@ import { ProgressBar } from "./ProgressBar";
 import { CustomVideoPlayerProps, MatchEventData } from "@/util/interfaces";
 import { COLOR_MAP, ICON_MAP } from "@/util/default";
 import Image from 'next/image';
-import { Fullscreen } from "lucide-react";
+import { 
+  formattedMatchEventType, 
+  formattedTacticEventType, 
+  formattedFoulsEventType, 
+  formattedPhysicalEventType, 
+  formattedConditionType 
+} from "@/util/services";
 
 export default function CustomVideoPlayer({
   src,
@@ -87,53 +93,57 @@ export default function CustomVideoPlayer({
   };
 
   // 5) Convert DB markers to include `comment`
-  const marksWithOffsets = useMemo(() => {
-    return (markers as MatchEventData[])
-      .map((m) => {
-        const offsetSeconds = m.eventTimeSeconds;
-        if (typeof offsetSeconds !== "number") return null;
+const marksWithOffsets = useMemo(() => {
+  return (markers as MatchEventData[])
+    .map((m) => {
+      const offsetSeconds = m.eventTimeSeconds;
+      if (typeof offsetSeconds !== "number") return null;
 
-        let label = "";
-        switch (m.category) {
-          case "MATCH":
-            label = m.matchType!;
-            break;
-          case "TACTIC":
-            label = m.tacticType!;
-            break;
-          case "FOULS":
-            label = m.foulType!;
-            break;
-          case "PHYSICAL":
-            label = m.physicalType!;
-            break;
-          case "NOTE":
-            label = m.noteType;
-            break;
-        }
+      let label = "";
+      // Use mappings based on category
+      switch (m.category) {
+        case "MATCH":
+          label = formattedMatchEventType[m.matchType!] || m.matchType!;
+          break;
+        case "TACTIC":
+          label = formattedTacticEventType[m.tacticType!] || m.tacticType!;
+          break;
+        case "FOULS":
+          label = formattedFoulsEventType[m.foulType!] || m.foulType!;
+          break;
+        case "PHYSICAL":
+          label = formattedPhysicalEventType[m.physicalType!] || m.physicalType!;
+          break;
+        case "NOTE":
+          label = m.noteType!;
+          break;
+      }
 
-        return {
-          id: m.id,
-          offsetSeconds,
-          color: COLOR_MAP[m.category] || "#9CA3AF",
-          label,
-          lablePath: ICON_MAP[m.category] || ICON_MAP.COMMENT,
-          condition: m.condition,
-          comment: m.comment || "",
-        };
-      })
-      .filter(
-        (x): x is {
-          id: number;
-          offsetSeconds: number;
-          color: string;
-          label: string;
-          lablePath: string;
-          condition: "UNDER_PRESSURE" | "CONFIDENT" | "FOCUSED" | "LOST_FOCUS" | "MOMENTUM_SHIFT" | "CLUTCH_PLAY" | "FATIGUE_SIGNS";
-          comment: string;
-        } => x !== null
-      );
-  }, [markers]);
+      // Map the condition type using formattedConditionType
+      const condition = formattedConditionType[m.condition as keyof typeof formattedConditionType] || m.condition;
+
+      return {
+        id: m.id,
+        offsetSeconds,
+        color: COLOR_MAP[m.category] || "#9CA3AF",
+        label,
+        lablePath: ICON_MAP[m.category] || ICON_MAP.COMMENT,
+        condition,
+        comment: m.comment || "",
+      };
+    })
+    .filter(
+      (x): x is {
+        id: number;
+        offsetSeconds: number;
+        color: string;
+        label: string;
+        lablePath: string;
+        condition: string;
+        comment: string;
+      } => x !== null
+    );
+}, [markers]);
 
   // 6) Skip to Previous Tag
   const skipToPreviousTag = () => {
@@ -208,12 +218,14 @@ export default function CustomVideoPlayer({
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
   return (
-    <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
+    <>
+    {isFullscreen? 
+      <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
       {/* VIDEO */}
       <div
         ref={containerRef}
         className="relative rounded-2xl overflow-hidden pt-[56.25%]"
-      >
+        >
         <video
           ref={videoRef}
           src={src}
@@ -221,12 +233,12 @@ export default function CustomVideoPlayer({
           preload="metadata"
           controls={false}
           onClick={togglePlay}
-        />
+          />
           <div
             className={isFullscreen
               ? "absolute bottom-15 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg"
               : "absolute bottom-2 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg"}
-            onClick={toggleFullscreen}>
+              onClick={toggleFullscreen}>
             <span className="text-white text-lg flex flex-row justify-center items-center space-x-2">
               <div className="text-white text-sm">
                 {Math.floor(currentTime / 60)}:
@@ -240,15 +252,13 @@ export default function CustomVideoPlayer({
                   width={24}  
                   height={24}  
                   className="text-white text-lg hover:scale-[1.15] active:scale-[1.05] "
-                />
+                  />
             </span>
           </div>
         
           {/* Arrows for navigating to the previous/next tag */}
           <div
-            className={isFullscreen
-              ? "absolute bottom-15 left-3 flex justify-center space-x-1"
-              : "absolute bottom-2 left-3 flex justify-center space-x-3"}>
+            className="absolute bottom-15 left-3 flex justify-center space-x-1">
             <button onClick={togglePlay} className="text-white p-1 text-2xl hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
               {isPlaying ? "❚❚" : "►"}
             </button>
@@ -261,7 +271,7 @@ export default function CustomVideoPlayer({
                 alt="Skip to previous tag" 
                 width={24} 
                 height={24} 
-              />
+                />
             </button>
             
             <button 
@@ -272,25 +282,104 @@ export default function CustomVideoPlayer({
                 alt="Skip to next tag" 
                 width={24} 
                 height={24} 
-              />
+                />
             </button>
-
           </div>
-        </div>
+        {/* VIDEO & TAG CONTROLS */}
+        <ProgressBar
+          duration={duration}
+          marks={marksWithOffsets}
+          progressRef={progressRef}
+          progressContainerRef={progressContainerRef}
+          hoveredIndex={hoveredIndex}
+          onSeek={onSeek}
+          onProgressMouseMove={onProgressMouseMove}
+          onProgressMouseLeave={onProgressMouseLeave}
+          onDeleteTag={onDeleteTag}
+          isFullscreen={isFullscreen}
+          />
+          </div>
+      </div>
+    : ////////////////////////////////////////////////////////////////////////////////////// Minimised screen ///////////////////////////////////////////////////////////////////////////
+      <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
+        {/* VIDEO */}
+        <div
+          ref={containerRef}
+          className="relative rounded-2xl overflow-hidden pt-[56.25%]"
+          >
+          <video
+            ref={videoRef}
+            src={src}
+            className="absolute inset-0 w-full h-full object-contain z-0"
+            preload="metadata"
+            controls={false}
+            onClick={togglePlay}
+            />
+            <div className= "absolute bottom-2 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg" onClick={toggleFullscreen}>
+              <span className="text-white text-lg flex flex-row justify-center items-center space-x-2">
+                <div className="text-white text-sm">
+                  {Math.floor(currentTime / 60)}:
+                  {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
+                  {Math.floor(duration / 60)}:
+                  {String(Math.floor(duration % 60)).padStart(2, "0")}
+                </div>
+                  <Image
+                    src="/icons/fullscreen.svg"
+                    alt="Toggle fullscreen"
+                    width={24}  
+                    height={24}  
+                    className="text-white text-lg hover:scale-[1.15] active:scale-[1.05] "
+                    />
+              </span>
+            </div>
+              
+            {/* Arrows for navigating to the previous/next tag */}
+            <div
+              className= "absolute bottom-2 left-3 flex justify-center space-x-3">
+              <button onClick={togglePlay} className="text-white p-1 text-2xl hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+                {isPlaying ? "❚❚" : "►"}
+              </button>
 
-      {/* VIDEO & TAG CONTROLS */}
-      <ProgressBar
-        duration={duration}
-        marks={marksWithOffsets}
-        progressRef={progressRef}
-        progressContainerRef={progressContainerRef}
-        hoveredIndex={hoveredIndex}
-        onSeek={onSeek}
-        onProgressMouseMove={onProgressMouseMove}
-        onProgressMouseLeave={onProgressMouseLeave}
-        onDeleteTag={onDeleteTag}
-        isFullscreen={isFullscreen}
-      />
-    </div>
+              <button 
+                onClick={skipToPreviousTag} 
+                className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+                <Image 
+                  src="/icons/leftSkip.svg" 
+                  alt="Skip to previous tag" 
+                  width={24} 
+                  height={24} 
+                  />
+              </button>
+              
+              <button 
+                onClick={skipToNextTag} 
+                className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+                <Image 
+                  src="/icons/rightSkip.svg" 
+                  alt="Skip to next tag" 
+                  width={24} 
+                  height={24} 
+                  />
+              </button>
+
+            </div>
+          </div>
+
+        {/* VIDEO & TAG CONTROLS */}
+        <ProgressBar
+          duration={duration}
+          marks={marksWithOffsets}
+          progressRef={progressRef}
+          progressContainerRef={progressContainerRef}
+          hoveredIndex={hoveredIndex}
+          onSeek={onSeek}
+          onProgressMouseMove={onProgressMouseMove}
+          onProgressMouseLeave={onProgressMouseLeave}
+          onDeleteTag={onDeleteTag}
+          isFullscreen={isFullscreen}
+          />
+      </div>
+    }
+    </>
   );
 }

@@ -26,7 +26,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
   return (
     <div
-      className="flex items-center py-2 gap-3">
+      className={isFullscreen? `absolute w-full bottom-1 py-4`: `flex items-center py-2 gap-3`}>
 
       {/* Progress Bar Container */}
       <div
@@ -56,7 +56,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
             }}
             className={`absolute w-[10px] h-[10px] transform rotate-45 rounded-xs border cursor-pointer ${
               openIndex === i
-                ? "border-[#6EB6B3] bg-white cursor-pointer"
+                ? "border-[#6EB6B3] bg-white cursor-pointer scale-[1.3]"
                 : "border-black"
             }`}
             style={{
@@ -86,6 +86,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           duration={duration}
           onDeleteTag={onDeleteTag}
           toggleBubble={toggleOpen}
+          isFullscreen={isFullscreen}
         />
       </div>
     </div>
