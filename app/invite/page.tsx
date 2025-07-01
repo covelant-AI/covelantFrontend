@@ -27,7 +27,7 @@ export default function InvitePage() {
         toast.error(Msg, {
           data: {
             title: 'Failed to copy link',
-            message: 'There was an error copying the invite link. Please copy it here at https://www.covelant.com/sign-up',
+            message: 'There was an error copying the invite link. Please copy it here at https://www.app.covelant.com/sign-up',
           },
           position: 'bottom-right',
         })
