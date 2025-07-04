@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { SidePanelDashboardProps, WinOutcome } from "@/util/interfaces";
 import { useAuth } from "@/app/context/AuthContext";
 import RadarChartWithExplanation from "./UI/HexaGraph";
-import ProfileInfo from "./UI/ProfileInfo";
+import ProfileInfo from "../UI/ProfileInfo";
 import OutcomeCircles from "./UI/OutcomeCircles";
 import * as Sentry from "@sentry/nextjs";
 
