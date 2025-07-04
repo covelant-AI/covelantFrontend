@@ -7,9 +7,9 @@ interface ProfileInfoProps {
   lastName: string;
 }
 
-const ProfileInfo = ({  avatarSrc, firstName, lastName }: ProfileInfoProps) => (
+const ProfileInfo = ({ avatarSrc, firstName, lastName }: ProfileInfoProps) => (
     <>
-    <div className="w-18 h-18 rounded-2xl overflow-hidden flex justify-center items-center">
+    <div className="w-18 h-18 rounded-lg overflow-hidden flex justify-center items-center">
       <Image
         src={avatarSrc || "/images/default-avatar.png"}
         alt="Profile picture"
@@ -18,7 +18,7 @@ const ProfileInfo = ({  avatarSrc, firstName, lastName }: ProfileInfoProps) => (
         className="object-cover w-full h-full"
         />
     </div>
-    <h3 className="text-xl font-semibold text-gray-800">
+    <h3 className="text-xl font-semibold text-gray-800 content-center">
       {firstName ?? 'No Player'}
       <br />
       <span className='font-bold'>{lastName ?? 'selected'}</span>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import PlayerSelector  from '@/components/InvitePage/PlayerSelector'
+import SearchUser  from '@/components/UI/SearchUser'
 import StaticPlayerDisplay from "@/components/UI/StaticPlayerDisplay"
 import OpponentSelector  from './OpponentSelector'
 import {MatchDataProps} from '@/util/interfaces'
@@ -26,7 +26,7 @@ export default function MatchData({ onDataChange }: MatchDataProps) {
 
       {/* Player Selection */}
       <div className="flex justify-between gap-4 max-sm:gap-1 mb-4 px-4 max-[360]:flex-col">
-        {profile?.type === "player" ? <StaticPlayerDisplay onSelect={setPlayerOne}/>: <PlayerSelector onSelect={setPlayerOne} />}
+        {profile?.type === "player" ? <StaticPlayerDisplay onSelect={setPlayerOne}/>: <SearchUser  onSelect={setPlayerOne} />}
         <div className="flex items-center font-bold text-gray-400 max-[360]:justify-center">VS</div>
         <OpponentSelector onSelect={setPlayerTwo} />
       </div>

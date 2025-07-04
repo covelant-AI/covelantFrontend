@@ -73,7 +73,7 @@ export const defaultDisplayedMatches = [
   { id: 6, title: 'Loading Data...',    imageUrl: '/images/whiteBackground.png' },
 ];
 
-export const inviteUrl = 'https://www.covelant.com/sign-up'
+export const inviteUrl = 'https://www.app.covelant.com/sign-up'
 
 
 //////////////////////////////////////////////////////////////////// MAIN PREFORMANCE TRACKER SECTION ///////////////////////////////////////////////////////////

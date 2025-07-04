@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import {Msg} from '@/components/UI/ToastTypes';
 import * as Sentry from "@sentry/nextjs";
 
-export default function PlayerSelector({onSelect}: PlayerSelectorProps){
+export default function SearchUser({onSelect}: PlayerSelectorProps){
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [suggestions, setSuggestions] = useState<User[]>([])
