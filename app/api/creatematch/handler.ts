@@ -1,5 +1,6 @@
 import { PrismaClient } from '../../../generated/prisma';  
 import { NextRequest, NextResponse } from 'next/server';
+import runpodSdk from "runpod-sdk";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,6 @@ export async function POST(req: NextRequest) {
     if (!playerOne || !playerTwo || !date || !fieldType || !matchType) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
-    console.log(matchType, fieldType, videoURL, thumbnail)
     // Create Match record
     const match = await prisma.match.create({
       data: {
@@ -77,6 +77,23 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    if(process.env.ENVIRONMENT == "prod"){
+    const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
+    const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
+    const result = await endpoint.run({
+      "input": {
+        "route": "analysis/process_video",
+        "data": {
+          "video_url": videoURL,
+          "video_id": match.id
+        }
+      }
+    });
+    
+    if(result.status == 'IN_QUEUE'){
+      return NextResponse.json({ success:true, message: "Match and data analysis created successfully" });
+    }
+    }
     return NextResponse.json({ success:true, message: "Match and player matches created successfully" });
   } catch (error) {
     console.error(error);
