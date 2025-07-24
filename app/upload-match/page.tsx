@@ -1,7 +1,5 @@
 'use client';
 import { useState,useCallback, SetStateAction } from 'react'
-import Image from "next/image";
-import Link from "next/link";
 import UploadVideo from "@/components/UploadPage/uploadVideo";
 import MatchData from "@/components/UploadPage/MatchData";
 import { Player } from '@/util/interfaces'
