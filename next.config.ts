@@ -4,7 +4,14 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
     images: {
       domains: ['firebasestorage.googleapis.com'],
-  },
+    },
+    // Ensure proper static generation for Render
+    output: 'standalone',
+    // Disable server-side rendering for pages that might cause issues
+    experimental: {
+      // This helps with prerender issues on deployment platforms
+      optimizePackageImports: ['@sentry/nextjs'],
+    },
 };
 
 
