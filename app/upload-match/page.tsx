@@ -117,6 +117,7 @@ export default function UploadMatchPage() {
                 setVideoURL(url);
                 setVideoThumbnail(thumbnail);
               }}
+              uploadedThumbnail={videoThumbnail}
             />
 
             {/* Player Selection */}
@@ -182,7 +183,7 @@ export default function UploadMatchPage() {
       </div>
       
         {renderStep()}
-        <div className="flex justify-between mt-6">
+        <div className="flex justify-between mt-6 w-full">
           {step > 1 && (
             <button
               onClick={() => setStep(step - 1)}
@@ -191,14 +192,6 @@ export default function UploadMatchPage() {
               Back
             </button>
           )}
-          {/* {step === 4 && (
-            <button
-              onClick={handleSubmit}
-              className="bg-[#4DBAB5] text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition-all"
-            >
-              Proceed
-            </button>
-          )} */}
         </div>
         </div>
       </div>

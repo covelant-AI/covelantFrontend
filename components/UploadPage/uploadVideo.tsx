@@ -1,13 +1,15 @@
 'use client';
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { storage, ref, uploadBytesResumable, getDownloadURL } from "@/app/firebase/config";
 
 interface UploadVideoProps {
-  onVideoUpload: (videoURL: string, videoThumbnail: string) => void;
+  onVideoUpload: (videoURL: string, videoThumbnail: string) => void,
+  uploadedURL?: string | null,
+  uploadedThumbnail?: string | null
 }
 
-export default function UploadVideo({ onVideoUpload}: UploadVideoProps) {
+export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbnail}: UploadVideoProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [highlight, setHighlight] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -107,6 +109,13 @@ export default function UploadVideo({ onVideoUpload}: UploadVideoProps) {
     const file = e.target.files?.[0];
     if (file) handleVideoFile(file);
   };
+
+  useEffect(() => {
+  if (uploadedThumbnail) {
+    setUploadProgress(100);
+    setThumbnail(uploadedThumbnail);
+  }
+}, [uploadedThumbnail]);
 
   return (
     <>
