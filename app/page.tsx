@@ -5,7 +5,6 @@ import SignInPage from './sign-in/page';
 import Loading from './loading';
 import HeroSection from '@/components/HeroSection/HeroSection'
 import HomeDashboard from '@/components/Dashboard/HomeDashboard';
-import ProductDisplay from '@/components/Stripe/ProductDisplay'
 
 export default function Home() {
   const { user, loading } = useAuth()
@@ -19,7 +18,6 @@ export default function Home() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1.5, ease: "easeOut" }}>
       <HeroSection />
-      <ProductDisplay/>
       <HomeDashboard />
     </motion.div>
   );

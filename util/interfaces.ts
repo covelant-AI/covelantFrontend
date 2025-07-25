@@ -274,6 +274,7 @@ export interface GetOpponentSearch{
 
 export interface OpponentSelectorProps {  // used in OpponentSelector
   onSelect: (user: Player) => void
+  selected: Player | null
 }
 
 
@@ -284,8 +285,6 @@ export interface GetUsersSearch { // used for player or coach searches
 
 export interface MatchDataProps {
   onDataChange: (data: {
-    playerOne: Player | null;
-    playerTwo: Player | null;
     matchType: string;
     fieldType: string;
     date: string;
