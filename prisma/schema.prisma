@@ -18,6 +18,9 @@ model Player {
   dominantHand String?       @default("Right Handed")
   height       Int?          @default(180)
   winRate      Float?        @default(1)
+  priceId      String?       @default("Free")
+  customerId   String?
+  credits      Int?          @default(0) 
   stats        PlayerStat[]
 
   playerMatchesFirst  PlayerMatch[] @relation("PlayerMatch_First")
@@ -37,6 +40,9 @@ model Coach {
   email     String
   team      String?
   age       Int?
+  priceId   String?       @default("Free")
+  customerId String?
+  credits      Int?          @default(0)  
 
   players   Player[] @relation("CoachPlayers")
 }

@@ -7,7 +7,7 @@ interface UploadVideoProps {
   onVideoUpload: (videoURL: string, videoThumbnail: string) => void;
 }
 
-export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
+export default function UploadVideo({ onVideoUpload}: UploadVideoProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [highlight, setHighlight] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -96,8 +96,6 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
     return new Blob([arrayBuffer], { type: "image/jpeg" });
   };
 
-
-
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setHighlight(false);
@@ -112,13 +110,17 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
 
   return (
     <>
-    {/* For small screens, show only the upload button */}
-    <div className="md:hidden w-full items-center justify-center flex flex-col mb-2">
+    <div className="w-full items-center justify-center flex flex-col mb-2">
       <button
+        className="flex items-center px-20 py-3 border border-dashed border-r-2 bg-gray-100 w-full justify-center text-black font-bold text-lg rounded-t-lg hover:bg-gray-300 transition-colors duration-300 active:scale-95 transition-transform"
+        style={uploadProgress === 100 ? { borderColor: "#6EB6B3", borderStyle: "dotted", borderWidth: "1px" } : {}}
         onClick={() => fileInputRef.current?.click()}
-        className="flex items-center px-20 py-3 border border-dashed border-r-2 bg-[#FEFEFE] w-full justify-center text-black font-bold text-lg rounded-t-lg hover:bg-gray-100 transition-colors duration-300 active:scale-95 transition-transform"
-        style={uploadProgress === 100 ? { borderColor: "#6EB6B3", borderStyle: "solid", borderWidth: "1px" } : {}}
-      >
+        onDragOver={(e) => {
+          e.preventDefault();
+          setHighlight(true);
+        }}
+        onDragLeave={() => setHighlight(false)}
+        >
         <Image 
           className="w-4 h-5 mr-5" 
           src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2Fupload2.png?alt=media&token=e1f0ff19-b255-4721-a378-ef6bdcb9f69b" 
@@ -130,9 +132,9 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
       
       {/* Display the video filename and progress bar */}
       {thumbnail && (
-        <div className="md:hidden w-full border border-[#6EB6B3] rounded-b-lg p-4">
+        <div className=" w-full border border-[#6EB6B3] rounded-b-lg p-4">
           <div className="text-center text-black font-bold">
-            <p className="text-sm">{uploadProgress===100 ? "File Uploaded: " + "CovMatch[#].mp4" : "Uploading..."}</p>
+            <p className="text-sm">{uploadProgress===100 ? "File Uploaded: " + "Click next" : "Uploading..."}</p>
             {/* Only show the progress bar if uploading */}
             {uploadProgress < 100 && (
               <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
@@ -140,56 +142,15 @@ export default function UploadVideo({ onVideoUpload }: UploadVideoProps) {
                   className="bg-[#4DBAB5] h-2.5 rounded-full transition-all duration-300"
                   style={{ width: `${uploadProgress}%` }}
                 ></div>
+                <p className="text-sm text-white text-center">
+                Uploading... {uploadProgress.toFixed(0)}%
+              </p>
               </div>
             )}
           </div>
         </div>
       )}
-    </div>
-
-    <div
-      className={`max-md:hidden relative flex items-center justify-center border-2 border-dashed ${
-        highlight ? "border-blue-400 bg-blue-50" : "border-[#4DBAB5] bg-gray-100"
-      } rounded-xl p-6 h-[420px] cursor-pointer transition-colors duration-300 w-full max-w-xl overflow-hidden`}
-      onClick={() => fileInputRef.current?.click()}
-      onDrop={handleDrop}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setHighlight(true);
-      }}
-      onDragLeave={() => setHighlight(false)}
-      >
-      {!thumbnail ? (
-        <div className="text-center text-black">
-          <Image className="mx-auto mb-4" src="/icons/UploadMatch.svg" alt="upload" width={80} height={50} />
-          <p className="text-sm font-medium text-gray-400 underline">click here</p>
-          <p className="text-sm text-gray-400">or</p>
-          <p className="text-sm underline text-gray-400">drag and drop</p>
-        </div>
-      ) : (
-        <>
-          <img
-            src={thumbnail}
-            alt="Video Thumbnail"
-            className="absolute inset-0 w-full h-full object-cover rounded-xl"
-            />
-          {uploadProgress < 100 && (
-            <div className="absolute bottom-6 left-6 right-6">
-              <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
-                <div
-                  className="bg-[#4DBAB5] h-2.5 rounded-full transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                  ></div>
-              </div>
-              <p className="text-sm text-white text-center">
-                Uploading... {uploadProgress.toFixed(0)}%
-              </p>
-            </div>
-          )}
-        </>
-      )}
-
-      <input
+            <input
         ref={fileInputRef}
         type="file"
         accept="video/*"
