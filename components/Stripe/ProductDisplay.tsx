@@ -11,8 +11,8 @@ export default function UpgradeToPro() {
 const handleUpgrade = () => {
   const url =
     plan === 'Athlete'
-      ? `https://buy.stripe.com/bJe14n0t060g6rj67Mao803?prefilled_email=${encodeURIComponent(profile.email)}`
-      : `https://buy.stripe.com/28EeVd4Jg1K0cPHgMqao800?prefilled_email=${encodeURIComponent(profile.email)}`
+      ? `${plans[0].link}?prefilled_email=${encodeURIComponent(profile.email)}`
+      : `${plans[1].link}?prefilled_email=${encodeURIComponent(profile.email)}`
 
   window.open(url, '_blank');
 };
