@@ -1,9 +1,10 @@
 'use client';
-import { useState, useCallback, SetStateAction } from 'react'
+import { useState, useCallback } from 'react'
 import UploadVideo from "@/components/UploadPage/uploadVideo";
 import MatchData from "@/components/UploadPage/MatchData";
 import StaticPlayerDisplay from "@/components/UI/StaticPlayerDisplay"
 import OpponentSelector  from '@/components/UploadPage/OpponentSelector';
+import AiFeatureSelector from "@/components/UploadPage/AiFeatureSelector";
 import { Player } from '@/util/interfaces'
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
@@ -17,17 +18,19 @@ export default function UploadMatchPage() {
   const [step, setStep] = useState(1); // Step control
 
   const [matchInfo, setMatchInfo] = useState<{
-    playerOne: Player | null
-    playerTwo: Player | null
-    matchType: string
-    fieldType: string
-    date: string
+    playerOne: Player | null;
+    playerTwo: Player | null;
+    matchType: string;
+    fieldType: string;
+    date: string;
+    winner: 'playerOne' | 'playerTwo' | null;
   }>({
     playerOne: null,
     playerTwo: null,
     matchType: '',
     fieldType: '',
     date: '',
+    winner: null,
   });
 
   const [videoURL, setVideoURL] = useState<string | null>(null);
@@ -37,74 +40,136 @@ export default function UploadMatchPage() {
   const [features, setFeatures] = useState<string[]>([]);
   const {profile} = useAuth(); 
 
-  const handleMatchDataChange = useCallback((data: { matchType: string; fieldType: string; date: string }) => {
+  const handleMatchDataChange = useCallback((data: {
+    matchType: string;
+    fieldType: string;
+    date: string;
+    winner: 'playerOne' | 'playerTwo' | null;
+  }) => {
     setMatchInfo(prev => ({
       ...prev,
       matchType: data.matchType,
       fieldType: data.fieldType,
       date: data.date,
+      winner: data.winner,
     }));
   }, []);
 
-  const handleSubmit = () => {
-    if (!videoURL || !videoThumbnail) {
-      toast.warning(Msg, {
-        data: {
-          title: 'Upload a video before proceeding.',
-          message: 'Please upload a video to analyze. Make sure it is and .mp4 format and less than 100MB in size.',
-        },
-        position: 'bottom-right',
-      });
-      return;
-    }
-    if (!matchInfo.playerOne || !matchInfo.playerTwo || !matchInfo.date || !matchInfo.fieldType || !matchInfo.matchType) {
-      toast.warning(Msg, {
-        data: {
-          title: 'Missing Match Information',
-          message: 'Please make sure to add both players, Select Match Type, Select Court, and Date before proceeding.',
-        },
-        position: 'bottom-right',
-      });
-      return;
-    }
+  const handleStepTwoNext = () => {
+  if (
+    !matchInfo.playerOne ||
+    !matchInfo.playerTwo ||
+    !matchInfo.date ||
+    !matchInfo.fieldType ||
+    !matchInfo.matchType ||
+    !matchInfo.winner
+  ) {
+    toast.warning(Msg, {
+      data: {
+        title: 'Missing Match Information',
+        message:
+          'Please make sure to add both players, select Match Type, Court, Date, and a Winner before proceeding.',
+      },
+      position: 'bottom-right',
+    });
+    return;
+  }
 
-    const matchData = {
-      ...matchInfo,
-      videoURL,
-      thumbnail: videoThumbnail,
-      features,
-    };
+  setStep(3);
+};
 
-    fetch('/api/creatematch', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(matchData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.success) {
-          toast.warning(Msg, {
-            data: {
-              title: 'Failed to upload match',
-              message: 'Something went wrong while uploading your match. Please try again later.',
-            },
-            position: 'bottom-right',
-          });
-        } else {
-          toast.success("Match uploaded successfully!", { position: 'bottom-right' });
-          router.push('/');
-        }
-      })
-      .catch((error) => {
-        toast.error(Msg, {
+const handleSubmit = (selectedFeatures: string[]) => {
+  if (!videoURL || !videoThumbnail) {
+    toast.warning(Msg, {
+      data: {
+        title: 'Upload a video before proceeding.',
+        message: 'Please upload a video to analyze. Make sure it is .mp4 and less than 100MB.',
+      },
+      position: 'bottom-right',
+    });
+    return;
+  }
+
+  if (
+    !matchInfo.playerOne ||
+    !matchInfo.playerTwo ||
+    !matchInfo.date ||
+    !matchInfo.fieldType ||
+    !matchInfo.matchType ||
+    !matchInfo.winner
+  ) {
+    toast.warning(Msg, {
+      data: {
+        title: 'Missing Match Information',
+        message: 'Add both players, court, match type, date, and winner.',
+      },
+      position: 'bottom-right',
+    });
+    return;
+  }
+
+  const matchData = {
+    ...matchInfo,
+    videoURL,
+    thumbnail: videoThumbnail,
+    features: selectedFeatures, // <--- update here
+    winnerId:
+      matchInfo.winner === 'playerOne'
+        ? matchInfo.playerOne?.id
+        : matchInfo.playerTwo?.id,
+  };
+
+  fetch('/api/creatematch', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(matchData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (!data.success) {
+        toast.warning(Msg, {
           data: {
-            title: 'Error uploading your video',
-            message: 'There was a problem uploading your video. Please try again later or contact support.',
+            title: 'Failed to upload match',
+            message: 'Something went wrong while uploading your match.',
           },
           position: 'bottom-right',
         });
-        Sentry.captureException(error);
+      } else {
+        toast.success('Match uploaded successfully!', { position: 'bottom-right' });
+        router.push('/');
+      }
+    })
+    .catch((error) => {
+      toast.error(Msg, {
+        data: {
+          title: 'Error uploading your video',
+          message: 'There was a problem uploading your video. Please try again later.',
+        },
+        position: 'bottom-right',
       });
+      Sentry.captureException(error);
+    });
+};
+
+
+  // Added function for step 1 validation
+  const handleNext = () => {
+    if (!playerOne || !playerTwo || !videoURL) {
+      toast.warning(Msg, {
+        data: {
+          title: 'Missing Required Data',
+          message: 'Please select both players and upload a video before proceeding.',
+        },
+        position: 'bottom-right',
+      });
+      return;
+    }
+    setMatchInfo(prev => ({
+      ...prev,
+      playerOne,
+      playerTwo,
+    }));
+    setStep(2);
   };
 
   const renderStep = () => {
@@ -140,16 +205,9 @@ export default function UploadMatchPage() {
             </div>
 
             <button
-              onClick={() => {
-                setMatchInfo(prev => ({
-                  ...prev,
-                  playerOne,
-                  playerTwo,
-                }));
-                setStep(2);
-              }}
-              className="bg-[#4DBAB5] mt-6 text-xl px-20 py-2 rounded-xl cursor-pointer 
-              hover:bg-teal-600 transition-colors duration-100 active:scale-95 transition-transform hover:text-white"
+              onClick={handleNext}
+              className={`bg-[#4DBAB5] mt-6 text-xl px-20 py-2 rounded-xl cursor-pointer 
+              hover:bg-teal-600 transition-colors duration-100 active:scale-95 transition-transform hover:text-white`}
             >
               Next
             </button>
@@ -158,13 +216,23 @@ export default function UploadMatchPage() {
       case 2:
         return (
         <>
-          <MatchData onDataChange={handleMatchDataChange} />
-          <button onClick={handleSubmit} className="bg-[#4DBAB5] mt-6 text-xl px-20 py-2 rounded-xl cursor-pointer 
+          <MatchData
+            onDataChange={handleMatchDataChange}
+            playerOne={playerOne!}
+            playerTwo={playerTwo!}
+          />
+          <button onClick={handleStepTwoNext} className="bg-[#4DBAB5] mt-6 text-xl px-20 py-2 rounded-xl cursor-pointer 
           hover:bg-teal-600 transition-colors duration-100 active:scale-95 transition-transform hover:text-white">
-            Analyse
+             Next
           </button>
-        </>
-      )
+        </>)
+      case 3:
+        return (
+          <AiFeatureSelector
+            onFeatureChange={(features) => setFeatures(features)}
+            onSubmit={handleSubmit}
+          />
+        );
       default:
         return null;
     }
@@ -173,6 +241,7 @@ export default function UploadMatchPage() {
   return (
     <div className=" flex flex-col min-h-screen items-center justify-center px-20 py-10 max-md:px-4">
       <div className="flex flex-col gap-6 bg-gray-white border border-1 rounded-xl items-center justify-center p-8 min-w-[400px] w-full max-w-3xl shadow-lg">
+      {step == 1 && (
       <div className="grid grid-cols-1 gap-2 w-full mb-8 text-center flex flex-col items-center">
         <span>
           <h1 className="text-5xl font-bold text-gray-900 max-md:text-2xl max-md:mt-20">Upload Match Video</h1>
@@ -180,7 +249,7 @@ export default function UploadMatchPage() {
             Pick a video of a match you would like to analyze and <br /> make sure that the video satisfies the requirements.
           </p>
         </span>
-      </div>
+      </div>)}
       
         {renderStep()}
         <div className="flex justify-between mt-6 w-full">

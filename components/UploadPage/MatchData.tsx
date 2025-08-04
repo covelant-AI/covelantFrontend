@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react'
 import {MatchDataProps} from '@/util/interfaces'
 
-export default function MatchData({ onDataChange }: MatchDataProps) {
+export default function MatchData({ onDataChange,playerOne, playerTwo }: MatchDataProps) {
   const [matchType, setMatchType] = useState('')
   const [fieldType, setFieldType] = useState('')
+  const [selectedWinner, setSelectedWinner] = useState<'playerOne' | 'playerTwo' | null>(null);
   const [date, setDate] = useState('')
 
   // Notify parent on any change
   useEffect(() => {
-    onDataChange({ matchType, fieldType, date});
-  }, [ matchType, fieldType, date, onDataChange])
+    onDataChange({ matchType, fieldType, date, winner: selectedWinner });
+  }, [matchType, fieldType, date, selectedWinner, onDataChange]);
+
+
 
   return (
     <div className="bg-white p-4 w-full">
@@ -49,6 +52,70 @@ export default function MatchData({ onDataChange }: MatchDataProps) {
         value={date}
         onChange={(e) => setDate(e.target.value)}
       />
+
+      <hr className="my-4" />
+
+      {/* Winner Selector */}
+      <div className="mb-4">
+        <label className="block text-md font-semibold mb-2 text-black">Select Winner</label>
+        <div className="space-y-3">
+          <label
+            className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
+              selectedWinner === 'playerOne' ? 'border-cyan-500 ring-1 ring-cyan-500' : 'border-gray-200'
+            }`}
+          >
+            <input
+              type="radio"
+              name="winner"
+              value="playerOne"
+              checked={selectedWinner === 'playerOne'}
+              onChange={() => setSelectedWinner('playerOne')}
+              className="hidden"
+            />
+            <img
+              src={playerOne.avatar ?? '/images/default-avatar.png'}
+              alt={playerOne.firstName ?? 'Player One'}
+              className="w-10 h-10 rounded-full mr-3"
+            />
+            <span className="font-semibold text-black">
+              {playerOne.firstName} {playerOne.lastName}
+            </span>
+            <span className="ml-auto">
+              <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center border-gray-400">
+                {selectedWinner === 'playerOne' && <div className="w-2.5 h-2.5 bg-cyan-500 rounded-full" />}
+              </div>
+            </span>
+          </label>
+          
+          <label
+            className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
+              selectedWinner === 'playerTwo' ? 'border-cyan-500 ring-1 ring-cyan-500' : 'border-gray-200'
+            }`}
+          >
+            <input
+              type="radio"
+              name="winner"
+              value="playerTwo"
+              checked={selectedWinner === 'playerTwo'}
+              onChange={() => setSelectedWinner('playerTwo')}
+              className="hidden"
+            />
+            <img
+              src={playerTwo.avatar ?? '/images/default-avatar.png'}
+              alt={playerTwo.firstName ?? 'Player Two'}
+              className="w-10 h-10 rounded-full mr-3"
+            />
+            <span className="font-semibold text-black">
+              {playerTwo.firstName} {playerTwo.lastName}
+            </span>
+            <span className="ml-auto">
+              <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center border-gray-400">
+                {selectedWinner === 'playerTwo' && <div className="w-2.5 h-2.5 bg-cyan-500 rounded-full" />}
+              </div>
+            </span>
+          </label>
+        </div>
+      </div>
     </div>
   )
 }

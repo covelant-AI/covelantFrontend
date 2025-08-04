@@ -288,8 +288,12 @@ export interface MatchDataProps {
     matchType: string;
     fieldType: string;
     date: string;
+    winner: 'playerOne' | 'playerTwo' | null;
   }) => void;
-};
+  playerOne: Player;
+  playerTwo: Player;
+}
+
 
 export interface PlayerSelectorProps {
   onSelect: Dispatch<SetStateAction<Player | null>>
