@@ -5,10 +5,10 @@ import { useAuth } from '@/app/context/AuthContext';
 import clsx from 'clsx';
 
 const featuresList = [
-  { name: 'Dead time Detection', cost: 0 },
-  { name: 'Cut Away Dead Time', cost: 20 },
-  { name: 'Track Ball Speed', cost: 40 },
-  { name: 'Track Player Speed', cost: 40 },
+  { name: 'Fast Dead Time Detection', value:'DeadTimeDetection', cost: 0 },
+  { name: 'Match Sectioning',value:'MatchSectioning', cost: 20 },
+  { name: 'Track Ball Speed',value:'TrackBallSpeed', cost: 40 },
+  { name: 'Track Player Speed',value:'TrackPlayerSpeed', cost: 40 },
 ];
 
 interface AiFeatureSelectorProps {
@@ -19,7 +19,7 @@ interface AiFeatureSelectorProps {
 export default function AiFeatureSelector({ onFeatureChange, onSubmit }: AiFeatureSelectorProps) {
   const [credits, setCredits] = useState<number>(0);
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(['Dead time Detection']);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(['DeadTimeDetection']);
   const [levelKey, setLevelKey] = useState<number>(0);
   const {profile} = useAuth();  
 
@@ -172,8 +172,8 @@ export default function AiFeatureSelector({ onFeatureChange, onSubmit }: AiFeatu
             <label key={feature.name} className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
-                checked={selectedFeatures.includes(feature.name)}
-                onChange={() => toggleFeature(feature.name)}
+                checked={selectedFeatures.includes(feature.value)}
+                onChange={() => toggleFeature(feature.value)}
                 className="w-5 h-5 text-teal-600 rounded border-gray-300 focus:ring-teal-500"
               />
               <span className="text-gray-700">
