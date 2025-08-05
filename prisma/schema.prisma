@@ -20,7 +20,7 @@ model Player {
   winRate      Float?        @default(1)
   priceId      String?       @default("Free")
   customerId   String?
-  credits      Int?          @default(0) 
+  credits      Int?          @default(100) 
   stats        PlayerStat[]
 
   playerMatchesFirst  PlayerMatch[] @relation("PlayerMatch_First")
@@ -42,7 +42,7 @@ model Coach {
   age       Int?
   priceId   String?       @default("Free")
   customerId String?
-  credits      Int?          @default(0)  
+  credits      Int?          @default(200)  
 
   players   Player[] @relation("CoachPlayers")
 }
