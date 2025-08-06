@@ -118,6 +118,7 @@ model CourtKeypoint {
 }
 
 
+
 model BallDetection {
   id        Int      @id @default(autoincrement())
   match     Match    @relation(fields: [matchId], references: [id])
