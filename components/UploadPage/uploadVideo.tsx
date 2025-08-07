@@ -7,13 +7,33 @@ interface UploadVideoProps {
   onVideoUpload: (videoURL: string, videoThumbnail: string) => void,
   uploadedURL?: string | null,
   uploadedThumbnail?: string | null
+  profileEmail?: string;
 }
 
-export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbnail}: UploadVideoProps) {
+export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbnail, profileEmail}: UploadVideoProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [highlight, setHighlight] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+  const fetchUser = async () => {
+    if (!profileEmail) return;
+
+    try {
+      const res = await fetch(`/api/getUser?email=${encodeURIComponent(profileEmail)}`);
+      if (!res.ok) throw new Error('Failed to fetch user');
+      const user = await res.json();
+      setUserId(user.data.id);
+    } catch (err) {
+      console.error("Error fetching user ID:", err);
+    }
+  };
+
+  fetchUser();
+}, [profileEmail]);
+
 
   const extractThumbnail = (videoFile: File, url: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -46,7 +66,7 @@ export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbn
   const handleVideoFile = async (file: File) => {
     if (file && file.type.startsWith("video/")) {
       const localUrl = URL.createObjectURL(file);
-      const ProfileEmail = sessionStorage.removeItem('userEmail');
+
       setUploadProgress(0);
     
       // Extract thumbnail first
@@ -57,11 +77,11 @@ export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbn
       const thumbnailBlob = dataURLtoBlob(thumbnailDataUrl);
     
       // Upload thumbnail to Firebase Storage (as a Blob)
-      const thumbNailRef = ref(storage, `thumbnails/${ProfileEmail}_${Date.now()}_${file.name}`);
+      const thumbNailRef = ref(storage, `thumbnails/${userId}/${Date.now()}_${file.name}`);
       const uploadTask1 = uploadBytesResumable(thumbNailRef, thumbnailBlob);
     
       // Upload video to Firebase Storage (as a File)
-      const videoRef = ref(storage, "videos/" + file.name);
+      const videoRef = ref(storage, `videos/${userId}/${Date.now()}_${file.name}`);
       const uploadTask2 = uploadBytesResumable(videoRef, file);
     
       uploadTask2.on(

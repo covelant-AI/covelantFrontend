@@ -183,6 +183,7 @@ const handleSubmit = (selectedFeatures: string[]) => {
                 setVideoThumbnail(thumbnail);
               }}
               uploadedThumbnail={videoThumbnail}
+              profileEmail={profile?.email || ''}
             />
 
             {/* Player Selection */}
