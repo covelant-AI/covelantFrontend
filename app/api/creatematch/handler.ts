@@ -80,22 +80,22 @@ export async function POST(req: NextRequest) {
       },
     });
     
-    // const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
-    // const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
-    // const result = await endpoint.run({
-    //    "input": {
-    //      "route": "analysis/process_video",
-    //      "data": {
-    //        "video_url": videoURL,
-    //        "video_id": match.id,
-    //        "features": data.features || ["Dead time Detection"],
-    //      }
-    //    }
-    //  });
+    const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
+    const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
+    const result = await endpoint.run({
+       "input": {
+         "route": "analysis/process_video",
+         "data": {
+           "video_url": videoURL,
+           "video_id": match.id,
+           "features": data.features || ["Dead time Detection"],
+         }
+       }
+     });
 
-    //  if(result.status == 'IN_QUEUE'){
-    //    return NextResponse.json({ success:true, message: "Match and data analysis created successfully" });
-    //  }
+     if(result.status == 'IN_QUEUE'){
+       return NextResponse.json({ success:true, message: "Match and data analysis created successfully" });
+     }
 
     return NextResponse.json({ success: true, message: "Match and player matches created successfully" });
 
