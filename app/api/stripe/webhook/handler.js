@@ -66,46 +66,66 @@ async function getUserInfo(identifier) {
      try {
          switch (eventType) {
          case 'checkout.session.completed': {
-           const session = await stripe.checkout.sessions.retrieve(data.object.id, {
-             expand: ['line_items'],
-           });
-      
-           const customerId = session?.customer;
-           const customer = await stripe.customers.retrieve(customerId);
-           const priceId = session?.line_items?.data[0]?.price.id;
-           const unitAmount = session.line_items.data[0].price.unit_amount;
-      
-           if (!customer.email) {
-             console.error('No customer email found');
-             throw new Error('No user found');
-           }
-      
-           const user = await getUserInfo(customer.email);
-      
-           if (!user) {
-             console.error('No matching user found in DB');
-             throw new Error('No user found');
-           }
-      
-           const creditToAdd = unitAmount === 1299 ? 500 : unitAmount === 299 ? 100 : 0;
-      
-           if (creditToAdd === 0) {
-             console.warn('Unknown payment amount, skipping credit update');
-             break;
-           }
+              const session = await stripe.checkout.sessions.retrieve(data.object.id, {
+                expand: ['line_items'],
+              });
+            
+              // Get a usable customer id (string) if present
+              const customerId =
+                typeof session.customer === 'string'
+                  ? session.customer
+                  : session.customer?.id ?? null;
+            
+              // Try to get the email either from the customer object or from session.customer_details
+              let email = null;
+            
+              if (customerId) {
+                // We have a customer id; fetch to read the email
+                const customer = await stripe.customers.retrieve(customerId);
+                // @ts-ignore – runtime check
+                email = (customer)?.email ?? null;
+              } else {
+                // No Customer on the session (common for one-time payments)
+                email = session.customer_details?.email ?? null;
+              }
+            
+              if (!email) {
+                console.error('No customer email found');
+                throw new Error('No user found');
+              }
+            
+              const priceId = session?.line_items?.data?.[0]?.price?.id ?? null;
+              const unitAmount = session?.line_items?.data?.[0]?.price?.unit_amount ?? null;
+            
+              const user = await getUserInfo(email);
+              if (!user) {
+                console.error('No matching user found in DB');
+                throw new Error('No user found');
+              }
+            
+              const creditToAdd =
+                unitAmount === 129900 ? 500 : // if unit_amount is in cents
+                unitAmount === 1299   ? 500 :
+                unitAmount === 29900  ? 100 :
+                unitAmount === 299    ? 100 : 0;
+            
+              if (creditToAdd === 0) {
+                console.warn('Unknown payment amount, skipping credit update');
+                break;
+              }
+            
+              const model = user.role === 'coach' ? prisma.coach : prisma.player;
+              await model.update({
+                where: { id: user.id },
+                data: {
+                  priceId: priceId ?? undefined,
+                  credits: { increment: creditToAdd },
+                },
+              });
+            
+              break;
+            }
 
-           const model = user.role === 'coach' ? prisma.coach : prisma.player;
-
-           await model.update({
-             where: { id: user.id },
-             data: {
-               priceId: priceId,
-               credits: { increment: creditToAdd },
-             },
-           });
-      
-           break;
-         }
 
              case 'customer.subscription.deleted': {
                const subscription = await stripe.subscriptions.retrieve(data.object.id);
@@ -131,7 +151,7 @@ async function getUserInfo(identifier) {
 
              case 'invoice.paid': {
                const subscription = await stripe.subscriptions.retrieve(data.object.id);
-            
+
                const user = await getUserInfo(subscription.customer);
             
                if (!user) {
