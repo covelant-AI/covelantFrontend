@@ -56,7 +56,7 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
 
   return (
     <div className="bg-white p-2 rounded-xl w-full justify-center items-center">
-      <div className="flex items-center justify-between p-2">
+      <div className="flex items-center justify-left gap-4 p-2">
         <h3 className="text-black font-semibold text-lg">
           Manual Tags
         </h3>
@@ -67,11 +67,11 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
       <div className="flex flex-col md:flex-row gap-4 w-full">
       <div className="w-full flex flex-col lg:flex-row gap-6">
         {/* ─── Left Column: dropdowns + time inputs ─── */}
-        <div className="flex flex-col flex-none gap-4">
-          <div className="flex items-center gap-3 sm:flex-row flex-col">
+        <div className="flex flex-row flex-none gap-2">
+          <div className="flex items-center gap-2 sm:flex-row flex-col">
             {/* 1) Match type dropdown */}
             <select
-              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold max-sm:w-full"
+              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md font-semibold max-sm:w-full"
               value={matchType}
               onChange={(e) => setMatchType(e.target.value)}
             >
@@ -83,10 +83,10 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
             </select>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center ">
             {/* 3) Condition dropdown */}
             <select
-              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold"
+              className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md font-semibold"
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
             >
@@ -102,7 +102,7 @@ export default function MatchForm({ videoId, timeStamp, onAddTag }: MainTagManag
         {/* ─── Middle Column: comment textarea ─── */}
         <div className="flex-1">
           <textarea
-            className="w-full h-26 bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm text-black resize-none"
+            className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 text-sm content-center text-black"
             placeholder="Comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}

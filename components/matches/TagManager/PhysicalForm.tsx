@@ -57,7 +57,7 @@ export default function PhysicalForm({ videoId, timeStamp, onAddTag }: MainTagMa
 
   return (
    <div className="bg-white p-2 rounded-xl w-full">
-    <div className="flex items-center justify-between p-2">
+      <div className="flex items-center justify-left gap-4 p-2">
       <h3 className="text-black font-semibold text-lg">
         Physical Tag
       </h3>
@@ -67,7 +67,7 @@ export default function PhysicalForm({ videoId, timeStamp, onAddTag }: MainTagMa
     <div className="flex flex-col md:flex-row gap-4 w-full">
       <div className="w-full flex flex-col lg:flex-row gap-6">
       {/* ─── Left Column: dropdown + time inputs ─── */}
-      <div className="flex flex-col flex-none gap-4">
+      <div className="flex flex-row flex-none gap-4">
         <div className="flex items-center gap-3 sm:flex-row flex-col">
           <select
             className="bg-gray-100 border border-gray-300 text-black rounded-lg px-3 py-1 text-md flex-1 font-semibold max-sm:w-full"
@@ -98,10 +98,10 @@ export default function PhysicalForm({ videoId, timeStamp, onAddTag }: MainTagMa
       </div>
 
       {/* ─── Middle Column: comment textarea ─── */}
-      <div className="flex-1">
-        <textarea
-          className="w-full h-26 bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm text-black resize-none"
-          placeholder="Comment"
+        <div className="flex-1">
+          <textarea
+            className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 text-sm content-center text-black"
+            placeholder="Comment"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />

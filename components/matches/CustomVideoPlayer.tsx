@@ -301,7 +301,7 @@ const marksWithOffsets = useMemo(() => {
           </div>
       </div>
     : ////////////////////////////////////////////////////////////////////////////////////// Minimised screen ///////////////////////////////////////////////////////////////////////////
-      <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
+      <div className="w-full mx-auto flex flex-col space-y-4">
         {/* VIDEO */}
         <div
           ref={containerRef}

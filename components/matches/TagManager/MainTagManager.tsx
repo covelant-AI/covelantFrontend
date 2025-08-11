@@ -36,7 +36,7 @@ export default function MainTagManager({
   }, [menuOpen]);
 
   return (
-      <div className="w-full max-w-[700px] shadow-lg bg-gray-100 rounded-2xl mx-auto flex flex-col space-y-4 p-6">
+      <div className="w-full shadow-lg bg-gray-100 rounded-2xl mx-auto flex flex-col space-y-4 pt-4">
       {/* header: inline tabs on md+, hamburger on sm */}
       <div className="flex items-center justify-center border-b border-gray-200 pb-2">
         {/* md+ inline */}
@@ -109,7 +109,7 @@ export default function MainTagManager({
       )}
 
       {/* form area */}
-      <div className="mt-4">
+      <div className="mt-2">
         {activeTab === "Match" && (
           <MatchForm
             videoId={videoId}

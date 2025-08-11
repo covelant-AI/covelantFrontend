@@ -107,7 +107,7 @@ const getVideoData = useCallback(async() => {
 
   return (
       <div className="bg-white h-screen overflow-x-hidden pt-10 max-md:pt-10">
-          <div className="px-10 md:px-40 lg:px-30 2xl:px-40 2xl:px-60 bg-white">
+          <div className="px-10 2xl:px-30 2xl:px-50 bg-white">
           <button
             onClick={() => router.back()}
             className="absolute top-4 left-4 z-50
@@ -121,7 +121,7 @@ const getVideoData = useCallback(async() => {
           <div className="flex flex-col lg:flex-row mt-8 w-full gap-4">
             
             {/* video + tags on top / left */}
-            <div className="w-full lg:w-2/3 space-y-4 mx-auto flex flex-col items-center">
+            <div className="w-full space-y-4 flex flex-col items-center">
               <CustomVideoPlayer
                 src={videoUrl || ""}
                 markers={markers}
@@ -139,7 +139,7 @@ const getVideoData = useCallback(async() => {
             </div>
 
             {/* performance panel below / right */}
-            <div className="w-full lg:w-1/3">
+            {/* <div className="w-full lg:w-1/3">
               <MainPreformanceTracker
                 videoId={videoId}
                 leftPlayer={playerOne}
@@ -148,7 +148,7 @@ const getVideoData = useCallback(async() => {
                 matchTime={currentVideoTime}
                 setInfo="VS"
                 />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
