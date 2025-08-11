@@ -26,7 +26,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
   return (
     <div
-      className={isFullscreen? `absolute w-full bottom-1 py-4`: `flex items-center py-2 gap-3`}>
+      className={isFullscreen? `absolute w-full bottom-1 py-4`: `absolute bottom-2 z-10 py-2
+              left-24 right-40 sm:left-30 sm:right-30`}>
 
       {/* Progress Bar Container */}
       <div

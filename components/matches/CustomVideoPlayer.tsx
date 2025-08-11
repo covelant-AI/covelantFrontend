@@ -221,163 +221,176 @@ const marksWithOffsets = useMemo(() => {
     <>
     {isFullscreen? 
       <div className="w-full max-w-[700px] mx-auto flex flex-col space-y-4">
-      {/* VIDEO */}
-      <div
-        ref={containerRef}
-        className="relative rounded-2xl overflow-hidden pt-[56.25%]"
-        >
-        <video
-          ref={videoRef}
-          src={src}
-          className="absolute inset-0 w-full h-full object-contain z-0"
-          preload="metadata"
-          controls={false}
-          onClick={togglePlay}
-          />
-          <div
-            className={isFullscreen
-              ? "absolute bottom-15 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg"
-              : "absolute bottom-2 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg"}
-              onClick={toggleFullscreen}>
-            <span className="text-white text-lg flex flex-row justify-center items-center space-x-2">
-              <div className="text-white text-sm">
-                {Math.floor(currentTime / 60)}:
-                {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
-                {Math.floor(duration / 60)}:
-                {String(Math.floor(duration % 60)).padStart(2, "0")}
-              </div>
-                <Image
-                  src="/icons/fullscreen.svg"
-                  alt="Toggle fullscreen"
-                  width={24}  
-                  height={24}  
-                  className="text-white text-lg hover:scale-[1.15] active:scale-[1.05] "
-                  />
-            </span>
-          </div>
-        
-          {/* Arrows for navigating to the previous/next tag */}
-          <div
-            className="absolute bottom-15 left-3 flex justify-center space-x-1">
-            <button onClick={togglePlay} className="text-white p-1 text-2xl hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
-              {isPlaying ? "❚❚" : "►"}
-            </button>
+{/* VIDEO */}
+<div
+  ref={containerRef}
+  className="relative rounded-2xl overflow-hidden pt-[56.25%]"
+>
+  <video
+    ref={videoRef}
+    src={src}
+    className="absolute inset-0 w-full h-full object-contain z-0"
+    preload="metadata"
+    controls={false}
+    onClick={togglePlay}
+  />
 
-            <button 
-              onClick={skipToPreviousTag} 
-              className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
-              <Image 
-                src="/icons/leftSkip.svg" 
-                alt="Skip to previous tag" 
-                width={24} 
-                height={24} 
-                />
-            </button>
-            
-            <button 
-              onClick={skipToNextTag} 
-              className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
-              <Image 
-                src="/icons/rightSkip.svg" 
-                alt="Skip to next tag" 
-                width={24} 
-                height={24} 
-                />
-            </button>
-          </div>
-        {/* VIDEO & TAG CONTROLS */}
-        <ProgressBar
-          duration={duration}
-          marks={marksWithOffsets}
-          progressRef={progressRef}
-          progressContainerRef={progressContainerRef}
-          hoveredIndex={hoveredIndex}
-          onSeek={onSeek}
-          onProgressMouseMove={onProgressMouseMove}
-          onProgressMouseLeave={onProgressMouseLeave}
-          onDeleteTag={onDeleteTag}
-          isFullscreen={isFullscreen}
-          />
-          </div>
+  {/* ⬇️ Bottom blur/gradient overlay */}
+<div
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-x-0 bottom-0 h-16 md:h-20 z-10"
+>
+  <div
+    className="absolute inset-0 bg-black/55 backdrop-blur-sm md:backdrop-blur"
+    style={{
+      // fade the whole blurred layer to 0 opacity at the top
+      WebkitMaskImage:
+        "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0) 100%)",
+      WebkitMaskRepeat: "no-repeat",
+      WebkitMaskSize: "100% 100%",
+      maskImage:
+        "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0) 100%)",
+      maskRepeat: "no-repeat",
+      maskSize: "100% 100%",
+    }}
+  />
+</div>
+
+  {/* Time / Fullscreen */}
+  <div
+    className={isFullscreen
+      ? "absolute bottom-15 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg z-20"
+      : "absolute bottom-2 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg z-20"}
+    onClick={toggleFullscreen}
+  >
+    <span className="text-white text-lg flex flex-row justify-center items-center space-x-2">
+      <div className="text-white text-sm">
+        {Math.floor(currentTime / 60)}:
+        {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
+        {Math.floor(duration / 60)}:
+        {String(Math.floor(duration % 60)).padStart(2, "0")}
+      </div>
+      <Image
+        src="/icons/fullscreen.svg"
+        alt="Toggle fullscreen"
+        width={24}
+        height={24}
+        className="text-white text-lg hover:scale-[1.15] active:scale-[1.05]"
+      />
+    </span>
+  </div>
+
+  {/* Progress bar (no logic change; ensure it sits above blur) */}
+  <ProgressBar
+    duration={duration}
+    marks={marksWithOffsets}
+    progressRef={progressRef}
+    progressContainerRef={progressContainerRef}
+    hoveredIndex={hoveredIndex}
+    onSeek={onSeek}
+    onProgressMouseMove={onProgressMouseMove}
+    onProgressMouseLeave={onProgressMouseLeave}
+    onDeleteTag={onDeleteTag}
+    isFullscreen={isFullscreen}
+  />
+
+  {/* Left controls */}
+  <div
+    className="absolute bottom-15 left-3 flex justify-center space-x-1 z-20"
+  >
+    <button onClick={togglePlay} className="text-white p-1 text-2xl hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+      {isPlaying ? "❚❚" : "►"}
+    </button>
+    <button onClick={skipToPreviousTag} className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+      <Image src="/icons/leftSkip.svg" alt="Skip to previous tag" width={24} height={24}/>
+    </button>
+    <button onClick={skipToNextTag} className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+      <Image src="/icons/rightSkip.svg" alt="Skip to next tag" width={24} height={24}/>
+    </button>
+  </div>
+</div>
+
       </div>
     : ////////////////////////////////////////////////////////////////////////////////////// Minimised screen ///////////////////////////////////////////////////////////////////////////
       <div className="w-full mx-auto flex flex-col space-y-4">
-        {/* VIDEO */}
-        <div
-          ref={containerRef}
-          className="relative rounded-2xl overflow-hidden pt-[56.25%]"
-          >
-          <video
-            ref={videoRef}
-            src={src}
-            className="absolute inset-0 w-full h-full object-contain z-0"
-            preload="metadata"
-            controls={false}
-            onClick={togglePlay}
-            />
-            <div className= "absolute bottom-2 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg" onClick={toggleFullscreen}>
-              <span className="text-white text-lg flex flex-row justify-center items-center space-x-2">
-                <div className="text-white text-sm">
-                  {Math.floor(currentTime / 60)}:
-                  {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
-                  {Math.floor(duration / 60)}:
-                  {String(Math.floor(duration % 60)).padStart(2, "0")}
-                </div>
-                  <Image
-                    src="/icons/fullscreen.svg"
-                    alt="Toggle fullscreen"
-                    width={24}  
-                    height={24}  
-                    className="text-white text-lg hover:scale-[1.15] active:scale-[1.05] "
-                    />
-              </span>
-            </div>
-              
-            {/* Arrows for navigating to the previous/next tag */}
-            <div
-              className= "absolute bottom-2 left-3 flex justify-center space-x-3">
-              <button onClick={togglePlay} className="text-white p-1 text-2xl hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
-                {isPlaying ? "❚❚" : "►"}
-              </button>
+{/* VIDEO */}
+<div
+  ref={containerRef}
+  className="relative rounded-2xl overflow-hidden pt-[56.25%]"
+>
+  <video
+    ref={videoRef}
+    src={src}
+    className="absolute inset-0 w-full h-full object-contain z-0"
+    preload="metadata"
+    controls={false}
+    onClick={togglePlay}
+  />
 
-              <button 
-                onClick={skipToPreviousTag} 
-                className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
-                <Image 
-                  src="/icons/leftSkip.svg" 
-                  alt="Skip to previous tag" 
-                  width={24} 
-                  height={24} 
-                  />
-              </button>
-              
-              <button 
-                onClick={skipToNextTag} 
-                className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
-                <Image 
-                  src="/icons/rightSkip.svg" 
-                  alt="Skip to next tag" 
-                  width={24} 
-                  height={24} 
-                  />
-              </button>
+  {/* ⬇️ Bottom blur/gradient overlay */}
+<div
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-x-0 bottom-0 h-16 md:h-20 z-10"
+>
+  <div
+    className="absolute inset-0 bg-black/55 backdrop-blur-sm md:backdrop-blur"
+    style={{
+      // fade the whole blurred layer to 0 opacity at the top
+      WebkitMaskImage:
+        "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0) 100%)",
+      WebkitMaskRepeat: "no-repeat",
+      WebkitMaskSize: "100% 100%",
+      maskImage:
+        "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0) 100%)",
+      maskRepeat: "no-repeat",
+      maskSize: "100% 100%",
+    }}
+  />
+</div>
 
-            </div>
-          </div>
+  {/* Time / Fullscreen */}
+  <div className="absolute bottom-2 right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg z-20" onClick={toggleFullscreen}>
+    <span className="text-white text-lg flex flex-row justify-center items-center space-x-2">
+      <div className="text-white text-sm">
+        {Math.floor(currentTime / 60)}:
+        {String(Math.floor(currentTime % 60)).padStart(2, "0")} /{" "}
+        {Math.floor(duration / 60)}:
+        {String(Math.floor(duration % 60)).padStart(2, "0")}
+      </div>
+      <Image src="/icons/fullscreen.svg" alt="Toggle fullscreen" width={24} height={24}
+        className="text-white text-lg hover:scale-[1.15] active:scale-[1.05]"/>
+    </span>
+  </div>
 
-        {/* VIDEO & TAG CONTROLS */}
-        <ProgressBar
-          duration={duration}
-          marks={marksWithOffsets}
-          progressRef={progressRef}
-          progressContainerRef={progressContainerRef}
-          hoveredIndex={hoveredIndex}
-          onSeek={onSeek}
-          onProgressMouseMove={onProgressMouseMove}
-          onProgressMouseLeave={onProgressMouseLeave}
-          onDeleteTag={onDeleteTag}
-          isFullscreen={isFullscreen}
-          />
+  {/* Progress Bar (stays the same props) */}
+  <ProgressBar
+    duration={duration}
+    marks={marksWithOffsets}
+    progressRef={progressRef}
+    progressContainerRef={progressContainerRef}
+    hoveredIndex={hoveredIndex}
+    onSeek={onSeek}
+    onProgressMouseMove={onProgressMouseMove}
+    onProgressMouseLeave={onProgressMouseLeave}
+    onDeleteTag={onDeleteTag}
+    isFullscreen={isFullscreen}
+  />
+
+  {/* Left controls */}
+  <div className="absolute bottom-2 left-3 flex justify-center space-x-3 z-20">
+    <button onClick={togglePlay} className="text-white p-1 text-2xl hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+      {isPlaying ? "❚❚" : "►"}
+    </button>
+    <button onClick={skipToPreviousTag} className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+      <Image src="/icons/leftSkip.svg" alt="Skip to previous tag" width={24} height={24}/>
+    </button>
+    <button onClick={skipToNextTag} className="text-white rounded-md hover:scale-[1.1] active:scale-[1.01] cursor-pointer">
+      <Image src="/icons/rightSkip.svg" alt="Skip to next tag" width={24} height={24}/>
+    </button>
+  </div>
+</div>
+
+
       </div>
     }
     </>
