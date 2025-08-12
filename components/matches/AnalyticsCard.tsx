@@ -35,14 +35,3 @@ export default function AnalyticsCard() {
     </div>
   );
 }
-
-
-            //   <div className="mt-auto px-4">
-            //     <Link href="/coming-soon">
-            //       <button className="w-full py-2 border border-teal-600 text-black font-semibold text-md rounded-xl hover:bg-teal-600 
-            //         hover:text-white transition-colors duration-300 cursor-pointer mb-4">
-            //         View AI support features
-            //       </button>
-            //     </Link>
-            //     <p className="text-xs text-black text-center">Covelant 2025</p>
-            //   </div>
