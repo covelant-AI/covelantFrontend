@@ -27,87 +27,90 @@ export default function AISummary({
   const currentStrikesEff = useAnimatedNumber(rawStrikesEff);
 
 
-  return (
-    <div className="grid grid-cols-2 gap-3 pt-6 px-4">
-      {/* Ball Speed */}
-      <div className="flex flex-col items-start p-3 rounded-2xl shadow bg-gray-100">
-        <span className="flex flex-row justify-center items-center pb-6">
-          <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-            <Image
-              src="/images/lables/lable-ball.png"
-              alt="ball"
-              width={24} 
-              height={24} 
-              className="w-6 h-6"
-            />
-          </div>
-          <p className="text-sm text-black font-bold pl-4">Ball Speed</p>
-        </span>
-        <div className="mt-1 text-4xl font-semibold text-black">
-          {currentBallSpeed.toFixed(1)}
-          <span className="text-lg font-light">km/h</span>
+return (
+  <div className="h-full flex flex-col rounded-b-2xl bg-white overflow-hidden">
+    {/* Ball Speed */}
+    <div
+      className="flex-1 flex flex-col justify-between px-4 py-3"
+      style={{
+        background:
+          "radial-gradient(80% 80% at 100% 100%, rgba(66,182,177,0.18) 0%, rgba(66,182,177,0.10) 34%, rgba(66,182,177,0) 60%), #FFFFFF",
+      }}
+    >
+      <div className="flex items-center gap-3">
+        <div className="bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center ring-1 ring-gray-200">
+          <Image src="/images/lables/lable-ball.png" alt="ball" width={24} height={24} className="w-6 h-6" />
         </div>
+        <p className="text-sm font-medium text-gray-700">Ball Speed</p>
       </div>
-
-      {/* Player Speed */}
-      <div className="flex flex-col items-start p-3 rounded-2xl shadow bg-gray-100">
-        <span className="flex flex-row justify-center items-center pb-6">
-          <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-            <Image
-              src="/images/lables/lable-person.png"
-              alt="person"
-              width={24}
-              height={24}
-              className="w-6 h-6"
-            />
-          </div>
-          <p className="text-sm text-black font-bold pl-4">Player Speed</p>
-        </span>
-        <div className="mt-1 text-4xl font-semibold text-black">
-          {currentPlayerSpeed.toFixed(1)}
-          <span className="text-lg font-light">km/h</span>
-        </div>
-      </div>
-
-      {/* Longest Rally */}
-      <div className="flex flex-col items-start p-3 rounded-2xl shadow bg-gray-100">
-        <span className="flex flex-row justify-center items-center pb-6">
-          <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-            <Image
-              src="/images/lables/lable-time.png"
-              alt="time"
-              width={16} 
-              height={16}
-              className="w-4 h-4"
-            />
-          </div>
-          <p className="text-sm text-black font-bold pl-4">Longest Rally</p>
-        </span>
-        <div className="mt-1 text-4xl font-semibold text-black">
-          {Math.round(currentLongestRally)}
-          <span className="text-lg font-light">hit</span>
-        </div>
-      </div>
-
-      {/* Strikes Eff. */}
-      <div className="flex flex-col items-start p-3 rounded-2xl shadow bg-gray-100">
-        <span className="flex flex-row justify-center items-center pb-6">
-          <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-            <Image
-              src="/images/lables/lable-target.png"
-              alt="target"
-              width={20}
-              height={20} 
-              className="w-5 h-5"
-            />
-          </div>
-          <p className="text-sm text-black font-bold pl-4">Win eff.</p>
-        </span>
-        <div className="mt-1 text-4xl font-semibold text-black">
-          {currentStrikesEff.toFixed(1)}
-          <span className="text-lg font-light">%</span>
-        </div>
+      <div className="text-right text-3xl md:text-4xl font-bold text-gray-900">
+        {currentBallSpeed.toFixed(1)}
+        <span className="ml-1 text-base md:text-lg font-normal text-gray-500">km/h</span>
       </div>
     </div>
-  );
+    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+    {/* Player Speed */}
+    <div
+      className="flex-1 flex flex-col justify-between px-4 py-3"
+      style={{
+        background:
+          "radial-gradient(80% 80% at 100% 100%, rgba(66,182,177,0.18) 0%, rgba(66,182,177,0.10) 34%, rgba(66,182,177,0) 60%), #FFFFFF",
+      }}
+    >
+      <div className="flex items-center gap-3">
+        <div className="bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center ring-1 ring-gray-200">
+          <Image src="/images/lables/lable-person.png" alt="person" width={24} height={24} className="w-6 h-6" />
+        </div>
+        <p className="text-sm font-medium text-gray-700">Player Speed</p>
+      </div>
+      <div className="text-right text-3xl md:text-4xl font-bold text-gray-900">
+        {currentPlayerSpeed.toFixed(1)}
+        <span className="ml-1 text-base md:text-lg font-normal text-gray-500">km/h</span>
+      </div>
+    </div>
+    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+    {/* Longest Rally */}
+    <div
+      className="flex-1 flex flex-col justify-between px-4 py-3"
+      style={{
+        background:
+          "radial-gradient(80% 80% at 100% 100%, rgba(66,182,177,0.18) 0%, rgba(66,182,177,0.10) 34%, rgba(66,182,177,0) 60%), #FFFFFF",
+      }}
+    >
+      <div className="flex items-center gap-3">
+        <div className="bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center ring-1 ring-gray-200">
+          <Image src="/images/lables/lable-time.png" alt="time" width={16} height={16} className="w-4 h-4" />
+        </div>
+        <p className="text-sm font-medium text-gray-700">Longest Rally</p>
+      </div>
+      <div className="text-right text-3xl md:text-4xl font-bold text-gray-900">
+        {Math.round(currentLongestRally)}
+        <span className="ml-1 text-base md:text-lg font-normal text-gray-500">hits</span>
+      </div>
+    </div>
+    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+    {/* Win Eff. */}
+    <div
+      className="flex-1 flex flex-col justify-between px-4 py-3"
+      style={{
+        background:
+          "radial-gradient(80% 80% at 100% 100%, rgba(66,182,177,0.18) 0%, rgba(66,182,177,0.10) 34%, rgba(66,182,177,0) 60%), #FFFFFF",
+      }}
+    >
+      <div className="flex items-center gap-3">
+        <div className="bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center ring-1 ring-gray-200">
+          <Image src="/images/lables/lable-target.png" alt="target" width={20} height={20} className="w-5 h-5" />
+        </div>
+        <p className="text-sm font-medium text-gray-700">Win Eff.</p>
+      </div>
+      <div className="text-right text-3xl md:text-4xl font-extrabold text-gray-900">
+        {currentStrikesEff.toFixed(1)}
+        <span className="ml-1 text-base md:text-lg font-normal text-gray-500">%</span>
+      </div>
+    </div>
+  </div>
+);
 }

@@ -110,6 +110,8 @@ export interface TennisScoreBoardProps {
   events: EventRecord[] | { [key: string]: EventRecord };
   eventTime: number;
   rounds?: number[];
+  leftPlayer?: { avatar?: string; firstName?: string };
+  rightPlayer?: { avatar?: string; firstName?: string };
 }
 
 export interface PlayerData {  // use in ListAllThletes
