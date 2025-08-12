@@ -36,7 +36,7 @@ export default function MainTagManager({
   }, [menuOpen]);
 
   return (
-      <div className="w-full shadow-lg bg-gray-100 rounded-2xl mx-auto flex flex-col space-y-4 pt-4">
+      <div className="w-full shadow-lg bg-gray-100 rounded-2xl border border-gray-300 mx-auto flex flex-col space-y-4 pt-4">
       {/* header: inline tabs on md+, hamburger on sm */}
       <div className="flex items-center justify-center border-b border-gray-200 pb-2">
         {/* md+ inline */}

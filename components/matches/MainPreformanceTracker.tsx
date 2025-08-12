@@ -4,8 +4,6 @@ import { formatSeconds } from "@/util/services";
 import TennisScoreBoard from "@/components/matches/TennisScoreBoard"
 import {MainPerformanceTrackerProps, MatchMetric, EventRecord} from "@/util/interfaces"
 import AISummery from "@/components/matches/AISummary"
-import Image from "next/image";
-import Link from "next/link";
 import { toast } from 'react-toastify';
 import {Msg} from '@/components/UI/ToastTypes';
 
@@ -54,52 +52,19 @@ export default function MainPreformanceTracker({
     getMatchData();
   }, []);
 
-  return (
-    <div className="bg-white border border-gray-100 rounded-3xl shadow-lg flex flex-col h-full">
-      {/* ─── Main content ─── */}
-      <div className="space-y-4">
-        {/* Top row: avatars + live badge + timer */}
-        <div className="flex items-center justify-between p-8 relative bg-gradient-to-b from-white to-gray-200 overflow-hidden
-             [clip-path:polygon(0_0,100%_0,100%_85%,50%_100%,0_85%)]">
-          {/* Left avatar */}
-          <div className="w-18 h-18 rounded-xl overflow-hidden flex justify-center items-center">
-            <Image
-               src={rightPlayer?.avatar || "/images/default-avatar.png"}
-               alt={rightPlayer?.firstName || "Player One"}
-               width={64}  // Equivalent to w-16 (16 * 4px = 64px)
-               height={64} // Equivalent to h-16 (16 * 4px = 64px)
-               className="ring-2 ring-gray-100 object-cover w-25 h-25"
-             />
-           </div>
+return (
+  <div className="min-w-60 self-stretch flex flex-col border border-gray-300 rounded-2xl">
+    {/* Main content fills all available height */}
+    <div className=" flex-1 flex flex-col min-h-0">
+      <TennisScoreBoard
+        events={scorePoints}
+        eventTime={matchTime}
+        rightPlayer={rightPlayer}
+        leftPlayer={leftPlayer}
+      />
 
-          {/* Center: Live & Time */}
-          <div className="flex flex-col items-center space-y-1">
-            <div className="flex items-center space-x-2 px-3 py-1 bg-gray-100 rounded-full">
-              {live && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />}
-              <span className="text-sm font-semibold text-gray-600">
-                {live ? "Live" : "Recorded"}
-              </span>
-            </div>
-            <div className="text-teal-400 font-extrabold text-2xl">{setInfo}</div>
-            {setInfo && <div className="text-xs text-gray-400">{eventTime}</div>}
-          </div>
-
-          {/* Right avatar */}
-          <div className="w-18 h-18 rounded-xl overflow-hidden flex justify-center items-center">
-            <Image
-              src={leftPlayer.avatar || "/images/default-avatar.png"}
-              alt={leftPlayer.firstName || "Player Two"}
-              width={64}  // Equivalent to w-16 (16 * 4px = 64px)
-              height={64} // Equivalent to h-16 (16 * 4px = 64px)
-              className="ring-2 ring-gray-100 object-cover w-25 h-full"
-            />
-          </div>
-        </div>
-
-        {/* Score row */}
-        <TennisScoreBoard events={scorePoints} eventTime={matchTime}/>
-
-        {/* Stats grid 2×2 */}
+      {/* Stats grow to fill the rest */}
+      <div className="mt-2 flex-1 min-h-0">
         <AISummery
           ballSpeeds={ballSpeeds}
           playerSpeeds={playerSpeeds}
@@ -108,20 +73,7 @@ export default function MainPreformanceTracker({
           eventTime={matchTime}
         />
       </div>
-      
-        
-      {/* ─── Spacer pushes button to bottom ─── */}
-      <div className="mt-auto px-4">
-        <Link href="/coming-soon">
-          <button className="w-full py-2 border border-teal-600 text-black font-semibold text-md rounded-xl hover:bg-teal-600 
-            hover:text-white transition-colors duration-300 cursor-pointer mb-4">
-            View AI support features
-          </button>
-        </Link>
-        <p className="text-xs text-black text-center">Covelant 2025</p>
-      </div>
     </div>
-
-  );
+  </div>
+);
 }
-

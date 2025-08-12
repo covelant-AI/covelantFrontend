@@ -7,13 +7,13 @@ import MainTagManager from "@/components/matches/TagManager/MainTagManager"
 import MainPreformanceTracker from "@/components/matches/MainPreformanceTracker"
 import {Player, MatchEventData} from "@/util/interfaces"
 import {defaultPlayer} from "@/util/default"
+import AnalyticsCard from "@/components/matches/AnalyticsCard";
 import Loading from "../loading"
 import { useParams,useRouter,usePathname  } from 'next/navigation'
 import { toast } from 'react-toastify';
 import {Msg} from '@/components/UI/ToastTypes';
 import Image from "next/image";
 import * as Sentry from "@sentry/nextjs";
-
 
 export default function Matches() {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -106,8 +106,8 @@ const getVideoData = useCallback(async() => {
   if (loading) return <Loading/>;
 
   return (
-      <div className="bg-white h-screen overflow-x-hidden pt-10 max-md:pt-10">
-          <div className="px-10 2xl:px-30 2xl:px-50 bg-white">
+      <div className="bg-white h-screen overflow-x-hidden pt-5 max-md:pt-10">
+        <div className="px-10 2xl:px-30 2xl:px-50 space-y-4 bg-white">
           <button
             onClick={() => router.back()}
             className="absolute top-4 left-4 z-50
@@ -118,38 +118,38 @@ const getVideoData = useCallback(async() => {
           >
           <Image src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FBackArrow.svg?alt=media&token=f4695bb5-dfd2-4733-9755-32748dbc86b8" alt="Back" width={20} height={20} />
           </button>
-          <div className="flex flex-col lg:flex-row mt-8 w-full gap-4">
-            
-            {/* video + tags on top / left */}
-            <div className="w-full space-y-4 flex flex-col items-center">
-              <CustomVideoPlayer
-                src={videoUrl || ""}
-                markers={markers}
-                videoStartTime={videoStart ?? "2025-06-01T14:30:00Z"}
-                onTimeUpdate={handleTimeUpdate}
-                onDeleteTag={handleDeleteTag}
-                timeStamp={currentVideoTime}
-              />
 
+            
+          {/* video + tags on top / left */}
+          <div className="w-full space-x-4 gap-4 flex flex-row items-stretch">
+            <CustomVideoPlayer
+              src={videoUrl || ""}
+              markers={markers}
+              videoStartTime={videoStart ?? "2025-06-01T14:30:00Z"}
+              onTimeUpdate={handleTimeUpdate}
+              onDeleteTag={handleDeleteTag}
+              timeStamp={currentVideoTime}
+            />
+
+            <MainPreformanceTracker
+              videoId={videoId}
+              leftPlayer={playerOne}
+              rightPlayer={playerTwo}
+              live={false}
+              matchTime={currentVideoTime}
+              setInfo="VS"
+              />
+          </div>
+
+            {/* performance panel below / right */}
+            <div className="w-full flex flex-row gap-4">
               <MainTagManager
                 videoId={videoId}
                 timeStamp={currentVideoTime}
                 onAddTag={handleAddTag}
               />
+              <AnalyticsCard/>
             </div>
-
-            {/* performance panel below / right */}
-            {/* <div className="w-full lg:w-1/3">
-              <MainPreformanceTracker
-                videoId={videoId}
-                leftPlayer={playerOne}
-                rightPlayer={playerTwo}
-                live={false}
-                matchTime={currentVideoTime}
-                setInfo="VS"
-                />
-            </div> */}
-          </div>
         </div>
       </div>
   );
