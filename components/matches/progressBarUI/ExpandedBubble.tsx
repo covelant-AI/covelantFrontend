@@ -96,8 +96,8 @@ const ExpandedBubble: React.FC<ExpandedBubbleProps> = ({
     <div
       ref={bubbleRef}
       className={ isFullscreen?
-        `absolute bottom-20 left-4 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-2 shadow-lg max-w-xs z-10`:
-        `absolute top-8 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-1 shadow-lg max-w-xs z-10`
+        `absolute bottom-20 left-4 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-2 shadow-lg max-w-xs ` :
+        `absolute bottom-10 left-0 transform -translate-x-1/2 bg-white border-2 border-yellow-600 rounded-3xl p-4 flex flex-col space-y-1 shadow-lg max-w-xs z-10 overflow-auto`
       }
       style={isFullscreen ? {} : { left: `calc(${(currentMark.offsetSeconds / duration) * 100}% - 0px)` }}
     >

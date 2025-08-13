@@ -36,11 +36,11 @@ export default function MainTagManager({
   }, [menuOpen]);
 
   return (
-      <div className="w-full shadow-lg bg-gray-100 rounded-2xl border border-gray-300 mx-auto flex flex-col space-y-4 pt-4">
+      <div className="w-full shadow-lg bg-gray-100 rounded-2xl border border-gray-300 mx-auto flex flex-col pt-2">
       {/* header: inline tabs on md+, hamburger on sm */}
-      <div className="flex items-center justify-center border-b border-gray-200 pb-2">
+      <div className="flex items-center justify-center pb-2">
         {/* md+ inline */}
-        <div className="hidden md:flex flex-wrap gap-3 justify-center w-full">
+        <div className="hidden md:flex flex-wrap gap-2 justify-center w-full">
           {tabs.map((tab, idx) => (
             <button
               key={tab}
@@ -109,7 +109,7 @@ export default function MainTagManager({
       )}
 
       {/* form area */}
-      <div className="mt-2">
+      <div >
         {activeTab === "Match" && (
           <MatchForm
             videoId={videoId}

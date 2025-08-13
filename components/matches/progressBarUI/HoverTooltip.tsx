@@ -25,24 +25,28 @@ const HoverTooltip: React.FC<HoverTooltipProps> = ({
 
   const mark = localMarks[hoveredIndex];
 
-  return (
-    <div
-      onMouseMove={(e) => e.stopPropagation()}
-      className="absolute -top-15 left-0 transform -translate-x-1/2 bg-white border-2 border-teal-600 rounded-full px-4 py-2 flex items-center space-x-2 shadow-lg"
-      style={{
-        left: `calc(${(mark.offsetSeconds / duration) * 100}% - 0px)`,
-      }}
-    >
-      <Image
-        src={mark.lablePath}
-        alt=""
-        width={16}
-        height={16}
-        className="flex-shrink-0"
-      />
-      <span className="text-sm font-medium text-black">{mark.label}</span>
-    </div>
-  );
+return (
+  <div
+    onMouseMove={(e) => e.stopPropagation()}
+    className="absolute -top-15 left-0 -translate-x-1/2
+               z-[99999] inline-flex items-center gap-2
+               whitespace-nowrap  /* keep one line */
+               bg-white border-2 border-teal-600 rounded-full
+               px-4 py-2 shadow-lg"
+    style={{ left: `calc(${(mark.offsetSeconds / duration) * 100}% - 0px)` }}
+  >
+    <Image
+      src={mark.lablePath}
+      alt=""
+      width={25}
+      height={16}
+      className="flex-none"   /* don't shrink icon */
+    />
+    <span className="text-sm font-medium text-black flex-none">
+      {mark.label}
+    </span>
+  </div>
+);
 };
 
 export default HoverTooltip;

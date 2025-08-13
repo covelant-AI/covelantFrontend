@@ -43,7 +43,7 @@ export default function CustomVideoPlayer({
   const BottomBlur: React.FC<{ className?: string }> = ({ className = "" }) => (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 ${className}`}
+      className={`pointer-events-none absolute inset-x-0 bottom-0 z-1 ${className}`}
     >
       {/* Blurred + darkened layer; mask makes it fade to 0 at the top */}
       <div
@@ -264,7 +264,7 @@ export default function CustomVideoPlayer({
 
         {/* Time / Fullscreen */}
         <div
-          className={`absolute ${controlsBottom} right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg z-20`}
+          className={`absolute ${controlsBottom} right-3 cursor-pointer bg-opacity-60 px-2 py-1 rounded-lg z-2`}
         >
           <span className="text-white text-lg flex flex-row justify-center items-center space-x-2">
             <div className="text-white text-sm">
@@ -301,7 +301,7 @@ export default function CustomVideoPlayer({
 
         {/* Left controls */}
         <div
-          className={`absolute ${controlsBottom} left-3 flex justify-center space-x-3 z-20`}
+          className={`absolute ${controlsBottom} left-3 flex justify-center space-x-3 z-2`}
         >
           <button
             onClick={togglePlay}

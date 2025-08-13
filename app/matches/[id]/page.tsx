@@ -110,7 +110,7 @@ const getVideoData = useCallback(async() => {
         <div className="px-10 2xl:px-30 2xl:px-50 space-y-4 bg-white">
           <button
             onClick={() => router.back()}
-            className="absolute top-4 left-4 z-50
+            className="absolute top-4 left-4 z-10
               px-4 py-4 rounded-xl bg-white shadow-md 
               hover:bg-gray-100 transition-colors duration-100 
               hover:scale-105 active:scale-95
