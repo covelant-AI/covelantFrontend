@@ -80,6 +80,8 @@ export async function POST(req: NextRequest) {
       },
     });
     
+
+    if(process.env.NODE_ENV !== 'development'){
     const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
     const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
     const result = await endpoint.run({
@@ -96,6 +98,7 @@ export async function POST(req: NextRequest) {
      if(result.status == 'IN_QUEUE'){
        return NextResponse.json({ success:true, message: "Match and data analysis created successfully" });
      }
+    }
 
     return NextResponse.json({ success: true, message: "Match and player matches created successfully" });
 

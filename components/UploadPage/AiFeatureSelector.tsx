@@ -57,9 +57,9 @@ export default function AiFeatureSelector({ onFeatureChange, onSubmit }: AiFeatu
     });
   };
 
-  const usedCredits = selectedFeatures.reduce((total, featureName) => {
-    const feature = featuresList.find(f => f.name === featureName);
-    return total + (feature?.cost || 0);
+  const usedCredits = selectedFeatures.reduce((total, featureValue) => {
+    const feature = featuresList.find(f => f.value === featureValue);
+    return total + (feature?.cost ?? 0);
   }, 0);
 
   const getImageName = (count: number) => {
@@ -95,7 +95,7 @@ export default function AiFeatureSelector({ onFeatureChange, onSubmit }: AiFeatu
         return;
       }
 
-      setCredits((prev) => prev - usedCredits); // Optimistic UI update
+      setCredits((prev) => prev - usedCredits); 
       onSubmit(selectedFeatures);
     } catch (error) {
       console.error('Error while updating credits:', error);
@@ -171,10 +171,10 @@ export default function AiFeatureSelector({ onFeatureChange, onSubmit }: AiFeatu
           {featuresList.map((feature) => (
             <label key={feature.name} className="flex items-center space-x-2 cursor-pointer">
               <input
-                type="checkbox"
+                type="checkbox"                    // or "radio"
                 checked={selectedFeatures.includes(feature.value)}
                 onChange={() => toggleFeature(feature.value)}
-                className="w-5 h-5 text-teal-600 rounded border-gray-300 focus:ring-teal-500"
+                className="h-5 w-5 accent-teal-600 border-gray-300 focus:ring-teal-500"
               />
               <span className="text-gray-700">
                 {feature.name}

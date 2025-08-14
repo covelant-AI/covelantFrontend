@@ -248,7 +248,7 @@ model ScorePoint {
   setNumber        Int
   gamePoint        Int       @default(0)
   matchPoint       Int       @default(0)
-  eventTimeSeconds Int
+  eventTimeSeconds Float
   createdAt        DateTime  @default(now())
 
   @@index([matchId])
@@ -264,7 +264,7 @@ model MatchMetric {
   player           Player?    @relation(fields: [playerId], references: [id])
   metricType       MetricType
   value            Float
-  eventTimeSeconds Int
+  eventTimeSeconds Float
   createdAt        DateTime   @default(now())
 
   @@index([matchId])

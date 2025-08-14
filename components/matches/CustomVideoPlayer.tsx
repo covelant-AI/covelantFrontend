@@ -271,8 +271,8 @@ export default function CustomVideoPlayer({
               {mmss(currentTime)} / {mmss(duration)}
             </div>
 
-              <SettingsMenu />
-              <VolumeControl videoRef={videoRef} />
+            <SettingsMenu />
+            <VolumeControl videoRef={videoRef} />
 
             <Image
               src="/icons/fullscreen.svg"
