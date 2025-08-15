@@ -169,6 +169,7 @@ export interface CustomVideoPlayerProps {
   lablePath?: string;
   onTimeUpdate?: (currentTime: number) => void;
   onDeleteTag: (id: number) => void;
+  videoSections?: any[];
 }
 
 

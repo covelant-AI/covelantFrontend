@@ -3,13 +3,15 @@ import React, { useEffect, useRef, useState } from "react";
 
 type SettingsMenuProps = {
   className?: string;
+  onAutoSkipToggle: (enabled: boolean) => void; // Callback to notify parent of the setting change
 };
 
-export default function SettingsMenu({ className = "" }: SettingsMenuProps) {
+export default function SettingsMenu({ className = "", onAutoSkipToggle }: SettingsMenuProps) {
   const [open, setOpen] = useState(false);
+  const [autoSkipEnabled, setAutoSkipEnabled] = useState(false); // State for Auto Skip Dead Time
   const rootRef = useRef<HTMLDivElement>(null);
 
-  // close on outside click (keeps “click again to close” behavior too)
+  // Close on outside click (keeps “click again to close” behavior too)
   useEffect(() => {
     if (!open) return;
     const onDoc = (e: MouseEvent) => {
@@ -20,6 +22,12 @@ export default function SettingsMenu({ className = "" }: SettingsMenuProps) {
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
   }, [open]);
+
+  // Handle toggling Auto Skip Dead Time
+  const handleAutoSkipToggle = () => {
+    setAutoSkipEnabled((prev) => !prev);
+    onAutoSkipToggle(!autoSkipEnabled); // Notify parent about the toggle state
+  };
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
@@ -37,13 +45,20 @@ export default function SettingsMenu({ className = "" }: SettingsMenuProps) {
           <div className="text-xs uppercase tracking-wide text-white/60 mb-2">Settings</div>
           <ul className="space-y-1 text-sm">
             <li className="flex items-center justify-between px-2 py-1 rounded hover:bg-white/10 cursor-pointer">
-              <span>Captions</span><span className="text-white/60">Off</span>
+              <span>Filters</span><span className="text-white/60">coming soon</span>
             </li>
             <li className="flex items-center justify-between px-2 py-1 rounded hover:bg-white/10 cursor-pointer">
               <span>Quality</span><span className="text-white/60">Auto</span>
             </li>
-            <li className="flex items-center justify-between px-2 py-1 rounded hover:bg-white/10 cursor-pointer">
-              <span>Playback</span><span className="text-white/60">1×</span>
+            {/* New "Auto Skip Dead Time" Toggle */}
+            <li
+              className="flex items-center justify-between px-2 py-1 rounded hover:bg-white/10 cursor-pointer"
+              onClick={handleAutoSkipToggle}
+            >
+              <span>Auto Skip Dead Time</span>
+              <span className={`text-white/60 ${autoSkipEnabled ? 'text-green-400' : 'text-red-400'}`}>
+                {autoSkipEnabled ? 'On' : 'Off'}
+              </span>
             </li>
           </ul>
         </div>

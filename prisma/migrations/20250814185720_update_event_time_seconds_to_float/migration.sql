@@ -1,0 +1,11 @@
+-- AlterTable
+ALTER TABLE "Coach" ALTER COLUMN "credits" SET DEFAULT 200;
+
+-- AlterTable
+ALTER TABLE "MatchMetric" ALTER COLUMN "eventTimeSeconds" SET DATA TYPE DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "Player" ALTER COLUMN "credits" SET DEFAULT 100;
+
+-- AlterTable
+ALTER TABLE "ScorePoint" ALTER COLUMN "eventTimeSeconds" SET DATA TYPE DOUBLE PRECISION;

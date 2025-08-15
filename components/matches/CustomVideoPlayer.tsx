@@ -19,6 +19,7 @@ export default function CustomVideoPlayer({
   markers,
   durationOverride,
   onTimeUpdate,
+  videoSections,
   timeStamp,
   onDeleteTag,
 }: CustomVideoPlayerProps) {
@@ -30,6 +31,7 @@ export default function CustomVideoPlayer({
   const [lastClickTime, setLastClickTime] = useState<number>(0);
   const [clickCount, setClickCount] = useState<number>(0);
   const [lastHoveredTime, setLastHoveredTime] = useState<number>(0);
+  const [autoSkipEnabled, setAutoSkipEnabled] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
@@ -63,7 +65,7 @@ export default function CustomVideoPlayer({
   );
 
   /* ========= Effects ========= */
-  // 1) Load metadata + time updates (kept same logic)
+ // 1) Load metadata + time updates
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -86,7 +88,8 @@ export default function CustomVideoPlayer({
     };
   }, [duration, durationOverride, onTimeUpdate]);
 
-  /* ========= Actions (same logic) ========= */
+
+  /* ========= Actions ========= */
   const togglePlay = () => {
     const v = videoRef.current;
     if (!v) return;
@@ -99,7 +102,7 @@ export default function CustomVideoPlayer({
     }
   };
 
-  const onSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+const onSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = videoRef.current;
     if (!v) return;
     const pct = Number(e.target.value) / 100;
@@ -238,6 +241,50 @@ export default function CustomVideoPlayer({
     }
   }, [currentTime, lastHoveredTime, marksWithOffsets]);
 
+
+  // Auto Skip Toggle Handler
+  const handleAutoSkipToggle = () => {
+    setAutoSkipEnabled((prev) => !prev);
+  };
+
+useEffect(() => {
+  if (!autoSkipEnabled) return;
+
+  const skipToNextSection = () => {
+    // Find the next section that starts after the current time
+    const nextSection = videoSections.find(
+      (section) => section.startTime > currentTime
+    );
+    if (nextSection) {
+      videoRef.current!.currentTime = nextSection.startTime; // Skip to the next section's start time
+      setCurrentTime(nextSection.startTime); // Update currentTime state
+    }
+  };
+
+  // Check if currentTime exceeds the endTime of the current section
+  const checkAndSkipSections = () => {
+    const currentSection = videoSections.find(
+      (section) => currentTime >= section.startTime && currentTime <= section.endTime
+    );
+
+    if (currentSection) {
+      // If currentTime exceeds current section's end time, skip to the next section
+      if (currentTime >= currentSection.endTime) {
+        skipToNextSection();
+      }
+    } else {
+      // If currentTime is not inside any section, skip to the next section
+      skipToNextSection();
+    }
+  };
+
+  // Check every second if we need to skip
+  const interval = setInterval(checkAndSkipSections, 100); // 100ms for quick responsiveness
+  return () => clearInterval(interval); // Cleanup interval on unmount
+}, [autoSkipEnabled, currentTime, videoSections]);
+
+
+
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
   /* ========= Render (single branch; classes vary) ========= */
@@ -271,8 +318,8 @@ export default function CustomVideoPlayer({
               {mmss(currentTime)} / {mmss(duration)}
             </div>
 
-              <SettingsMenu />
-              <VolumeControl videoRef={videoRef} />
+            <SettingsMenu onAutoSkipToggle={handleAutoSkipToggle}/>
+            <VolumeControl videoRef={videoRef} />
 
             <Image
               src="/icons/fullscreen.svg"
@@ -297,6 +344,7 @@ export default function CustomVideoPlayer({
           onProgressMouseLeave={onProgressMouseLeave}
           onDeleteTag={onDeleteTag}
           isFullscreen={isFullscreen}
+          videoSections={videoSections}
         />
 
         {/* Left controls */}

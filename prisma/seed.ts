@@ -1,12 +1,11 @@
 import { seedCoaches } from './seeds/01_coaches';
-import { seedPlayerData } from './seeds/02_players';
-import { findOrCreateOpponent } from './seeds/03_opponents';
 import { seedPlayerStats } from './seeds/04_stats';
 import { createMatch } from './seeds/05_matches';
 import { seedOverallStats } from './seeds/06_overallStats';
 import { seedMatchEvents } from './seeds/07_matchEvents'
 import { seedScorePoints } from './seeds/08_scorePoints'
 import {seedMatchMetrics} from './seeds/09_seedMatchMetrics'
+import { seedMatchSections } from './seeds/10_seedMatchSections';
 
 async function main() {
   console.log("Seeding database...");
@@ -68,7 +67,8 @@ async function main() {
   // ←–– Finally, call the MatchEvent seeder
   await seedMatchEvents();
   await seedScorePoints();
-  await seedMatchMetrics()
+  await seedMatchMetrics();
+  await seedMatchSections();
 
   console.log("Seeding completed!");
 }

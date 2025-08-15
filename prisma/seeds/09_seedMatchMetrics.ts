@@ -23,43 +23,51 @@ for (const m of matches) {
     eventTimeSeconds: number;
   }> = [];
 
-    // new function to push all metric types
-    function pushMetrics(
-      intervals: {
-        time: number;
-        ballSpeed: number;
-        playerSpeed: number;
-        longestRally: number;
-        strikesEff: number;
-      }[]
-    ) {
-
-      for (const { time, ballSpeed, playerSpeed, longestRally, strikesEff } of intervals) {
-        rows.push({
-          metricType: MetricType.BALL_SPEED,
-          value: parseFloat(ballSpeed.toFixed(1)),
-          eventTimeSeconds: time,
-        });
-      
-        rows.push({
-          metricType: MetricType.PLAYER_SPEED,
-          value: parseFloat(playerSpeed.toFixed(1)),
-          eventTimeSeconds: time,
-        });
-      
-        rows.push({
-          metricType: MetricType.LONGEST_RALLY,
-          value: parseFloat(longestRally.toFixed(1)),
-          eventTimeSeconds: time,
-        });
-      
-        rows.push({
-          metricType: MetricType.STRIKES_EFF,
-          value: parseFloat(strikesEff.toFixed(1)),
-          eventTimeSeconds: time,
-        });
-      }
+function pushMetrics(
+  intervals: {
+    time: number;
+    ballSpeed: number;
+    playerSpeed: number;
+    longestRally: number;
+    strikesEff: number;
+  }[]
+) {
+  for (const { time, ballSpeed, playerSpeed, longestRally, strikesEff } of intervals) {
+    // Check if the values are valid numbers before adding to rows
+    if (!isNaN(ballSpeed) && isFinite(ballSpeed)) {
+      rows.push({
+        metricType: MetricType.BALL_SPEED,
+        value: parseFloat(ballSpeed.toFixed(1)),
+        eventTimeSeconds: time,
+      });
     }
+
+    if (!isNaN(playerSpeed) && isFinite(playerSpeed)) {
+      rows.push({
+        metricType: MetricType.PLAYER_SPEED,
+        value: parseFloat(playerSpeed.toFixed(1)),
+        eventTimeSeconds: time,
+      });
+    }
+
+    if (!isNaN(longestRally) && isFinite(longestRally)) {
+      rows.push({
+        metricType: MetricType.LONGEST_RALLY,
+        value: parseFloat(longestRally.toFixed(1)),
+        eventTimeSeconds: time,
+      });
+    }
+
+    if (!isNaN(strikesEff) && isFinite(strikesEff)) {
+      rows.push({
+        metricType: MetricType.STRIKES_EFF,
+        value: parseFloat(strikesEff.toFixed(1)),
+        eventTimeSeconds: time,
+      });
+    }
+  }
+}
+
 
         // Example intervals with manual values for ball speed and player speed
     const intervalsArray = [[
@@ -258,18 +266,15 @@ for (const m of matches) {
         matchId,
         playerId: row.playerId ?? null,
         metricType: row.metricType,
-        value: row.value,
+        value: !isNaN(row.value) && isFinite(row.value) ? row.value : 0,  // Handle invalid values
         eventTimeSeconds: row.eventTimeSeconds,
       },
     });
+
   }
-
-
-
     console.log(
       `✔️  Seeded ${rows.length} MatchMetric rows for match ${matchId}`
     );
   }
-
   console.log("🎾 MatchMetric seeding complete.");
 }
