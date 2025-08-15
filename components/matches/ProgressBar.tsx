@@ -1,5 +1,6 @@
 import React, { MouseEvent, useState, useEffect } from "react";
 import ExpandedBubble from "./progressBarUI/ExpandedBubble";
+import RedBar from "./progressBarUI/RedBar";
 import HoverTooltip from "./progressBarUI/HoverTooltip"; 
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -13,6 +14,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   onProgressMouseLeave,
   onDeleteTag,
   isFullscreen,
+  videoSections,
 }) => {
   const [localMarks, setLocalMarks] = useState(marks);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -27,7 +29,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   return (
     <div
       className={isFullscreen? `absolute w-full bottom-1 py-4`: `absolute bottom-3 z-2 py-2
-              left-24 right-40 sm:left-32 sm:right-55`}>
+              left-24 right-40 sm:left-35 sm:right-55`}>
 
       {/* Progress Bar Container */}
       <div
@@ -41,8 +43,18 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           ref={progressRef}
           defaultValue={0}
           onChange={onSeek}
-          className="w-full h-[6] rounded-6xl cursor-pointer accent-[#6EB6B3]"
+          className="w-full h-[10] rounded-6xl cursor-pointer accent-[#6EB6B3]"
         />
+
+        {/* Render each red bar */}
+        {videoSections.map((section, index) => (
+          <RedBar
+            key={index}
+            section={section}
+            duration={duration}
+            progressContainerRef={progressContainerRef}
+          />
+        ))}
 
         {/* Diamonds */}
         {localMarks.map((m, i) => (
@@ -115,4 +127,5 @@ export interface ProgressBarProps {
   onProgressMouseLeave: () => void;
   onDeleteTag: (id: number) => void;
   isFullscreen: boolean;
+  videoSections?: any[];
 }

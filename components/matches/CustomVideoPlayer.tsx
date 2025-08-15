@@ -19,6 +19,7 @@ export default function CustomVideoPlayer({
   markers,
   durationOverride,
   onTimeUpdate,
+  videoSections,
   timeStamp,
   onDeleteTag,
 }: CustomVideoPlayerProps) {
@@ -85,6 +86,7 @@ export default function CustomVideoPlayer({
       v.removeEventListener("timeupdate", onTime);
     };
   }, [duration, durationOverride, onTimeUpdate]);
+
 
   /* ========= Actions (same logic) ========= */
   const togglePlay = () => {
@@ -297,6 +299,7 @@ export default function CustomVideoPlayer({
           onProgressMouseLeave={onProgressMouseLeave}
           onDeleteTag={onDeleteTag}
           isFullscreen={isFullscreen}
+          videoSections={videoSections}
         />
 
         {/* Left controls */}

@@ -5,14 +5,20 @@ const prisma = new PrismaClient();
 // Utility function to generate random float values within a range (for start and end time)
 const getRandomFloat = (min: number, max: number) => (Math.random() * (max - min) + min).toFixed(2);
 
-// Generate a random number of sections for each match (between 5 and 10 sections)
-const generateRandomSections = (matchId: number, totalTime: number = 180) => {
-  const numSections = Math.floor(Math.random() * 6) + 5; // Random number of sections between 5 and 10
+const generateRandomSections = (matchId: number, totalTime: number = 300) => {
+  const numSections = Math.floor(Math.random() * 6) + 5; // Random number of sections between 5 and 10 
   let sections = [];
+  let lastEndTime = 0;  // Track the end time of the last section
+  
+  // Calculate the gap between the start times to evenly distribute sections across the total time
+  const availableTimeForSections = totalTime - (numSections - 1) * 20;  // Subtracting 20 seconds for each section's gap
+  const timeInterval = availableTimeForSections / numSections;
 
   for (let i = 0; i < numSections; i++) {
-    const startTime = parseFloat(getRandomFloat(0, totalTime - 2));  
-    const endTime = parseFloat(getRandomFloat(startTime + 1, totalTime)); 
+    // Ensure there is at least 20 seconds between sections, and spread sections evenly
+    const startTime = parseFloat(getRandomFloat(i * timeInterval, (i + 1) * timeInterval - 20));  
+    const sectionDuration = Math.min(20, totalTime - startTime);  // Limit section length to 20 seconds
+    const endTime = startTime + sectionDuration;  // Ensure no section exceeds 20 seconds
 
     sections.push({
       matchId,
@@ -21,10 +27,14 @@ const generateRandomSections = (matchId: number, totalTime: number = 180) => {
       endIndex: i,
       endTime,
     });
+
+    lastEndTime = endTime;  // Update lastEndTime for the next iteration
   }
 
   return sections;
 };
+
+
 
 export async function seedMatchSections() {
   try {

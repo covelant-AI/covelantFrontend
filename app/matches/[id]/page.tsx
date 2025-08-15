@@ -24,6 +24,7 @@ export default function Matches() {
   const [playerOne, setPlayerOne] = useState<Player>(defaultPlayer)
   const [playerTwo, setPlayerTwo] = useState<Player>(defaultPlayer)
   const [markers, setMarkers] = useState<MatchEventData[]>([]);
+  const [videoSections, setVideoSections] = useState([]);
   const params = useParams<{ id: string }>()
   const router = useRouter();
   
@@ -36,15 +37,19 @@ const getVideoData = useCallback(async() => {
         if (res.success) return res.data;
         Sentry.captureException(res);
       });
-      setPlayerOne(vid.playerMatches[0].player)
-      setPlayerTwo(vid.playerMatches[0].playerTwo)
-      setVideoId(vid.id);
-      setVideoStart(vid.date);
-
-      const url = await getDownloadURL(ref(storage, vid.videoUrl));
-      setVideoUrl(url);
-      setLoading(false);
+    const response = await fetch(`/api/getMatchSections?id=${encodeURIComponent(matchId)}`);
+    const data = await response.json();
+    setVideoSections(data.data);
+      console.log("Video Sections:", data.data);
+    setPlayerOne(vid.playerMatches[0].player)
+    setPlayerTwo(vid.playerMatches[0].playerTwo)
+    setVideoId(vid.id);
+    setVideoStart(vid.date);
+    const url = await getDownloadURL(ref(storage, vid.videoUrl));
+    setVideoUrl(url);
+    setLoading(false);
   }, []);
+
 
   // 2) Fetch existing tags for this match
   async function loadTags(){
@@ -56,6 +61,7 @@ const getVideoData = useCallback(async() => {
       setMarkers([])
     }
   }
+  
 
   const handleTimeUpdate = (t: number) => setCurrentVideoTime(t);
 
@@ -129,6 +135,7 @@ const getVideoData = useCallback(async() => {
               onTimeUpdate={handleTimeUpdate}
               onDeleteTag={handleDeleteTag}
               timeStamp={currentVideoTime}
+              videoSections={videoSections}
             />
 
             <MainPreformanceTracker
