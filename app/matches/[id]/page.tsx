@@ -40,7 +40,6 @@ const getVideoData = useCallback(async() => {
     const response = await fetch(`/api/getMatchSections?id=${encodeURIComponent(matchId)}`);
     const data = await response.json();
     setVideoSections(data.data);
-      console.log("Video Sections:", data.data);
     setPlayerOne(vid.playerMatches[0].player)
     setPlayerTwo(vid.playerMatches[0].playerTwo)
     setVideoId(vid.id);
