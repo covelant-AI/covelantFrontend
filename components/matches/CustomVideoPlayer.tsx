@@ -1,10 +1,11 @@
 "use client";
-import React, { useRef, useState, useEffect, useMemo, MouseEvent } from "react";
+import React, { useRef, useState, useEffect, useMemo, MouseEvent, useCallback } from "react";
 import { ProgressBar } from "./ProgressBar";
 import VolumeControl from "./progressBarUI/VolumeControl";
 import SettingsMenu from "./progressBarUI/SettingsMenu";
 import { CustomVideoPlayerProps, MatchEventData } from "@/util/interfaces";
 import { COLOR_MAP, ICON_MAP } from "@/util/default";
+import {CategoryKey} from "@/util/types";
 import Image from "next/image";
 import {
   formattedMatchEventType,
@@ -32,6 +33,7 @@ export default function CustomVideoPlayer({
   const [clickCount, setClickCount] = useState<number>(0);
   const [lastHoveredTime, setLastHoveredTime] = useState<number>(0);
   const [autoSkipEnabled, setAutoSkipEnabled] = useState(false);
+  const [FilteredTags, setFilteredTags] = useState<CategoryKey[]>([]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
@@ -247,43 +249,46 @@ const onSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAutoSkipEnabled((prev) => !prev);
   };
 
-useEffect(() => {
-  if (!autoSkipEnabled) return;
+  useEffect(() => {
+    if (!autoSkipEnabled) return;
 
-  const skipToNextSection = () => {
-    // Find the next section that starts after the current time
-    const nextSection = videoSections.find(
-      (section) => section.startTime > currentTime
-    );
-    if (nextSection) {
-      videoRef.current!.currentTime = nextSection.startTime; // Skip to the next section's start time
-      setCurrentTime(nextSection.startTime); // Update currentTime state
-    }
-  };
+    const skipToNextSection = () => {
+      // Find the next section that starts after the current time
+      const nextSection = videoSections.find(
+        (section) => section.startTime > currentTime
+      );
+      if (nextSection) {
+        videoRef.current!.currentTime = nextSection.startTime; // Skip to the next section's start time
+        setCurrentTime(nextSection.startTime); // Update currentTime state
+      }
+    };
 
-  // Check if currentTime exceeds the endTime of the current section
-  const checkAndSkipSections = () => {
-    const currentSection = videoSections.find(
-      (section) => currentTime >= section.startTime && currentTime <= section.endTime
-    );
+    // Check if currentTime exceeds the endTime of the current section
+    const checkAndSkipSections = () => {
+      const currentSection = videoSections.find(
+        (section) => currentTime >= section.startTime && currentTime <= section.endTime
+      );
 
-    if (currentSection) {
-      // If currentTime exceeds current section's end time, skip to the next section
-      if (currentTime >= currentSection.endTime) {
+      if (currentSection) {
+        // If currentTime exceeds current section's end time, skip to the next section
+        if (currentTime >= currentSection.endTime) {
+          skipToNextSection();
+        }
+      } else {
+        // If currentTime is not inside any section, skip to the next section
         skipToNextSection();
       }
-    } else {
-      // If currentTime is not inside any section, skip to the next section
-      skipToNextSection();
-    }
-  };
+    };
 
-  // Check every second if we need to skip
-  const interval = setInterval(checkAndSkipSections, 100); // 100ms for quick responsiveness
-  return () => clearInterval(interval); // Cleanup interval on unmount
-}, [autoSkipEnabled, currentTime, videoSections]);
+    // Check every second if we need to skip
+    const interval = setInterval(checkAndSkipSections, 100); // 100ms for quick responsiveness
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [autoSkipEnabled, currentTime, videoSections]);
 
-
+  // Stable handler passed to SettingsMenu
+  const handleTagFilterChange = useCallback((tags: CategoryKey[]) => {
+    setFilteredTags(tags);
+  }, []);
 
   const onProgressMouseLeave = () => setHoveredIndex(null);
 
@@ -318,7 +323,9 @@ useEffect(() => {
               {mmss(currentTime)} / {mmss(duration)}
             </div>
 
-            <SettingsMenu onAutoSkipToggle={handleAutoSkipToggle}/>
+            <SettingsMenu 
+              onAutoSkipToggle={handleAutoSkipToggle}
+              onTagFilterChange={handleTagFilterChange} />
             <VolumeControl videoRef={videoRef} />
 
             <Image
@@ -345,6 +352,7 @@ useEffect(() => {
           onDeleteTag={onDeleteTag}
           isFullscreen={isFullscreen}
           videoSections={videoSections}
+          FilteredTags={FilteredTags} 
         />
 
         {/* Left controls */}
