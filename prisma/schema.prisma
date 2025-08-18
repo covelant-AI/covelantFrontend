@@ -98,7 +98,7 @@ model Match {
 
 model PlayerDetection {
   id        Int      @id @default(autoincrement())
-  match     Match    @relation(fields: [matchId], references: [id])
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
   matchId   Int
   payload   Json
   createdAt DateTime @default(now())
@@ -109,7 +109,7 @@ model PlayerDetection {
 
 model CourtKeypoint {
   id        Int      @id @default(autoincrement())
-  match     Match    @relation(fields: [matchId], references: [id])
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
   matchId   Int
   payload   Json
   createdAt DateTime @default(now())
@@ -121,7 +121,7 @@ model CourtKeypoint {
 
 model BallDetection {
   id        Int      @id @default(autoincrement())
-  match     Match    @relation(fields: [matchId], references: [id])
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
   matchId   Int
   payload   Json
   createdAt DateTime @default(now())
@@ -131,7 +131,7 @@ model BallDetection {
 
 model VideoSection {
   id         Int     @id @default(autoincrement())
-  match      Match   @relation(fields: [matchId], references: [id])
+  match      Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
   matchId    Int
   startIndex Int
   startTime  Float
@@ -159,7 +159,7 @@ model PlayerMatch {
   id           Int       @id @default(autoincrement())
   matchId      Int
   result       String
-  match        Match     @relation(fields: [matchId], references: [id])
+  match        Match     @relation(fields: [matchId], references: [id],  onDelete: Cascade, onUpdate: Cascade)
 
   playerId     Int?
   player       Player?   @relation("PlayerMatch_First", fields: [playerId], references: [id])
@@ -240,7 +240,7 @@ enum ConditionType {
 model ScorePoint {
   id               Int       @id @default(autoincrement())
   matchId          Int
-  match            Match     @relation(fields: [matchId], references: [id])
+  match            Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
   playerId         Int?
   player           Player?   @relation(fields: [playerId], references: [id])
   opponentId       Int?
@@ -259,7 +259,7 @@ model ScorePoint {
 model MatchMetric {
   id               Int        @id @default(autoincrement())
   matchId          Int
-  match            Match      @relation(fields: [matchId], references: [id])
+  match            Match      @relation(fields: [matchId], references: [id], onDelete: Cascade)
   playerId         Int?
   player           Player?    @relation(fields: [playerId], references: [id])
   metricType       MetricType
@@ -284,7 +284,7 @@ enum MetricType {
 model MatchEvent {
   id               Int               @id @default(autoincrement())
   matchId          Int
-  match            Match             @relation(fields: [matchId], references: [id])
+  match            Match             @relation(fields: [matchId], references: [id], onDelete: Cascade)
   category         EventCategory
   comment          String?
 

@@ -20,7 +20,7 @@ export default function AnalyticsCard() {
       {/* Content */}
       <div className="absolute inset-0 z-10 flex flex-col items-center">
         <div className="mt-24 text-black/90 text-sm font-medium tracking-wide">
-          Start Climbing ®
+          Sideline ®
         </div>
 
         <div className="mt-auto mb-5">

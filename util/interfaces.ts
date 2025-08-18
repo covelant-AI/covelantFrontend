@@ -128,9 +128,7 @@ export interface MainPerformanceTrackerProps {
   videoId: number;
   leftPlayer: PlayerData;
   rightPlayer: PlayerData;
-  live: boolean;
   matchTime: number;
-  setInfo?: string;
 }
 
 export interface RadialBlurBgProps {

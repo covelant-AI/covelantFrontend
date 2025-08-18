@@ -36,9 +36,6 @@ export default function Loading() {
         height={160}
         className="cursor-pointer mb-10"
       />
-      <h1 className="absolute text-3xl font-normal text-center text-gray-300 mb-78">
-        please wait while<br />Our AI finishes its pasta
-      </h1>
 
       <DotLottieReact
         className="w-auto h-1/2 max-lg:w-screen max-md:h-100"
@@ -54,7 +51,7 @@ export default function Loading() {
         width="auto"
         height="700px"
         rotate="0deg"
-        top="15vh"
+        top="18vh"
         left="5vh"
       />
     </div>

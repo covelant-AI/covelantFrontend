@@ -1,6 +1,7 @@
-import React, { MouseEvent, useState, useEffect } from "react";
+import React, { MouseEvent, useState, useEffect, useMemo } from "react";
 import ExpandedBubble from "./progressBarUI/ExpandedBubble";
 import RedBar from "./progressBarUI/RedBar";
+import {CategoryKey } from "@/util/types";
 import HoverTooltip from "./progressBarUI/HoverTooltip"; 
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -15,16 +16,98 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   onDeleteTag,
   isFullscreen,
   videoSections,
+  FilteredTags,
 }) => {
   const [localMarks, setLocalMarks] = useState(marks);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const activeTags = (FilteredTags ?? []) as CategoryKey[];
+  const [diamondPresence, setDiamondPresence] = useState<DiamondPresence>({});
   const toggleOpen = (i: number | null) => {
     setOpenIndex(i); 
   };
 
+  const COLOR_TO_KEY: Record<string, CategoryKey> = {
+  "#FACC15": "Match",
+  "#14B8A6": "Tactic",
+  "#EF4444": "Fouls",
+  "#38BDF8": "Physical",
+  "#9CA3AF": "Note",
+};
+
+  const colorToKey = (color?: string): CategoryKey | undefined => {
+  if (!color) return undefined;
+  const c = color.trim().toUpperCase();
+  return COLOR_TO_KEY[c];
+  };
+
+  const DIAMOND_ANIM_MS = 200;
+
+  type PresenceState = "enter" | "present" | "exit";
+  type DiamondPresence = Record<string, { mark: any; state: PresenceState }>;
+
+
   useEffect(() => {
     setLocalMarks(marks);
+    console.log("Marks updated:", marks);
   }, [marks]);
+
+  const renderMarks = useMemo(() => {
+    if (!activeTags.length) return localMarks; 
+    const set = new Set<CategoryKey>(activeTags);
+    return localMarks.filter((m) => {
+      const key = colorToKey(m.color);
+      return key ? set.has(key) : false;
+    });
+  }, [localMarks, activeTags]);
+
+  // Keep items around briefly to animate exit; animate new ones on enter
+  useEffect(() => {
+    setDiamondPresence((prev) => {
+      const next: DiamondPresence = { ...prev };
+      const nextIds = new Set(renderMarks.map((m: any) => String(m.id)));
+
+      // Mark removed items as exiting
+      Object.keys(prev).forEach((id) => {
+        if (!nextIds.has(id) && prev[id].state !== "exit") {
+          next[id] = { ...prev[id], state: "exit" };
+          // remove after fade-out completes
+          setTimeout(() => {
+            setDiamondPresence((curr) => {
+              const copy = { ...curr };
+              if (copy[id]?.state === "exit") delete copy[id];
+              return copy;
+            });
+          }, DIAMOND_ANIM_MS);
+        }
+      });
+
+      // Add or update current items
+      renderMarks.forEach((m: any) => {
+        const id = String(m.id);
+        if (!prev[id]) {
+          // brand new → start at 'enter', then promote to 'present' on next frame
+          next[id] = { mark: m, state: "enter" };
+          requestAnimationFrame(() => {
+            setDiamondPresence((curr) => {
+              const item = curr[id];
+              if (item && item.state === "enter") {
+                return { ...curr, [id]: { ...item, state: "present" } };
+              }
+              return curr;
+            });
+          });
+        } else {
+          // keep latest mark data; preserve state (unless it was exiting and reappears)
+          const wasExiting = prev[id].state === "exit";
+          next[id] = { mark: m, state: wasExiting ? "present" : prev[id].state };
+        }
+      });
+
+      return next;
+    });
+  }, [renderMarks]);
+
+
 
   return (
     <div
@@ -56,51 +139,56 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           />
         ))}
 
-        {/* Diamonds */}
-        {localMarks.map((m, i) => (
-          <div
-            key={m.id}
-            onClick={() => {
-              if (openIndex !== i) {
-                toggleOpen(i); // Only open if it's not already open
-              } else {
-                toggleOpen(null); // Close the bubble if the same tag is clicked
-              }
-            }}
-            className={`absolute w-[10px] h-[10px] transform rotate-45 rounded-xs border cursor-pointer ${
-              openIndex === i
-                ? "border-[#6EB6B3] bg-white cursor-pointer scale-[1.3]"
-                : "border-black"
-            }`}
-            style={{
-              left: `calc(${(m.offsetSeconds / duration) * 100 * 0.98 }% + 3px)`,
-              top: "-14px",
-              backgroundColor: openIndex === i ? "#FFF" : m.color,
-              transition: "background-color 0.2s, border-color 0.2s",
-            }}
-          />
-        ))}
+        {/* Diamonds with fade-in/out */}
+        {Object.values(diamondPresence).map(({ mark: m, state }) => {
+          // align clicks with your existing openIndex working over renderMarks
+          const idxInFiltered = renderMarks.findIndex((x: any) => x.id === m.id);
+          const isOpen = openIndex === idxInFiltered;
+        
+          return (
+            <div
+              key={m.id}
+              onClick={() => {
+                if (idxInFiltered < 0 || state !== "present") return; // ignore while exiting
+                if (openIndex !== idxInFiltered) { setOpenIndex(idxInFiltered); }
+                else { setOpenIndex(null); }
+              }}
+              className={`absolute w-[10px] h-[10px] transform rotate-45 rounded-xs border cursor-pointer
+                          transition-all duration-200 ease-out
+                          ${isOpen ? "border-[#6EB6B3] bg-white scale-[1.3]" : "border-gray-600"}
+                          ${state === "present" ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-0.5"}
+                          ${state === "exit" ? "pointer-events-none" : ""}`}
+              style={{
+                left: `calc(${(m.offsetSeconds / duration) * 100 * 0.98}% + 3px)`,
+                top: "-14px",
+                backgroundColor: isOpen ? "#FFF" : m.color,
+              }}
+            />
+          );
+        })}
 
         {/* HoverTooltip for all tags (no disable condition) */}
-        {localMarks.map((m, i) => (
+        {renderMarks.map((m, i) => (
           <HoverTooltip
             key={m.id}
             hoveredIndex={hoveredIndex}
-            localMarks={localMarks}
+            localMarks={renderMarks}
             duration={duration}
-            disableHoverTooltip={false}  // Tooltip is always enabled now
+            disableHoverTooltip={false}
           />
         ))}
+
 
         {/* ExpandedBubble for tag details */}
         <ExpandedBubble
           openIndex={openIndex}
-          localMarks={localMarks}
+          localMarks={renderMarks}
           duration={duration}
           onDeleteTag={onDeleteTag}
-          toggleBubble={toggleOpen}
+          toggleBubble={setOpenIndex}
           isFullscreen={isFullscreen}
         />
+
       </div>
     </div>
   );
@@ -128,4 +216,5 @@ export interface ProgressBarProps {
   onDeleteTag: (id: number) => void;
   isFullscreen: boolean;
   videoSections?: any[];
+  FilteredTags?: string[]; 
 }

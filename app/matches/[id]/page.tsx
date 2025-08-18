@@ -141,9 +141,7 @@ const getVideoData = useCallback(async() => {
               videoId={videoId}
               leftPlayer={playerOne}
               rightPlayer={playerTwo}
-              live={false}
               matchTime={currentVideoTime}
-              setInfo="VS"
               />
           </div>
 

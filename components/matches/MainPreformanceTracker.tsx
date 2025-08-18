@@ -12,9 +12,7 @@ export default function MainPreformanceTracker({
   videoId,
   leftPlayer,
   rightPlayer,
-  live,
   matchTime,
-  setInfo,
 }: MainPerformanceTrackerProps) {
     const [eventTime, setEventTime] = useState<string>("00:00");
     const [ballSpeeds, setBallSpeeds] = useState<MatchMetric[]>([])
