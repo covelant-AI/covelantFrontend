@@ -1,17 +1,28 @@
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import Link from 'next/link'
+import { PORTAL_LINK } from "@/util/helpers";
 
 export default function SubscriptionSettings(){
+    const email = sessionStorage.getItem('email');
 
     return(
-        <div className='flex flex-col justify-center items-center pt-6'>
-            <h3 className='text-black text-center font-semibold'><span className='text-xl font-bold'>Sorry Mario!</span><br/>The subscription plan is in another castle</h3>
-         <DotLottieReact
-              src="https://lottie.host/38974e19-2c4c-4f37-98c0-05564a373c02/Hdbn9lNhRT.lottie"
-              loop
-              autoplay
-              className='w-100 h-50 justify-center'
-            />
-            <h3 className='text-black text-center font-semibold'>You get access to everything for free!</h3>
+        <div className="h-full min-h-[300px] flex items-center justify-center">
+          <div className="flex flex-col items-center text-center gap-3">
+            <h3 className="text-black font-semibold">
+              The subscription plan is in another castle
+            </h3>
+            <Link 
+                href={PORTAL_LINK+'?prefilled_email='+email}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={"rounded-md px-20 py-2 font-semibold transition bg-[#42B6B1] text-white hover:bg-teal-600 cursor-pointer"}
+            >
+                <button
+                  className="rounded-md px-20 py-2 font-semibold transition bg-[#42B6B1] 
+                  text-white hover:bg-teal-600 cursor-pointer">
+                  Manage Subscription
+                </button>
+            </Link>
+          </div>
         </div>
-    )
+)
 }

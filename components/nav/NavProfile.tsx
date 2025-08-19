@@ -72,10 +72,6 @@ export default function NavProfile(){
               <button
                 className="flex items-center px-2 py-1 w-full font-semibold text-sm text-rblack hover:bg-gray-200 hover:scale-[1.02] active:bg-gray-400"
                 type="button"
-                onClick={(e) => {
-                  document.body.style.cursor = 'wait';
-                  e.currentTarget.style.cursor = 'wait';
-                }}
               >
                 <Image
                   src="/images/default-avatar.png"
