@@ -207,7 +207,7 @@ export default function OpponentSelector({
 
       {searchOpen && !selectedState && !showCreateForm && (
         <div className="bg-gray-100 rounded-xl mt-1 z-10 pb-20 
-        max-[360]:max-w-40 max-[360]:top-160 absolute w-full max-w-[150] min-h-[150] shadow-lg">
+        max-[360]:max-w-40 max-[360]:top-160 absolute max-w-[150] min-h-[150] shadow-lg">
           <div className="flex items-center px-2 py-2 bg-white border-b border-gray-200 rounded-lg">
             <Image src="/icons/search.svg" alt="Search" width={20} height={20} />
             <input
