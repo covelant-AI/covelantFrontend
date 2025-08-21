@@ -1,106 +1,124 @@
-import { PrismaClient } from '../../../generated/prisma';  
+import { PrismaClient } from '../../../generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import runpodSdk from "runpod-sdk";
+import runpodSdk from 'runpod-sdk';
 
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
-  const { playerOne, playerTwo, date, fieldType, matchType, videoURL, thumbnail, winnerId } = data;
+  const { playerOne, playerTwo, date, fieldType, matchType, videoURL, thumbnail, winnerId, features } = data;
 
   try {
-    if (!playerOne || !playerTwo || !date || !fieldType || !matchType || !winnerId) {
+    if (!playerOne || !playerTwo || !date || !fieldType || !matchType || winnerId === undefined) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    // Create Match record
-    const match = await prisma.match.create({
-      data: {
-        date: new Date(date),
-        type: matchType,
-        fieldType,
-        videoUrl: videoURL,
-        imageUrl: thumbnail,
-        videoType: "mp4"
-      },
-    });
-
-    // Find PlayerOne
+    // Resolve Player One (must exist)
     const playerOneRecord = await prisma.player.findFirst({
       where: { email: playerOne.email },
     });
-
     if (!playerOneRecord) {
-      return NextResponse.json({ message: "PlayerOne not found" }, { status: 404 });
+      return NextResponse.json({ message: 'PlayerOne not found' }, { status: 404 });
     }
 
-    // Determine if PlayerTwo is Opponent
-    let playerTwoRecord;
-    let isOpponent = false;
+    // Resolve Player Two: Player by email OR Opponent by name (and create if missing)
+    const playerTwoIsPlayer =
+      typeof playerTwo?.email === 'string' && playerTwo.email.trim() !== '';
 
-    if (playerTwo.email) {
-      playerTwoRecord = await prisma.player.findFirst({ where: { email: playerTwo.email } });
-      if (!playerTwoRecord) {
-        return NextResponse.json({ message: "PlayerTwo not found" }, { status: 404 });
+    let playerTwoPlayer: { id: number } | null = null;
+    let opponent: { id: number } | null = null;
+
+    if (playerTwoIsPlayer) {
+      playerTwoPlayer = await prisma.player.findFirst({
+        where: { email: playerTwo.email },
+      });
+      if (!playerTwoPlayer) {
+        return NextResponse.json({ message: 'PlayerTwo not found' }, { status: 404 });
       }
     } else {
-      // you can upsert here if you want to auto-create opponents
-      playerTwoRecord = await prisma.opponent.findFirst({
-        where: { firstName: playerTwo.firstName, lastName: playerTwo.lastName },
-      });
-      if (!playerTwoRecord) {
-        return NextResponse.json({ message: "Opponent not found" }, { status: 404 });
+      const firstName = (playerTwo.firstName ?? '').trim();
+      const lastName = (playerTwo.lastName ?? '').trim();
+      if (!firstName || !lastName) {
+        return NextResponse.json({ message: 'Opponent firstName & lastName required' }, { status: 400 });
       }
+      // find or create opponent
+      const existing = await prisma.opponent.findFirst({
+        where: { firstName, lastName },
+      });
+      opponent = existing ?? (await prisma.opponent.create({ data: { firstName, lastName } }));
     }
 
-
+    // Winner logic: frontend sends playerOne.id if P1 wins; if P2 wins and it's an Opponent, it sends a sentinel (e.g., -1)
     const isPlayerOneWinner = winnerId === playerOneRecord.id;
     const isPlayerTwoWinner = !isPlayerOneWinner;
 
-    // Create PlayerMatch for playerOne
-    await prisma.playerMatch.create({
-      data: {
-        matchId: match.id,
-        playerId: playerOneRecord.id,
-        playerTwoId: isOpponent ? null : playerTwoRecord!.id,  // <-- only if Player
-        opponentId: isOpponent ? (playerTwoRecord as any).id : null, // <-- use Opponent id here
-        result: isPlayerOneWinner ? "win" : "lose",
-      },
+    // Do DB writes atomically
+    const resultPayload = await prisma.$transaction(async (tx) => {
+      const match = await tx.match.create({
+        data: {
+          date: new Date(date),
+          type: matchType,
+          fieldType,
+          videoUrl: videoURL,
+          imageUrl: thumbnail,
+          videoType: 'mp4',
+        },
+      });
+
+      // PlayerMatch row from Player One's perspective
+      await tx.playerMatch.create({
+        data: {
+          matchId: match.id,
+          playerId: playerOneRecord.id,
+          ...(playerTwoPlayer
+            ? { playerTwoId: playerTwoPlayer.id } // <-- reference Player.id
+            : { opponentId: opponent!.id }        // <-- reference Opponent.id
+          ),
+          result: isPlayerOneWinner ? 'win' : 'lose',
+        },
+      });
+
+      // PlayerMatch row for the other side
+      await tx.playerMatch.create({
+        data: {
+          matchId: match.id,
+          ...(playerTwoPlayer
+            ? {
+                playerId: playerTwoPlayer.id,     // P2 as Player
+                playerTwoId: playerOneRecord.id,  // P1 as the "other" player
+              }
+            : {
+                opponentId: opponent!.id,         // Only opponent id (no playerId)
+              }
+          ),
+          result: isPlayerTwoWinner ? 'win' : 'lose',
+        },
+      });
+
+      return { matchId: match.id };
     });
 
-    // Create PlayerMatch for playerTwo
-    await prisma.playerMatch.create({
-      data: {
-        matchId: match.id,
-        playerId: isOpponent ? null : playerTwoRecord!.id,      // <-- only if Player
-        playerTwoId: isOpponent ? null : playerOneRecord.id,    // <-- only if Player
-        opponentId: isOpponent ? (playerTwoRecord as any).id : null, // <-- use Opponent id here
-        result: isPlayerTwoWinner ? "win" : "lose",
-      },
-    });
-    
+    // Optional: kick off analysis on Runpod (unchanged)
+    if (process.env.NODE_ENV !== 'development') {
+      const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
+      const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
+      const rp = await endpoint.run({
+        input: {
+          route: 'analysis/process_video',
+          data: {
+            video_url: videoURL,
+            video_id: resultPayload.matchId,
+            features: features || ['Dead time Detection'],
+          },
+        },
+      });
 
-    if(process.env.NODE_ENV !== 'development'){
-    const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
-    const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
-    const result = await endpoint.run({
-       "input": {
-         "route": "analysis/process_video",
-         "data": {
-           "video_url": videoURL,
-           "video_id": match.id,
-           "features": data.features || ["Dead time Detection"],
-         }
-       }
-     });
-
-     if(result.status == 'IN_QUEUE'){
-       return NextResponse.json({ success:true, message: "Match and data analysis created successfully" });
-     }
+      if (rp.status === 'IN_QUEUE') {
+        return NextResponse.json({ success: true, message: 'Match and data analysis created successfully' });
+      }
     }
 
-    return NextResponse.json({ success: true, message: "Match and player matches created successfully" });
-
+    return NextResponse.json({ success: true, message: 'Match and player matches created successfully' });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: 'Error creating match', error: String(error) }, { status: 500 });

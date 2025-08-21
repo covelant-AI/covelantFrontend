@@ -108,15 +108,57 @@ const handleSubmit = (selectedFeatures: string[]) => {
     return;
   }
 
+  // Is playerTwo an existing Player (has an email)? Otherwise it's an opponent-by-name.
+  const playerTwoIsPlayer =
+    typeof (matchInfo.playerTwo as any)?.email === 'string' &&
+    (matchInfo.playerTwo as any).email.trim() !== '';
+
+  // If opponent-by-name, make sure we have both names
+  if (!playerTwoIsPlayer) {
+    const fn = (matchInfo.playerTwo as any)?.firstName?.trim();
+    const ln = (matchInfo.playerTwo as any)?.lastName?.trim();
+    if (!fn || !ln) {
+      toast.warning(Msg, {
+        data: {
+          title: 'Opponent name required',
+          message: 'Please provide first and last name for the opponent.',
+        },
+        position: 'bottom-right',
+      });
+      return;
+    }
+  }
+
+  // Shape payload exactly as the API expects:
+  // - playerOne: by email
+  // - playerTwo: either by email OR by { firstName, lastName }
+  const apiPlayerOne = { email: (matchInfo.playerOne as any).email };
+  const apiPlayerTwo = playerTwoIsPlayer
+    ? { email: (matchInfo.playerTwo as any).email }
+    : {
+        firstName: (matchInfo.playerTwo as any).firstName,
+        lastName: (matchInfo.playerTwo as any).lastName,
+      };
+
+  // Winner logic:
+  // - If playerOne selected as winner → send playerOne.id
+  // - If playerTwo selected and it's a Player → send playerTwo.id
+  // - If playerTwo selected and it's an Opponent → send a sentinel that != playerOne.id (e.g., -1)
+  const winnerId =
+    matchInfo.winner === 'playerOne'
+      ? (matchInfo.playerOne as any)?.id
+      : playerTwoIsPlayer
+      ? (matchInfo.playerTwo as any)?.id
+      : -1; // opponent won (backend checks winnerId === playerOne.id; anything else => playerTwo/opponent wins)
+
   const matchData = {
     ...matchInfo,
+    playerOne: apiPlayerOne, // override with API shape
+    playerTwo: apiPlayerTwo, // override with API shape
     videoURL,
     thumbnail: videoThumbnail,
-    features: selectedFeatures, // <--- update here
-    winnerId:
-      matchInfo.winner === 'playerOne'
-        ? matchInfo.playerOne?.id
-        : matchInfo.playerTwo?.id,
+    features: selectedFeatures,
+    winnerId,
   };
 
   fetch('/api/creatematch', {
@@ -150,6 +192,7 @@ const handleSubmit = (selectedFeatures: string[]) => {
       Sentry.captureException(error);
     });
 };
+
 
 
   // Added function for step 1 validation
