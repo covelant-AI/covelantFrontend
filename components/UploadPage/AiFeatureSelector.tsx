@@ -103,7 +103,6 @@ export default function AiFeatureSelector({ onFeatureChange, onSubmit }: AiFeatu
     }
   };
 
-
   const currentImageName = getImageName(selectedFeatures.length);
 
   return (

@@ -39,22 +39,20 @@ export async function POST(req: NextRequest) {
     let isOpponent = false;
 
     if (playerTwo.email) {
-      playerTwoRecord = await prisma.player.findFirst({
-        where: { email: playerTwo.email },
-      });
+      playerTwoRecord = await prisma.player.findFirst({ where: { email: playerTwo.email } });
+      if (!playerTwoRecord) {
+        return NextResponse.json({ message: "PlayerTwo not found" }, { status: 404 });
+      }
     } else {
-      isOpponent = true;
+      // you can upsert here if you want to auto-create opponents
       playerTwoRecord = await prisma.opponent.findFirst({
-        where: {
-          firstName: playerTwo.firstName,
-          lastName: playerTwo.lastName,
-        },
+        where: { firstName: playerTwo.firstName, lastName: playerTwo.lastName },
       });
-
       if (!playerTwoRecord) {
         return NextResponse.json({ message: "Opponent not found" }, { status: 404 });
       }
     }
+
 
     const isPlayerOneWinner = winnerId === playerOneRecord.id;
     const isPlayerTwoWinner = !isPlayerOneWinner;
@@ -64,7 +62,8 @@ export async function POST(req: NextRequest) {
       data: {
         matchId: match.id,
         playerId: playerOneRecord.id,
-        playerTwoId: playerTwoRecord.id,
+        playerTwoId: isOpponent ? null : playerTwoRecord!.id,  // <-- only if Player
+        opponentId: isOpponent ? (playerTwoRecord as any).id : null, // <-- use Opponent id here
         result: isPlayerOneWinner ? "win" : "lose",
       },
     });
@@ -73,9 +72,9 @@ export async function POST(req: NextRequest) {
     await prisma.playerMatch.create({
       data: {
         matchId: match.id,
-        playerId: isOpponent ? null : playerTwoRecord?.id,
-        playerTwoId: isOpponent ? null : playerOneRecord?.id,
-        opponentId: isOpponent ? playerTwoRecord?.id : null,
+        playerId: isOpponent ? null : playerTwoRecord!.id,      // <-- only if Player
+        playerTwoId: isOpponent ? null : playerOneRecord.id,    // <-- only if Player
+        opponentId: isOpponent ? (playerTwoRecord as any).id : null, // <-- use Opponent id here
         result: isPlayerTwoWinner ? "win" : "lose",
       },
     });
