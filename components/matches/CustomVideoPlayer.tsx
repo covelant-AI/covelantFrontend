@@ -255,11 +255,12 @@ const onSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const skipToNextSection = () => {
       // Find the next section that starts after the current time
       const nextSection = videoSections.find(
-        (section) => section.startTime > currentTime
+        (section) => section.startTime  > currentTime
       );
+
       if (nextSection) {
-        videoRef.current!.currentTime = nextSection.startTime; // Skip to the next section's start time
-        setCurrentTime(nextSection.startTime); // Update currentTime state
+        videoRef.current!.currentTime = nextSection.startTime + 0.5; // Skip to the next section's start time
+        setCurrentTime(nextSection.startTime + 0.5); // Update currentTime state
       }
     };
 
