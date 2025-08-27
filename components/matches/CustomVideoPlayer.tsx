@@ -249,42 +249,62 @@ const onSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAutoSkipEnabled((prev) => !prev);
   };
 
-  useEffect(() => {
-    if (!autoSkipEnabled) return;
+useEffect(() => {
+  if (!autoSkipEnabled) return;
 
-    const skipToNextSection = () => {
-      // Find the next section that starts after the current time
-      const nextSection = videoSections.find(
-        (section) => section.startTime  > currentTime
-      );
+  let isSkipping = false; // Guard flag to prevent re-entrancy during skipping
 
-      if (nextSection) {
-        videoRef.current!.currentTime = nextSection.startTime + 0.5; // Skip to the next section's start time
-        setCurrentTime(nextSection.startTime + 0.5); // Update currentTime state
-      }
-    };
+  const skipToNextSection = () => {
+    if (isSkipping) return; // Prevent skipping multiple times in quick succession
+    isSkipping = true; // Set the guard flag
 
-    // Check if currentTime exceeds the endTime of the current section
-    const checkAndSkipSections = () => {
-      const currentSection = videoSections.find(
-        (section) => currentTime >= section.startTime && currentTime <= section.endTime
-      );
+    // Find the next section that starts after the current time
+    const nextSection = videoSections.find(
+      (section) => section.startTime > videoRef.current!.currentTime
+    );
 
-      if (currentSection) {
-        // If currentTime exceeds current section's end time, skip to the next section
-        if (currentTime >= currentSection.endTime) {
-          skipToNextSection();
-        }
-      } else {
-        // If currentTime is not inside any section, skip to the next section
+    if (nextSection) {
+      videoRef.current!.currentTime = nextSection.startTime; // Skip to the next section's start time
+    }
+
+    // Reset the guard flag after a short delay to prevent immediate re-triggering
+    setTimeout(() => {
+      isSkipping = false;
+    }, 100); // Adjust the timeout as needed to prevent immediate re-triggering
+  };
+
+  const handleTimeUpdate = () => {
+    const currentTime = videoRef.current!.currentTime;
+
+    // Find the section that the currentTime is inside of
+    const currentSection = videoSections.find(
+      (section) => currentTime >= section.startTime && currentTime <= section.endTime
+    );
+
+    if (currentSection) {
+      // If currentTime exceeds the current section's end time, skip to the next section
+      if (currentTime >= currentSection.endTime) {
         skipToNextSection();
       }
-    };
+    } else {
+      // If currentTime is not inside any section, skip to the next section
+      skipToNextSection();
+    }
+  };
 
-    // Check every second if we need to skip
-    const interval = setInterval(checkAndSkipSections, 100); // 100ms for quick responsiveness
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, [autoSkipEnabled, currentTime, videoSections]);
+  // Listen to the timeupdate event and handle skipping
+  const video = videoRef.current;
+  if (video) {
+    video.addEventListener("timeupdate", handleTimeUpdate);
+
+    // Cleanup the event listener on unmount
+    return () => {
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+    };
+  }
+}, [autoSkipEnabled, videoSections]); // Only rerun the effect if autoSkipEnabled or videoSections change
+
+
 
   // Stable handler passed to SettingsMenu
   const handleTagFilterChange = useCallback((tags: CategoryKey[]) => {
