@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Optional: kick off analysis on Runpod (unchanged)
-    if (process.env.NODE_ENV !== 'development') {
+    if (process.env.CONNECT_AI !== 'false') {
       const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
       const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
       const rp = await endpoint.run({
