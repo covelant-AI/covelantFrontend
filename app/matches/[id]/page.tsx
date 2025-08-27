@@ -146,7 +146,7 @@ const getVideoData = useCallback(async() => {
           </div>
 
             {/* performance panel below / right */}
-            <div className="w-full flex flex-row gap-4">
+            <div className="w-full flex flex-row gap-4 max-md:flex-col">
               <MainTagManager
                 videoId={videoId}
                 timeStamp={currentVideoTime}

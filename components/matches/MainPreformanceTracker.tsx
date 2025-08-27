@@ -51,9 +51,9 @@ export default function MainPreformanceTracker({
   }, []);
 
 return (
-  <div className="min-w-60 self-stretch flex flex-col border border-gray-300 rounded-2xl">
+  <div className="min-w-60 self-stretch flex flex-col border border-gray-300 rounded-2xl max-lg:hidden">
     {/* Main content fills all available height */}
-    <div className=" flex-1 flex flex-col min-h-0">
+    <div className=" flex-1 flex flex-col min-h-0 ">
       <TennisScoreBoard
         events={scorePoints}
         eventTime={matchTime}
