@@ -1,8 +1,9 @@
 import React, { MouseEvent, useState, useEffect, useMemo } from "react";
 import ExpandedBubble from "./progressBarUI/ExpandedBubble";
-import RedBar from "./progressBarUI/RedBar";
+import WhiteBar from "./progressBarUI/WhiteBar";
 import {CategoryKey } from "@/util/types";
 import HoverTooltip from "./progressBarUI/HoverTooltip"; 
+
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   duration,
@@ -126,12 +127,12 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           ref={progressRef}
           defaultValue={0}
           onChange={onSeek}
-          className="w-full h-[10] rounded-6xl cursor-pointer accent-[#6EB6B3]"
+          className="w-full h-[10] rounded-6xl cursor-pointer accent-[#6EB6B3] range-sm"
         />
 
         {/* Render each red bar */}
         {videoSections.map((section, index) => (
-          <RedBar
+          <WhiteBar
             key={index}
             section={section}
             duration={duration}

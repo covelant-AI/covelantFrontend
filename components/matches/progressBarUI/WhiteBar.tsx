@@ -9,7 +9,7 @@ interface RedBarProps {
   progressContainerRef: React.RefObject<HTMLDivElement>;
 }
 
-export default function RedBar({
+export default function WhiteBar({
   section,
   duration,
   progressContainerRef,
@@ -45,7 +45,7 @@ export default function RedBar({
 
   return (
     <div
-      className="absolute bg-red-500 rounded-lg"
+      className="absolute bg-white rounded-lg"
       style={{
         left: `${containerOffsets.left + startPx}px`,  
         width: `${widthPx}px`,                         
