@@ -204,7 +204,7 @@ const handleRemovePlayer = async (playerId: number) => {
                       </svg>
                     </button>
 
-                    <Link href={`/demo-note`} className="flex flex-col items-center">
+                    <Link href={`/coming-soon`} className="flex flex-col items-center">
                       <div className="rounded-lg p-1 border hover:border-[#6EB6B3] hover:bg-[#6EB6B3] active:scale-[0.98]">
                         <Image
                           src={athlete.avatar || '/images/default-avatar.png'}
