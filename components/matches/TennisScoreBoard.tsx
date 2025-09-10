@@ -10,7 +10,7 @@ export default function TennisScoreBoard({
   rightPlayer,
 }: TennisScoreBoardProps) {
   const defaultAvatar = "/images/default-avatar.png";
-  const topAvatar = rightPlayer?.avatar || defaultAvatar; // top row matches your screenshot
+  const topAvatar = rightPlayer?.avatar || defaultAvatar;
   const bottomAvatar = leftPlayer?.avatar || defaultAvatar;
 
   // 1) normalize into a real array
@@ -58,6 +58,7 @@ export default function TennisScoreBoard({
         tStore[tKey] = e.eventTimeSeconds;
       }
     }
+    console.log(setNo)
   });
 
   // 6) build rows (same data as before)
