@@ -99,42 +99,44 @@ export async function POST(req: NextRequest) {
     });
 
     // Optional: kick off analysis on Runpod (unchanged)
-    // if (process.env.CONNECT_AI !== 'false') {
-    //   const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
-    //   const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
-    //   const rp = await endpoint.run({
-    //     input: {
-    //       route: 'analysis/process_video',
-    //       data: {
-    //         video_url: videoURL,
-    //         video_id: resultPayload.matchId,
-    //         features: features || ['Dead time Detection'],
-    //       },
-    //     },
-    //   });
+    if (process.env.CONNECT_AI !== 'false') {
+      const runpod = runpodSdk(process.env.AI_SERVER_API_KEY);
+      const endpoint = runpod.endpoint(process.env.ENDPOINT_ID);
+      const rp = await endpoint.run({
+        input: {
+          route: 'analysis/process_video',
+          data: {
+            video_url: videoURL,
+            video_id: resultPayload.matchId,
+            features: features || ['Dead time Detection'],
+          },
+        },
+      });
 
-    //   if (rp.status === 'IN_QUEUE') {
-    //     return NextResponse.json({ success: true, message: 'Match and data analysis created successfully' });
-    //   }
-    // }
+      if (rp.status === 'IN_QUEUE') {
+        return NextResponse.json({ success: true, message: 'Match and data analysis created successfully' });
+      }
+    }
 
-    const API_URL = 'https://covelantnxeehena0kbt.tec-s32.onthetaedgecloud.com/analyze';
+    if(process.env.CONNECT_EDGE_CLOUD !== 'false'){
+    const API_URL = ' https://covelantzd4v5pikmwjp.tec-s31.onthetaedgecloud.com/analyze';
 
     const payload = {
       data: {
         video_url: videoURL,
         video_id: resultPayload.matchId,
-        features: features && features.length ? features : ['Dead time Detection'],
+        features: features && features.length ? features : ['DeadTimeDetection'],
       },
     };
 
-    const res = await fetch(API_URL, {
+    await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
+    }
     
-    return NextResponse.json({ success: true, message: 'Match and player matches created successfully', res });
+    return NextResponse.json({ success: true, message: 'Match and player matches created successfully' });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: 'Error creating match', error: String(error) }, { status: 500 });
