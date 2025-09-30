@@ -26,6 +26,9 @@ export async function GET(req: NextRequest) {
         endIndex: true,
         endTime: true,
       },
+      orderBy: {
+        startTime: 'asc',
+      },
     })
 
     // Return the fetched data as JSON
