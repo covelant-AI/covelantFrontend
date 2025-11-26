@@ -1,6 +1,8 @@
+// components/game-timeline/PlayerAvatar.tsx
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Player } from "./types";
 
 export interface PlayerAvatarProps {
@@ -8,11 +10,34 @@ export interface PlayerAvatarProps {
 }
 
 const PlayerAvatar: React.FC<PlayerAvatarProps> = ({ player }) => {
+  const initials = player.short || player.name?.charAt(0) || "?";
+
   return (
     <div
-      className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white ring-2 ${player.bg} ${player.ring}`}
+      className={`
+        relative h-8 w-8 rounded-full overflow-hidden
+        ring-2 ${player.ring} 
+      `}
     >
-      {player.short}
+      {player.avatar ? (
+        <Image
+          src={player.avatar}
+          alt={player.name}
+          fill
+          sizes="32px"
+          className="object-cover rounded-full"
+        />
+      ) : (
+        <div
+          className={`
+            flex h-full w-full items-center justify-center
+            rounded-full text-xs font-semibold text-white
+            ${player.bg}
+          `}
+        >
+          {initials}
+        </div>
+      )}
     </div>
   );
 };

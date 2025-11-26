@@ -110,8 +110,8 @@ export interface TennisScoreBoardProps {
   events: EventRecord[] | { [key: string]: EventRecord };
   eventTime: number;
   rounds?: number[];
-  leftPlayer?: { avatar?: string; firstName?: string };
-  rightPlayer?: { avatar?: string; firstName?: string };
+  playerTwo?: { avatar?: string; firstName?: string };
+  playerOne?: { avatar?: string; firstName?: string };
 }
 
 export interface PlayerData {  // use in ListAllThletes
@@ -126,8 +126,8 @@ export interface PlayerData {  // use in ListAllThletes
 
 export interface MainPerformanceTrackerProps {
   videoId: number;
-  leftPlayer: PlayerData;
-  rightPlayer: PlayerData;
+  playerOne: PlayerData;
+  playerTwo: PlayerData;
   matchTime: number;
 }
 

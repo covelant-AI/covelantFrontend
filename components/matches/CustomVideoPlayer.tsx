@@ -307,9 +307,32 @@ useEffect(() => {
 
 
   // Stable handler passed to SettingsMenu
-  const handleTagFilterChange = useCallback((tags: CategoryKey[]) => {
-    setFilteredTags(tags);
-  }, []);
+    const handleTagFilterChange = useCallback((tags: CategoryKey[]) => {
+      setFilteredTags(tags);
+    }, []);
+  
+    useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (typeof timeStamp !== "number") return;
+    if (duration <= 0) {
+      // if metadata not loaded yet, wait for it
+      return;
+    }
+  
+    // Avoid micro-seeks if it's already basically there
+    if (Math.abs(v.currentTime - timeStamp) < 0.25) {
+      return;
+    }
+  
+    v.currentTime = timeStamp;
+    setCurrentTime(timeStamp);
+  
+    if (progressRef.current) {
+      progressRef.current.value = ((timeStamp / duration) * 100).toString();
+    }
+  }, [timeStamp, duration]);
+
 
   const onProgressMouseLeave = () => setHoveredIndex(null);
 

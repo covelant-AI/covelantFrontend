@@ -1,20 +1,31 @@
 "use client";
 
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Player, TimelineEvent } from "./types";
 import TimelineCard from "./TimelineCard";
-import { WavyBackground } from "../UI/wavy-background";
+import { BackgroundGradientAnimation } from "../UI/BackgroundGradientAnimation";
+
+export type VideoSection = {
+  id: number;
+  matchId: number;
+  startIndex: number;
+  endIndex: number;
+  startTime: number;
+  endTime: number;
+};
 
 export interface DraggableTimelineProps {
-  events: TimelineEvent[];
+  videoSections: VideoSection[];
   players: Player[];
   title?: string;
+  onSectionSelect?: (sectionId: number) => void;
 }
 
 const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
-  events,
+  videoSections,
   players,
   title = "Game 1",
+  onSectionSelect,
 }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,8 +51,8 @@ const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
     const container = scrollRef.current;
     if (!container) return;
 
-    const friction = 0.35; // lower = more friction
-    const minVelocity = 0.01; // px/ms
+    const friction = 0.35;
+    const minVelocity = 0.01;
 
     let lastTimestamp: number | null = null;
 
@@ -52,13 +63,9 @@ const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
       const dt = timestamp - lastTimestamp;
       lastTimestamp = timestamp;
 
-      // move according to velocity
-      container.scrollLeft -= velocity.current * dt * 20; // 20 = speed factor
-
-      // apply friction
+      container.scrollLeft -= velocity.current * dt * 20;
       velocity.current *= Math.pow(friction, dt / 16);
 
-      // stop if very slow
       if (Math.abs(velocity.current) < minVelocity) {
         momentumFrame.current = null;
         return;
@@ -85,7 +92,8 @@ const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
     lastTime.current = performance.now();
     velocity.current = 0;
 
-    scrollRef.current.setPointerCapture(e.pointerId);
+    // ❌ remove pointer capture (this was swallowing click events on the cards)
+    // scrollRef.current.setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -98,11 +106,9 @@ const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
     const now = performance.now();
     const dt = now - lastTime.current || 1;
 
-    // drag scrolling
     const deltaX = x - startX.current;
     scrollRef.current.scrollLeft = scrollLeft.current - deltaX;
 
-    // estimate velocity (px per ms)
     velocity.current = dx / dt;
     lastX.current = x;
     lastTime.current = now;
@@ -115,13 +121,12 @@ const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
       isDragging.current = false;
       setIsDraggingCursor(false);
 
-      scrollRef.current.releasePointerCapture(e.pointerId);
+      // ❌ and remove releasePointerCapture
+      // scrollRef.current.releasePointerCapture(e.pointerId);
 
-      // strong enough fling → inertia
       if (Math.abs(velocity.current) > 0.02) {
         startMomentumScroll();
       } else {
-        // no snap, just stop
         velocity.current = 0;
       }
     }
@@ -142,9 +147,24 @@ const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
   const getPlayerById = (id: number): Player | undefined =>
     players.find((p) => p.id === id);
 
+  const eventsFromSections: TimelineEvent[] = videoSections.map(
+    (section, index) => ({
+      id: section.id,
+      playerId:
+        players[index % players.length]?.id ??
+        (players.length > 0 ? players[0].id : 0),
+    })
+  );
+
+  const handleCardClick = (sectionId: number) => {
+    onSectionSelect?.(sectionId);
+  };
+
   return (
-    <div className="relative rounded-2xl bg-gray-100 px-4 py-1">
-      <WavyBackground backgroundFill="white" className="w-full h-full ">
+    <div className="relative overflow-hidden rounded-2xl">
+      <BackgroundGradientAnimation containerClassName="absolute inset-0 z-0" />
+
+      <div className="relative z-10 bg-gray-100/10 px-4 py-1">
         <div className="mb-2 ml-4 text-sm font-semibold text-white">
           {title}
         </div>
@@ -160,17 +180,15 @@ const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerLeave}
         >
-          {/* Hide scrollbar visually */}
           <style jsx>{`
             div::-webkit-scrollbar {
               display: none;
             }
           `}</style>
 
-          {/* continuous line behind cards */}
           <div className="pointer-events-none absolute left-0 top-1/2 h-[3px] w-[200vw] -translate-y-1/2 bg-white/90" />
 
-          {events.map((event) => {
+          {eventsFromSections.map((event) => {
             const player = getPlayerById(event.playerId);
             if (!player) return null;
 
@@ -180,12 +198,16 @@ const DraggableTimeline: React.FC<DraggableTimelineProps> = ({
                 className="relative z-10 px-4 cursor-pointer"
                 data-timeline-card
               >
-                <TimelineCard event={event} player={player} />
+                <TimelineCard
+                  event={event}
+                  player={player}
+                  onClick={handleCardClick}
+                />
               </div>
             );
           })}
         </div>
-      </WavyBackground>
+      </div>
     </div>
   );
 };
