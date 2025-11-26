@@ -138,7 +138,7 @@ export default function GameTimelineEditor({
 
 
   return (
-    <div className="w-full rounded-3xl bg-white shadow-lg md:p-6">
+    <div className="w-full rounded-3xl bg-white shadow-lg md:p-6 ">
       <div className="flex flex-col gap-4">
 
         <DraggableTimeline

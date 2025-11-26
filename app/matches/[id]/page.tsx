@@ -149,26 +149,32 @@ const getVideoData = useCallback(async() => {
 
             {/* performance panel below / right */}
             <div className="w-full flex flex-row gap-4 max-md:flex-col">
-              { mode ?
-                <>
-                  <MainTagManager
-                    videoId={videoId}
-                    timeStamp={currentVideoTime}
-                    onAddTag={handleAddTag}
+
+              { mode ? (
+                  <>
+                    <MainTagManager
+                      videoId={videoId}
+                      timeStamp={currentVideoTime}
+                      onAddTag={handleAddTag}
                     />
                     <AnalyticsCard/>
-                </>
-                : 
-                <GameTimelineEditor
-                  playerOne={playerOne}
-                  playerTwo={playerTwo}
-                  videoSections={videoSections}
-                  onSeekVideo={(timeSeconds) => {
-                    setCurrentVideoTime(timeSeconds);
-                  }}
-                />
+                  </>
+                ) : (
+                  <GameTimelineEditor
+                    playerOne={playerOne}
+                    playerTwo={playerTwo}
+                    videoSections={videoSections}
+                    onSeekVideo={(timeSeconds) => setCurrentVideoTime(timeSeconds)}
+                  />
+                )
               }
             </div>
+              <button
+                onClick={() => setMode((prev) => !prev)}
+                className="py-2 px-4 rounded-lg center-align bg-gray-900 text-white text-sm shadow hover:bg-gray-800 transition-all"
+              >
+                {mode ? "X" : "Y"}
+              </button>
         </div>
       </div>
   );
