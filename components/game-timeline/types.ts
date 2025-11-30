@@ -55,3 +55,12 @@ export interface GameTimelineEditorProps {
   /** bubble up so parent can seek video */
   onSeekVideo?: (timeSeconds: number) => void;
 }
+
+export interface TimeInputsProps {
+  startTime: string; // "MM:SS"
+  endTime: string;   // "MM:SS"
+  onStartChange: (value: string) => void;
+  onEndChange: (value: string) => void;
+  onSave: () => void;        // 🔥 triggers update request
+  isSaving?: boolean;        // optional UI state
+}
