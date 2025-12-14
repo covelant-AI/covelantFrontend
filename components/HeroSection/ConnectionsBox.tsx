@@ -84,7 +84,7 @@ export default function ConnectionBox(){
       </>: <>
       <div className="flex items-center space-x-2 mr-6 max-sm:mx-2">
           {(playerCount < 3 ? safePlayerData : safePlayerData.slice(0, 3)).map((player) => (
-            <Link key={player.id} href={`/coming-soon`}>
+            <Link key={player.id} href={`/player/${player.id}`}>
               <button className='cursor-pointer active:scale-[0.9] hover:scale-[1.05]'>
                 <div key={player.id} className="w-12 h-12 rounded-xl overflow-hidden ">
                 <div className="relative w-full h-full">

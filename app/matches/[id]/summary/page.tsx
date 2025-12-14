@@ -221,7 +221,7 @@ export default function SummaryPage() {
   const rallyWinPercentage = totalRallies > 0 ? Math.round((playerWins / totalRallies) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 pt-24">
+    <div className="min-h-screen bg-gray-50 px-20 pt-24 pb-8 max-sm:px-4 xl:px-50">
       <div className="max-w-[1600px] mx-auto">
         {/* Top: Player Selector */}
         <div className="mb-6">

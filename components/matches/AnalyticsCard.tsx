@@ -1,8 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 
+interface AnalyticsCardProps {
+  matchId: string | number;
+}
 
-export default function AnalyticsCard() {
+export default function AnalyticsCard({ matchId }: AnalyticsCardProps) {
   return (
     <div className="relative w-[220px]  rounded-[22px] overflow-hidden bg-white shadow-[0_12px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/5 min-w-60">
       {/* Background image (replace src) */}
@@ -24,10 +27,10 @@ export default function AnalyticsCard() {
         </div>
 
         <div className="mt-auto mb-5">
-        <Link href="/coming-soon"> 
+        <Link href={`/matches/${matchId}/summary`}> 
           <button className="px-5 py-2 rounded-2xl bg-white text-slate-900 font-semibold shadow-[0_10px_22px_rgba(66,182,177,0.35)] ring-1 ring-white/70
           hover:bg-teal-600 hover:text-white transition-colors duration-300 cursor-pointer">
-            Full Analytics
+            Match Summary
           </button>
         </Link>
         </div>

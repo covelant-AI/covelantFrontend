@@ -152,7 +152,7 @@ const getVideoData = useCallback(async() => {
                 timeStamp={currentVideoTime}
                 onAddTag={handleAddTag}
               />
-              <AnalyticsCard/>
+              <AnalyticsCard matchId={params.id}/>
             </div>
         </div>
       </div>
