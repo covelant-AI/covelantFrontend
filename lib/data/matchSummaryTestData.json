@@ -1,0 +1,3157 @@
+{
+    "video_id": "4",
+    "data": [
+      {
+        "start": {
+          "index": 124,
+          "time": 4.133333333333334
+        },
+        "end": {
+          "index": 276,
+          "time": 9.2
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 1,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 238,
+              "time": 7.933333333333334
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.4175702333450317,
+              11.225757598876953
+            ],
+            "bottom_player_location": [
+              3.7048544883728027,
+              -13.93971061706543
+            ],
+            "bounce": {
+              "location": [
+                2.257556915283203,
+                0.0
+              ],
+              "state": "net_hit",
+              "start": {
+                "index": 238,
+                "time": 7.933333333333334
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 866,
+          "time": 28.866666666666667
+        },
+        "end": {
+          "index": 1126,
+          "time": 37.53333333333333
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 4,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 915,
+              "time": 30.5
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -3.5463504791259766,
+              14.12149715423584
+            ],
+            "bottom_player_location": [
+              -1.6190590858459473,
+              -2.50063419342041
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 993,
+              "time": 33.1
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -3.5463504791259766,
+              14.12149715423584
+            ],
+            "bottom_player_location": [
+              -1.6190590858459473,
+              -2.50063419342041
+            ],
+            "bounce": {
+              "location": [
+                -2.2962217330932617,
+                6.069011211395264
+              ],
+              "state": "valid",
+              "start": {
+                "index": 945,
+                "time": 31.5
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 1041,
+              "time": 34.7
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -2.007534980773926,
+              11.758317947387695
+            ],
+            "bottom_player_location": [
+              -3.846571922302246,
+              -7.364169120788574
+            ],
+            "bounce": {
+              "location": [
+                -5.6047186851501465,
+                -6.134949207305908
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 1041,
+                "time": 34.7
+              }
+            },
+            "ball_speed": 51.818304413038426
+          },
+          {
+            "start": {
+              "index": 1123,
+              "time": 37.43333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -0.6099827289581299,
+              11.831543922424316
+            ],
+            "bottom_player_location": [
+              -4.188517093658447,
+              -9.860512733459473
+            ],
+            "bounce": {
+              "location": [
+                3.183773994445801,
+                21.8994197845459
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 1074,
+                "time": 35.8
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 1206,
+          "time": 40.2
+        },
+        "end": {
+          "index": 1667,
+          "time": 55.56666666666667
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 7,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 1299,
+              "time": 43.3
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              2.1207454204559326,
+              11.60509967803955
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 1374,
+              "time": 45.8
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              1.8277329206466675,
+              11.13575267791748
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                -9.452157974243164,
+                15.280782699584961
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 1343,
+                "time": 44.766666666666666
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 1395,
+              "time": 46.5
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -3.154259204864502,
+              9.689090728759766
+            ],
+            "bottom_player_location": [
+              -1.158831000328064,
+              -13.916345596313477
+            ],
+            "bounce": null,
+            "ball_speed": 115.05025313637306
+          },
+          {
+            "start": {
+              "index": 1506,
+              "time": 50.2
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -3.18906569480896,
+              9.145644187927246
+            ],
+            "bottom_player_location": [
+              4.077844142913818,
+              -13.949313163757324
+            ],
+            "bounce": {
+              "location": [
+                2.8423848152160645,
+                12.249730110168457
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 1461,
+                "time": 48.7
+              }
+            },
+            "ball_speed": 74.10929676155465
+          },
+          {
+            "start": {
+              "index": 1572,
+              "time": 52.4
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              2.2054810523986816,
+              13.454581260681152
+            ],
+            "bottom_player_location": [
+              -2.369769811630249,
+              -8.135104179382324
+            ],
+            "bounce": {
+              "location": [
+                -6.048259258270264,
+                3.348555326461792
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 1557,
+                "time": 51.9
+              }
+            },
+            "ball_speed": 63.12226660957699
+          },
+          {
+            "start": {
+              "index": 1603,
+              "time": 53.43333333333333
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              6.569836616516113,
+              11.79594898223877
+            ],
+            "bottom_player_location": [
+              -0.8465744853019714,
+              -5.555426120758057
+            ],
+            "bounce": null,
+            "ball_speed": 64.32713237431864
+          },
+          {
+            "start": {
+              "index": 1659,
+              "time": 55.3
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              6.774679660797119,
+              12.136493682861328
+            ],
+            "bottom_player_location": [
+              1.2258247137069702,
+              -5.94931697845459
+            ],
+            "bounce": {
+              "location": [
+                1.651041030883789,
+                0.0
+              ],
+              "state": "net_hit",
+              "start": {
+                "index": 1659,
+                "time": 55.3
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 1749,
+          "time": 58.3
+        },
+        "end": {
+          "index": 2067,
+          "time": 68.9
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 2,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 1812,
+              "time": 60.4
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              4.782268524169922,
+              16.20928192138672
+            ],
+            "bottom_player_location": [
+              1.5031614303588867,
+              -6.070027828216553
+            ],
+            "bounce": null,
+            "ball_speed": 53.10890884520299
+          },
+          {
+            "start": {
+              "index": 2049,
+              "time": 68.3
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              5.084880352020264,
+              16.18902015686035
+            ],
+            "bottom_player_location": [
+              0.47839003801345825,
+              -6.486854553222656
+            ],
+            "bounce": {
+              "location": [
+                1.9161769151687622,
+                7.99471378326416
+              ],
+              "state": "valid",
+              "start": {
+                "index": 1873,
+                "time": 62.43333333333333
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 2276,
+          "time": 75.86666666666666
+        },
+        "end": {
+          "index": 2692,
+          "time": 89.73333333333333
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 2,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 2583,
+              "time": 86.1
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.3296103477478027,
+              12.275470733642578
+            ],
+            "bottom_player_location": [
+              4.382641792297363,
+              -13.953570365905762
+            ],
+            "bounce": null,
+            "ball_speed": 110.205838092146
+          },
+          {
+            "start": {
+              "index": 2659,
+              "time": 88.63333333333334
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -1.2981475591659546,
+              11.508813858032227
+            ],
+            "bottom_player_location": [
+              4.179725646972656,
+              -13.934670448303223
+            ],
+            "bounce": {
+              "location": [
+                0.947278618812561,
+                0.0
+              ],
+              "state": "net_hit",
+              "start": {
+                "index": 2659,
+                "time": 88.63333333333334
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 2871,
+          "time": 95.7
+        },
+        "end": {
+          "index": 3131,
+          "time": 104.36666666666666
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 3,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 2935,
+              "time": 97.83333333333333
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -5.289059162139893,
+              17.998884201049805
+            ],
+            "bottom_player_location": [
+              -3.2220921516418457,
+              -3.6557424068450928
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 2946,
+              "time": 98.2
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -4.949889183044434,
+              17.51945686340332
+            ],
+            "bottom_player_location": [
+              -3.5808913707733154,
+              -3.518827438354492
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 3123,
+              "time": 104.1
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -3.5889546871185303,
+              16.78284454345703
+            ],
+            "bottom_player_location": [
+              -4.376560211181641,
+              -4.51522970199585
+            ],
+            "bounce": {
+              "location": [
+                -3.028355360031128,
+                8.919635772705078
+              ],
+              "state": "valid",
+              "start": {
+                "index": 3016,
+                "time": 100.53333333333333
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 3105,
+          "time": 103.5
+        },
+        "end": {
+          "index": 3807,
+          "time": 126.9
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 6,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 3337,
+              "time": 111.23333333333333
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              2.0725245475769043,
+              11.898092269897461
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": 66.73294852281504
+          },
+          {
+            "start": {
+              "index": 3388,
+              "time": 112.93333333333334
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              1.6516501903533936,
+              11.54781723022461
+            ],
+            "bottom_player_location": [
+              -4.168337821960449,
+              -13.878043174743652
+            ],
+            "bounce": {
+              "location": [
+                0.7507593631744385,
+                8.689203262329102
+              ],
+              "state": "valid",
+              "start": {
+                "index": 3388,
+                "time": 112.93333333333334
+              }
+            },
+            "ball_speed": 79.41531840058961
+          },
+          {
+            "start": {
+              "index": 3457,
+              "time": 115.23333333333333
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              0.8935444951057434,
+              14.469779968261719
+            ],
+            "bottom_player_location": [
+              -4.6524271965026855,
+              -12.483786582946777
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 3488,
+              "time": 116.26666666666667
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              0.9788765907287598,
+              14.95311450958252
+            ],
+            "bottom_player_location": [
+              -4.824291706085205,
+              -12.457738876342773
+            ],
+            "bounce": {
+              "location": [
+                1.0814166069030762,
+                6.311209678649902
+              ],
+              "state": "valid",
+              "start": {
+                "index": 3488,
+                "time": 116.26666666666667
+              }
+            },
+            "ball_speed": 64.3012387328423
+          },
+          {
+            "start": {
+              "index": 3512,
+              "time": 117.06666666666666
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              2.907762289047241,
+              14.28158187866211
+            ],
+            "bottom_player_location": [
+              -3.434168577194214,
+              -12.489102363586426
+            ],
+            "bounce": null,
+            "ball_speed": 78.73416524894698
+          },
+          {
+            "start": {
+              "index": 3739,
+              "time": 124.63333333333334
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              3.0505919456481934,
+              14.263355255126953
+            ],
+            "bottom_player_location": [
+              -0.3955279290676117,
+              -13.894362449645996
+            ],
+            "bounce": {
+              "location": [
+                -1.0619882345199585,
+                9.109099388122559
+              ],
+              "state": "valid",
+              "start": {
+                "index": 3588,
+                "time": 119.6
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 4173,
+          "time": 139.1
+        },
+        "end": {
+          "index": 4440,
+          "time": 148.0
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 2,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 4260,
+              "time": 142.0
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.2743055820465088,
+              11.739035606384277
+            ],
+            "bottom_player_location": [
+              4.298769950866699,
+              -13.939118385314941
+            ],
+            "bounce": null,
+            "ball_speed": 129.8926590967074
+          },
+          {
+            "start": {
+              "index": 4421,
+              "time": 147.36666666666667
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -1.0670524835586548,
+              11.51810073852539
+            ],
+            "bottom_player_location": [
+              3.1739449501037598,
+              -13.932321548461914
+            ],
+            "bounce": {
+              "location": [
+                -1.4364185333251953,
+                12.395539283752441
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 4332,
+                "time": 144.4
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 4416,
+          "time": 147.2
+        },
+        "end": {
+          "index": 4572,
+          "time": 152.4
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 1,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 4526,
+              "time": 150.86666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.3805644512176514,
+              11.887408256530762
+            ],
+            "bottom_player_location": [
+              4.349264621734619,
+              -13.949825286865234
+            ],
+            "bounce": {
+              "location": [
+                2.1243388652801514,
+                0.0
+              ],
+              "state": "net_hit",
+              "start": {
+                "index": 4526,
+                "time": 150.86666666666667
+              }
+            },
+            "ball_speed": 82.16786590350833
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 4669,
+          "time": 155.63333333333333
+        },
+        "end": {
+          "index": 4840,
+          "time": 161.33333333333334
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 2,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 4681,
+              "time": 156.03333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              1.071191668510437,
+              6.002033710479736
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 4836,
+              "time": 161.2
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              0.25540000200271606,
+              6.846488952636719
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                1.2021445035934448,
+                4.324825286865234
+              ],
+              "state": "valid",
+              "start": {
+                "index": 4756,
+                "time": 158.53333333333333
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 5014,
+          "time": 167.13333333333333
+        },
+        "end": {
+          "index": 5154,
+          "time": 171.8
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 2,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 5048,
+              "time": 168.26666666666668
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              2.490335702896118,
+              11.52469539642334
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 5112,
+              "time": 170.4
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              2.4076602458953857,
+              11.285002708435059
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                -2.9618723392486572,
+                0.3589755594730377
+              ],
+              "state": "valid",
+              "start": {
+                "index": 5096,
+                "time": 169.86666666666667
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 5197,
+          "time": 173.23333333333332
+        },
+        "end": {
+          "index": 5663,
+          "time": 188.76666666666668
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 8,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 5271,
+              "time": 175.7
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              2.261589288711548,
+              11.481876373291016
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": 110.59798671695425
+          },
+          {
+            "start": {
+              "index": 5349,
+              "time": 178.3
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              1.9579370021820068,
+              11.253387451171875
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                -1.69045889377594,
+                5.071457386016846
+              ],
+              "state": "valid",
+              "start": {
+                "index": 5332,
+                "time": 177.73333333333332
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 5369,
+              "time": 178.96666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -0.20384229719638824,
+              11.698944091796875
+            ],
+            "bottom_player_location": [
+              -1.6214799880981445,
+              -13.997818946838379
+            ],
+            "bounce": null,
+            "ball_speed": 78.46776051661966
+          },
+          {
+            "start": {
+              "index": 5401,
+              "time": 180.03333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -0.5372883677482605,
+              12.63677978515625
+            ],
+            "bottom_player_location": [
+              1.7396161556243896,
+              -14.061722755432129
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 5432,
+              "time": 181.06666666666666
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -0.3418218493461609,
+              12.880470275878906
+            ],
+            "bottom_player_location": [
+              1.351414442062378,
+              -14.052717208862305
+            ],
+            "bounce": null,
+            "ball_speed": 60.098691727193
+          },
+          {
+            "start": {
+              "index": 5514,
+              "time": 183.8
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -0.010650882497429848,
+              12.336135864257812
+            ],
+            "bottom_player_location": [
+              2.340991735458374,
+              -14.07407283782959
+            ],
+            "bounce": {
+              "location": [
+                3.664637327194214,
+                8.969955444335938
+              ],
+              "state": "valid",
+              "start": {
+                "index": 5514,
+                "time": 183.8
+              }
+            },
+            "ball_speed": 60.16971943752257
+          },
+          {
+            "start": {
+              "index": 5535,
+              "time": 184.5
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              2.9405019283294678,
+              14.591056823730469
+            ],
+            "bottom_player_location": [
+              -0.33444520831108093,
+              -14.017035484313965
+            ],
+            "bounce": null,
+            "ball_speed": 60.82901006289282
+          },
+          {
+            "start": {
+              "index": 5631,
+              "time": 187.7
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              2.023610830307007,
+              12.852547645568848
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                0.870907723903656,
+                0.0
+              ],
+              "state": "net_hit",
+              "start": {
+                "index": 5631,
+                "time": 187.7
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 7545,
+          "time": 251.5
+        },
+        "end": {
+          "index": 7819,
+          "time": 260.6333333333333
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 8,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 7605,
+              "time": 253.5
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.2636264562606812,
+              10.982500076293945
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": 68.20594476731728
+          },
+          {
+            "start": {
+              "index": 7620,
+              "time": 254.0
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -1.1404030323028564,
+              10.124393463134766
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 7651,
+              "time": 255.03333333333333
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.4856411218643188,
+              11.068794250488281
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 7684,
+              "time": 256.1333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -2.2848904132843018,
+              9.617541313171387
+            ],
+            "bottom_player_location": [
+              3.6330127716064453,
+              -14.10268497467041
+            ],
+            "bounce": null,
+            "ball_speed": 70.69832469234987
+          },
+          {
+            "start": {
+              "index": 7691,
+              "time": 256.3666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -2.4021828174591064,
+              9.597599983215332
+            ],
+            "bottom_player_location": [
+              12.633828163146973,
+              -1.1032181978225708
+            ],
+            "bounce": null,
+            "ball_speed": 74.02420526231033
+          },
+          {
+            "start": {
+              "index": 7725,
+              "time": 257.5
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -1.1248292922973633,
+              9.673548698425293
+            ],
+            "bottom_player_location": [
+              12.153398513793945,
+              -0.15846063196659088
+            ],
+            "bounce": null,
+            "ball_speed": 72.28266101648279
+          },
+          {
+            "start": {
+              "index": 7763,
+              "time": 258.76666666666665
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              0.05246694013476372,
+              11.655376434326172
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 7806,
+              "time": 260.2
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              0.5165207386016846,
+              12.547101974487305
+            ],
+            "bottom_player_location": [
+              -0.28976568579673767,
+              -11.873193740844727
+            ],
+            "bounce": null,
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 8029,
+          "time": 267.6333333333333
+        },
+        "end": {
+          "index": 8192,
+          "time": 273.06666666666666
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 1,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 8150,
+              "time": 271.6666666666667
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              1.5405564308166504,
+              4.120576858520508
+            ],
+            "bottom_player_location": [
+              3.6042749881744385,
+              -5.867112636566162
+            ],
+            "bounce": {
+              "location": [
+                2.2582552433013916,
+                2.756929397583008
+              ],
+              "state": "valid",
+              "start": {
+                "index": 8110,
+                "time": 270.3333333333333
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 8414,
+          "time": 280.46666666666664
+        },
+        "end": {
+          "index": 8552,
+          "time": 285.06666666666666
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 1,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 8536,
+              "time": 284.53333333333336
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              0.6766154766082764,
+              9.573098182678223
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 9049,
+          "time": 301.6333333333333
+        },
+        "end": {
+          "index": 9200,
+          "time": 306.6666666666667
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 1,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 9188,
+              "time": 306.26666666666665
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -0.8639909029006958,
+              10.011857986450195
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                8.546732902526855,
+                -7.448405742645264
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 9144,
+                "time": 304.8
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 9180,
+          "time": 306.0
+        },
+        "end": {
+          "index": 9341,
+          "time": 311.3666666666667
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 2,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 9240,
+              "time": 308.0
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              0.47069016098976135,
+              13.884926795959473
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": 80.8737648694614
+          },
+          {
+            "start": {
+              "index": 9297,
+              "time": 309.9
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              0.557667076587677,
+              13.002593994140625
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                -4.122464656829834,
+                0.0
+              ],
+              "state": "net_hit",
+              "start": {
+                "index": 9297,
+                "time": 309.9
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 9539,
+          "time": 317.96666666666664
+        },
+        "end": {
+          "index": 9727,
+          "time": 324.23333333333335
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 1,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 9712,
+              "time": 323.73333333333335
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              2.157226324081421,
+              13.910401344299316
+            ],
+            "bottom_player_location": [
+              -5.000161170959473,
+              -12.198206901550293
+            ],
+            "bounce": {
+              "location": [
+                8.561676025390625,
+                -7.448023319244385
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 9712,
+                "time": 323.73333333333335
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 10324,
+          "time": 344.1333333333333
+        },
+        "end": {
+          "index": 10478,
+          "time": 349.26666666666665
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 1,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 10469,
+              "time": 348.96666666666664
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -2.7982871532440186,
+              13.488099098205566
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                -3.350907802581787,
+                -12.148454666137695
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 10426,
+                "time": 347.53333333333336
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 10624,
+          "time": 354.1333333333333
+        },
+        "end": {
+          "index": 11140,
+          "time": 371.3333333333333
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 9,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 10708,
+              "time": 356.93333333333334
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -3.4147751331329346,
+              12.641250610351562
+            ],
+            "bottom_player_location": [
+              1.478641152381897,
+              -11.874397277832031
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 10766,
+              "time": 358.8666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -5.566760063171387,
+              10.8705415725708
+            ],
+            "bottom_player_location": [
+              0.65171879529953,
+              -12.238945007324219
+            ],
+            "bounce": {
+              "location": [
+                8.557573318481445,
+                -7.431029319763184
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 10766,
+                "time": 358.8666666666667
+              }
+            },
+            "ball_speed": 82.76765439296014
+          },
+          {
+            "start": {
+              "index": 10810,
+              "time": 360.3333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -4.335883140563965,
+              11.26718807220459
+            ],
+            "bottom_player_location": [
+              4.5209245681762695,
+              -12.50932502746582
+            ],
+            "bounce": {
+              "location": [
+                8.5413236618042,
+                -7.457077503204346
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 10810,
+                "time": 360.3333333333333
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 10854,
+              "time": 361.8
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              0.975182831287384,
+              12.437278747558594
+            ],
+            "bottom_player_location": [
+              4.245090007781982,
+              -13.933028221130371
+            ],
+            "bounce": {
+              "location": [
+                8.525135040283203,
+                -7.483027458190918
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 10854,
+                "time": 361.8
+              }
+            },
+            "ball_speed": 52.39430971987162
+          },
+          {
+            "start": {
+              "index": 10920,
+              "time": 364.0
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              0.8815191388130188,
+              12.621278762817383
+            ],
+            "bottom_player_location": [
+              -2.3001508712768555,
+              -13.456015586853027
+            ],
+            "bounce": {
+              "location": [
+                1.7091939449310303,
+                7.7003912925720215
+              ],
+              "state": "valid",
+              "start": {
+                "index": 10920,
+                "time": 364.0
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 10961,
+              "time": 365.3666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              1.8608052730560303,
+              11.778663635253906
+            ],
+            "bottom_player_location": [
+              -1.8020135164260864,
+              -13.983477592468262
+            ],
+            "bounce": {
+              "location": [
+                1.27580726146698,
+                -4.725086212158203
+              ],
+              "state": "valid",
+              "start": {
+                "index": 10961,
+                "time": 365.3666666666667
+              }
+            },
+            "ball_speed": 54.32987773798333
+          },
+          {
+            "start": {
+              "index": 10996,
+              "time": 366.53333333333336
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              0.5791848301887512,
+              12.373662948608398
+            ],
+            "bottom_player_location": [
+              -0.6130266785621643,
+              -12.487350463867188
+            ],
+            "bounce": {
+              "location": [
+                8.504862785339355,
+                -7.492032527923584
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 10996,
+                "time": 366.53333333333336
+              }
+            },
+            "ball_speed": 66.68117864571511
+          },
+          {
+            "start": {
+              "index": 11017,
+              "time": 367.23333333333335
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.126822829246521,
+              12.575529098510742
+            ],
+            "bottom_player_location": [
+              -0.2192070484161377,
+              -12.257631301879883
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 11084,
+              "time": 369.46666666666664
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -0.7121317386627197,
+              13.182700157165527
+            ],
+            "bottom_player_location": [
+              -0.33671918511390686,
+              -13.362346649169922
+            ],
+            "bounce": {
+              "location": [
+                -1.513852596282959,
+                0.0
+              ],
+              "state": "net_hit",
+              "start": {
+                "index": 11084,
+                "time": 369.46666666666664
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 11907,
+          "time": 396.9
+        },
+        "end": {
+          "index": 12077,
+          "time": 402.56666666666666
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 2,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 11966,
+              "time": 398.8666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              4.137259006500244,
+              13.938477516174316
+            ],
+            "bottom_player_location": [
+              -2.1133575439453125,
+              -12.483549118041992
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 12070,
+              "time": 402.3333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              3.3829994201660156,
+              12.678709030151367
+            ],
+            "bottom_player_location": [
+              -2.0801925659179688,
+              -11.665433883666992
+            ],
+            "bounce": {
+              "location": [
+                6.65651273727417,
+                8.926273345947266
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 12026,
+                "time": 400.8666666666667
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 12168,
+          "time": 405.6
+        },
+        "end": {
+          "index": 12393,
+          "time": 413.1
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 4,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 12226,
+              "time": 407.53333333333336
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              3.819145917892456,
+              13.583906173706055
+            ],
+            "bottom_player_location": [
+              -2.1136701107025146,
+              -12.482218742370605
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 12253,
+              "time": 408.43333333333334
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              3.8285677433013916,
+              13.66855525970459
+            ],
+            "bottom_player_location": [
+              -2.14288067817688,
+              -12.497692108154297
+            ],
+            "bounce": {
+              "location": [
+                -4.956211566925049,
+                -2.2370214462280273
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 12253,
+                "time": 408.43333333333334
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 12272,
+              "time": 409.06666666666666
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              3.9868130683898926,
+              13.543524742126465
+            ],
+            "bottom_player_location": [
+              -1.9430712461471558,
+              -12.354009628295898
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 12384,
+              "time": 412.8
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              4.054327011108398,
+              13.531803131103516
+            ],
+            "bottom_player_location": [
+              -3.6021463871002197,
+              -12.456977844238281
+            ],
+            "bounce": {
+              "location": [
+                8.557573318481445,
+                -7.431029319763184
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 12351,
+                "time": 411.7
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 12492,
+          "time": 416.4
+        },
+        "end": {
+          "index": 12655,
+          "time": 421.8333333333333
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 1,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 12646,
+              "time": 421.53333333333336
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              0.6967191696166992,
+              14.859986305236816
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                -4.140476226806641,
+                -10.152291297912598
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 12595,
+                "time": 419.8333333333333
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 12880,
+          "time": 429.3333333333333
+        },
+        "end": {
+          "index": 13159,
+          "time": 438.6333333333333
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 6,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 12938,
+              "time": 431.26666666666665
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -3.41347336769104,
+              13.296576499938965
+            ],
+            "bottom_player_location": [
+              1.113269567489624,
+              -12.703699111938477
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 12973,
+              "time": 432.43333333333334
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -3.26297664642334,
+              12.076896667480469
+            ],
+            "bottom_player_location": [
+              1.284348726272583,
+              -11.45568561553955
+            ],
+            "bounce": null,
+            "ball_speed": 70.00947204106217
+          },
+          {
+            "start": {
+              "index": 13006,
+              "time": 433.53333333333336
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -3.102677822113037,
+              12.07224178314209
+            ],
+            "bottom_player_location": [
+              0.9057056307792664,
+              -11.363447189331055
+            ],
+            "bounce": {
+              "location": [
+                8.5413236618042,
+                -7.457077503204346
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 13006,
+                "time": 433.53333333333336
+              }
+            },
+            "ball_speed": 84.57558976160178
+          },
+          {
+            "start": {
+              "index": 13023,
+              "time": 434.1
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -1.3601083755493164,
+              11.848782539367676
+            ],
+            "bottom_player_location": [
+              -0.32337769865989685,
+              -13.069625854492188
+            ],
+            "bounce": null,
+            "ball_speed": 66.71578835280457
+          },
+          {
+            "start": {
+              "index": 13068,
+              "time": 435.6
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              3.138608455657959,
+              12.22431755065918
+            ],
+            "bottom_player_location": [
+              -0.7595906257629395,
+              -14.01064395904541
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 13144,
+              "time": 438.1333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              4.853059768676758,
+              13.084840774536133
+            ],
+            "bottom_player_location": [
+              -0.6998796463012695,
+              -11.83370304107666
+            ],
+            "bounce": {
+              "location": [
+                8.550844192504883,
+                -7.465358257293701
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 13144,
+                "time": 438.1333333333333
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 13418,
+          "time": 447.26666666666665
+        },
+        "end": {
+          "index": 13582,
+          "time": 452.73333333333335
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 4,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 13477,
+              "time": 449.23333333333335
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              4.04191255569458,
+              14.320367813110352
+            ],
+            "bottom_player_location": [
+              -2.2084543704986572,
+              -12.464486122131348
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 13513,
+              "time": 450.43333333333334
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              3.4626755714416504,
+              13.129459381103516
+            ],
+            "bottom_player_location": [
+              -1.9177284240722656,
+              -11.570096015930176
+            ],
+            "bounce": null,
+            "ball_speed": 69.26634908631577
+          },
+          {
+            "start": {
+              "index": 13517,
+              "time": 450.56666666666666
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              3.497828245162964,
+              13.140920639038086
+            ],
+            "bottom_player_location": [
+              -1.8539632558822632,
+              -11.568632125854492
+            ],
+            "bounce": null,
+            "ball_speed": 69.26634908631577
+          },
+          {
+            "start": {
+              "index": 13569,
+              "time": 452.3
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              3.6286091804504395,
+              13.092619895935059
+            ],
+            "bottom_player_location": [
+              -1.7624690532684326,
+              -11.67086124420166
+            ],
+            "bounce": {
+              "location": [
+                8.557573318481445,
+                -7.431029319763184
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 13538,
+                "time": 451.26666666666665
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 13659,
+          "time": 455.3
+        },
+        "end": {
+          "index": 13845,
+          "time": 461.5
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 4,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 13719,
+              "time": 457.3
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              3.725451946258545,
+              13.97906494140625
+            ],
+            "bottom_player_location": [
+              -2.3226962089538574,
+              -12.4943208694458
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 13729,
+              "time": 457.6333333333333
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              3.6876890659332275,
+              14.296782493591309
+            ],
+            "bottom_player_location": [
+              -2.382162570953369,
+              -12.460827827453613
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 13746,
+              "time": 458.2
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              3.3673081398010254,
+              11.838969230651855
+            ],
+            "bottom_player_location": [
+              -2.0694732666015625,
+              -11.944305419921875
+            ],
+            "bounce": null,
+            "ball_speed": 54.57343667447329
+          },
+          {
+            "start": {
+              "index": 13837,
+              "time": 461.23333333333335
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              5.115835666656494,
+              10.935888290405273
+            ],
+            "bottom_player_location": [
+              -1.821018934249878,
+              -12.758594512939453
+            ],
+            "bounce": {
+              "location": [
+                4.757999897003174,
+                -13.520318984985352
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 13802,
+                "time": 460.06666666666666
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 13939,
+          "time": 464.6333333333333
+        },
+        "end": {
+          "index": 14169,
+          "time": 472.3
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 5,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 13954,
+              "time": 465.1333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              7.1679182052612305,
+              14.542328834533691
+            ],
+            "bottom_player_location": [
+              6.024961471557617,
+              -11.127423286437988
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 13999,
+              "time": 466.6333333333333
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              6.931214809417725,
+              15.98158073425293
+            ],
+            "bottom_player_location": [
+              6.637331485748291,
+              -10.252143859863281
+            ],
+            "bounce": {
+              "location": [
+                8.383091926574707,
+                -7.494181156158447
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 13999,
+                "time": 466.6333333333333
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 14041,
+              "time": 468.03333333333336
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              4.994030475616455,
+              18.136245727539062
+            ],
+            "bottom_player_location": [
+              8.072519302368164,
+              -7.994421482086182
+            ],
+            "bounce": null,
+            "ball_speed": 59.32774973202364
+          },
+          {
+            "start": {
+              "index": 14073,
+              "time": 469.1
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              3.6223931312561035,
+              17.41473960876465
+            ],
+            "bottom_player_location": [
+              7.4149580001831055,
+              -7.9158148765563965
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 14157,
+              "time": 471.9
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              2.5737860202789307,
+              16.229963302612305
+            ],
+            "bottom_player_location": [
+              6.481640338897705,
+              -8.588679313659668
+            ],
+            "bounce": {
+              "location": [
+                4.881638526916504,
+                -4.4030303955078125
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 14121,
+                "time": 470.7
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 14332,
+          "time": 477.73333333333335
+        },
+        "end": {
+          "index": 14983,
+          "time": 499.43333333333334
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 8,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 14418,
+              "time": 480.6
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -3.6003873348236084,
+              14.982745170593262
+            ],
+            "bottom_player_location": [
+              1.2132328748703003,
+              -12.698212623596191
+            ],
+            "bounce": {
+              "location": [
+                2.0092809200286865,
+                -9.396181106567383
+              ],
+              "state": "valid",
+              "start": {
+                "index": 14418,
+                "time": 480.6
+              }
+            },
+            "ball_speed": 50.40295184615906
+          },
+          {
+            "start": {
+              "index": 14448,
+              "time": 481.6
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -3.2468392848968506,
+              14.648140907287598
+            ],
+            "bottom_player_location": [
+              1.340497612953186,
+              -11.929746627807617
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 14511,
+              "time": 483.7
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -5.527837753295898,
+              13.210229873657227
+            ],
+            "bottom_player_location": [
+              0.5251246094703674,
+              -12.514440536499023
+            ],
+            "bounce": {
+              "location": [
+                -0.7534838914871216,
+                -4.1110453605651855
+              ],
+              "state": "valid",
+              "start": {
+                "index": 14511,
+                "time": 483.7
+              }
+            },
+            "ball_speed": 66.12717190015474
+          },
+          {
+            "start": {
+              "index": 14546,
+              "time": 484.8666666666667
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -3.2730236053466797,
+              13.096846580505371
+            ],
+            "bottom_player_location": [
+              -0.3655114471912384,
+              -9.337093353271484
+            ],
+            "bounce": {
+              "location": [
+                -1.585202693939209,
+                9.523228645324707
+              ],
+              "state": "valid",
+              "start": {
+                "index": 14546,
+                "time": 484.8666666666667
+              }
+            },
+            "ball_speed": 73.02514575200892
+          },
+          {
+            "start": {
+              "index": 14567,
+              "time": 485.56666666666666
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -2.71323299407959,
+              13.317773818969727
+            ],
+            "bottom_player_location": [
+              -0.6354394555091858,
+              -5.625810146331787
+            ],
+            "bounce": null,
+            "ball_speed": 69.79447064793929
+          },
+          {
+            "start": {
+              "index": 14689,
+              "time": 489.6333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -2.254240036010742,
+              13.110819816589355
+            ],
+            "bottom_player_location": [
+              -0.8017385601997375,
+              -4.793868064880371
+            ],
+            "bounce": {
+              "location": [
+                1.9766943454742432,
+                5.862913608551025
+              ],
+              "state": "valid",
+              "start": {
+                "index": 14608,
+                "time": 486.93333333333334
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 14737,
+              "time": 491.23333333333335
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.620959758758545,
+              9.619929313659668
+            ],
+            "bottom_player_location": [
+              -0.6064143776893616,
+              -3.99436092376709
+            ],
+            "bounce": {
+              "location": [
+                -1.3043186664581299,
+                -11.252142906188965
+              ],
+              "state": "valid",
+              "start": {
+                "index": 14737,
+                "time": 491.23333333333335
+              }
+            },
+            "ball_speed": 51.537020555417946
+          },
+          {
+            "start": {
+              "index": 14977,
+              "time": 499.23333333333335
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -0.3870527148246765,
+              5.340193748474121
+            ],
+            "bottom_player_location": [
+              -2.154064416885376,
+              -13.970898628234863
+            ],
+            "bounce": {
+              "location": [
+                -0.7052616477012634,
+                14.002219200134277
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 14782,
+                "time": 492.73333333333335
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 15810,
+          "time": 527.0
+        },
+        "end": {
+          "index": 16076,
+          "time": 535.8666666666667
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 5,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 15873,
+              "time": 529.1
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              4.451414108276367,
+              15.914331436157227
+            ],
+            "bottom_player_location": [
+              -2.202113628387451,
+              -12.478795051574707
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 15893,
+              "time": 529.7666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              4.604382514953613,
+              15.350265502929688
+            ],
+            "bottom_player_location": [
+              -2.0559732913970947,
+              -12.462864875793457
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 15923,
+              "time": 530.7666666666667
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              4.5413103103637695,
+              15.434473991394043
+            ],
+            "bottom_player_location": [
+              -1.8838924169540405,
+              -11.897970199584961
+            ],
+            "bounce": {
+              "location": [
+                3.4662630558013916,
+                17.401966094970703
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 15923,
+                "time": 530.7666666666667
+              }
+            },
+            "ball_speed": 72.71369372296725
+          },
+          {
+            "start": {
+              "index": 15984,
+              "time": 532.8
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              4.9176836013793945,
+              14.684857368469238
+            ],
+            "bottom_player_location": [
+              -1.5973005294799805,
+              -11.9483003616333
+            ],
+            "bounce": {
+              "location": [
+                2.9531238079071045,
+                10.580995559692383
+              ],
+              "state": "valid",
+              "start": {
+                "index": 15957,
+                "time": 531.9
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 16034,
+              "time": 534.4666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              4.729562759399414,
+              14.626642227172852
+            ],
+            "bottom_player_location": [
+              -4.451092720031738,
+              -12.47458267211914
+            ],
+            "bounce": {
+              "location": [
+                0.2356194108724594,
+                0.0
+              ],
+              "state": "net_hit",
+              "start": {
+                "index": 16034,
+                "time": 534.4666666666667
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 16310,
+          "time": 543.6666666666666
+        },
+        "end": {
+          "index": 16485,
+          "time": 549.5
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 3,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 16323,
+              "time": 544.1
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -0.059107717126607895,
+              2.7505557537078857
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 16370,
+              "time": 545.6666666666666
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -0.2915820777416229,
+              2.3917312622070312
+            ],
+            "bottom_player_location": null,
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 16471,
+              "time": 549.0333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -1.0588486194610596,
+              4.44141960144043
+            ],
+            "bottom_player_location": null,
+            "bounce": {
+              "location": [
+                -4.068750381469727,
+                -8.436685562133789
+              ],
+              "state": "valid",
+              "start": {
+                "index": 16449,
+                "time": 548.3
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 16700,
+          "time": 556.6666666666666
+        },
+        "end": {
+          "index": 16894,
+          "time": 563.1333333333333
+        },
+        "summary": {
+          "player_won_point": "bottom",
+          "rally_size": 2,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 16790,
+              "time": 559.6666666666666
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -3.9134554862976074,
+              15.556780815124512
+            ],
+            "bottom_player_location": [
+              1.4032793045043945,
+              -12.607564926147461
+            ],
+            "bounce": {
+              "location": [
+                2.642702579498291,
+                -1.3649014234542847
+              ],
+              "state": "valid",
+              "start": {
+                "index": 16790,
+                "time": 559.6666666666666
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 16859,
+              "time": 561.9666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -2.270597457885742,
+              14.944854736328125
+            ],
+            "bottom_player_location": [
+              0.45557889342308044,
+              -11.797224044799805
+            ],
+            "bounce": {
+              "location": [
+                10.967357635498047,
+                -1.8906623125076294
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 16842,
+                "time": 561.4
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 17532,
+          "time": 584.4
+        },
+        "end": {
+          "index": 17988,
+          "time": 599.6
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 7,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 17619,
+              "time": 587.3
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              4.2710371017456055,
+              14.707621574401855
+            ],
+            "bottom_player_location": [
+              -2.122263193130493,
+              -11.642439842224121
+            ],
+            "bounce": null,
+            "ball_speed": 68.35678021153052
+          },
+          {
+            "start": {
+              "index": 17683,
+              "time": 589.4333333333333
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              5.4102959632873535,
+              14.127869606018066
+            ],
+            "bottom_player_location": [
+              -1.9166780710220337,
+              -12.303162574768066
+            ],
+            "bounce": {
+              "location": [
+                -2.5521464347839355,
+                -10.156139373779297
+              ],
+              "state": "valid",
+              "start": {
+                "index": 17683,
+                "time": 589.4333333333333
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 17720,
+              "time": 590.6666666666666
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              2.078819990158081,
+              14.777315139770508
+            ],
+            "bottom_player_location": [
+              -4.234961986541748,
+              -13.889680862426758
+            ],
+            "bounce": {
+              "location": [
+                -2.494536876678467,
+                8.25367546081543
+              ],
+              "state": "valid",
+              "start": {
+                "index": 17720,
+                "time": 590.6666666666666
+              }
+            },
+            "ball_speed": 62.083450695443695
+          },
+          {
+            "start": {
+              "index": 17766,
+              "time": 592.2
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -1.3616682291030884,
+              16.560609817504883
+            ],
+            "bottom_player_location": [
+              -4.0328826904296875,
+              -12.457067489624023
+            ],
+            "bounce": {
+              "location": [
+                0.40656232833862305,
+                -7.180415153503418
+              ],
+              "state": "valid",
+              "start": {
+                "index": 17766,
+                "time": 592.2
+              }
+            },
+            "ball_speed": 51.263468144157876
+          },
+          {
+            "start": {
+              "index": 17810,
+              "time": 593.6666666666666
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -0.7387896180152893,
+              15.559826850891113
+            ],
+            "bottom_player_location": [
+              0.14848525822162628,
+              -13.9523344039917
+            ],
+            "bounce": {
+              "location": [
+                2.852216958999634,
+                8.995683670043945
+              ],
+              "state": "valid",
+              "start": {
+                "index": 17810,
+                "time": 593.6666666666666
+              }
+            },
+            "ball_speed": 61.19242598900894
+          },
+          {
+            "start": {
+              "index": 17838,
+              "time": 594.6
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              2.7449357509613037,
+              15.013319969177246
+            ],
+            "bottom_player_location": [
+              -1.769457459449768,
+              -13.085660934448242
+            ],
+            "bounce": null,
+            "ball_speed": 78.19136310181639
+          },
+          {
+            "start": {
+              "index": 17974,
+              "time": 599.1333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              1.7124793529510498,
+              14.639490127563477
+            ],
+            "bottom_player_location": [
+              -2.5026051998138428,
+              -12.76857852935791
+            ],
+            "bounce": {
+              "location": [
+                -2.3635153770446777,
+                12.73568058013916
+              ],
+              "state": "out_of_bounds",
+              "start": {
+                "index": 17890,
+                "time": 596.3333333333334
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      },
+      {
+        "start": {
+          "index": 18606,
+          "time": 620.2
+        },
+        "end": {
+          "index": 18957,
+          "time": 631.9
+        },
+        "summary": {
+          "player_won_point": "top",
+          "rally_size": 5,
+          "valid_rally": true
+        },
+        "strokes": [
+          {
+            "start": {
+              "index": 18697,
+              "time": 623.2333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -3.9684226512908936,
+              15.726399421691895
+            ],
+            "bottom_player_location": [
+              1.564961552619934,
+              -11.89761734008789
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 18731,
+              "time": 624.3666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              -6.5490617752075195,
+              15.083948135375977
+            ],
+            "bottom_player_location": [
+              0.7684944868087769,
+              -11.797802925109863
+            ],
+            "bounce": null,
+            "ball_speed": 79.45681175758112
+          },
+          {
+            "start": {
+              "index": 18856,
+              "time": 628.5333333333333
+            },
+            "player_hit": "bottom",
+            "top_player_location": [
+              -4.583501815795898,
+              14.834434509277344
+            ],
+            "bottom_player_location": [
+              0.09945786744356155,
+              -13.949312210083008
+            ],
+            "bounce": {
+              "location": [
+                2.484628915786743,
+                6.095222473144531
+              ],
+              "state": "valid",
+              "start": {
+                "index": 18801,
+                "time": 626.7
+              }
+            },
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 18884,
+              "time": 629.4666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              2.234510898590088,
+              13.271293640136719
+            ],
+            "bottom_player_location": [
+              -1.7388728857040405,
+              -8.727761268615723
+            ],
+            "bounce": null,
+            "ball_speed": null
+          },
+          {
+            "start": {
+              "index": 18932,
+              "time": 631.0666666666667
+            },
+            "player_hit": "top",
+            "top_player_location": [
+              1.777747631072998,
+              13.10447883605957
+            ],
+            "bottom_player_location": [
+              -2.028407335281372,
+              -8.444900512695312
+            ],
+            "bounce": {
+              "location": [
+                -1.356043815612793,
+                5.247439384460449
+              ],
+              "state": "valid",
+              "start": {
+                "index": 18932,
+                "time": 631.0666666666667
+              }
+            },
+            "ball_speed": null
+          }
+        ]
+      }
+    ]
+  }
