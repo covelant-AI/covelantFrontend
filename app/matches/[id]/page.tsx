@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback  } from "react";
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "@/app/firebase/config";
+import GameTimelineEditor from "@/components/game-timeline/GameTimelineEditor";
 import CustomVideoPlayer from "@/components/matches/CustomVideoPlayer"
 import MainTagManager from "@/components/matches/TagManager/MainTagManager"
 import MainPreformanceTracker from "@/components/matches/MainPreformanceTracker"
@@ -25,6 +26,7 @@ export default function Matches() {
   const [playerTwo, setPlayerTwo] = useState<Player>(defaultPlayer)
   const [markers, setMarkers] = useState<MatchEventData[]>([]);
   const [videoSections, setVideoSections] = useState([]);
+  const [mode , setMode] = useState<boolean>(false);
   const params = useParams<{ id: string }>()
   const router = useRouter();
   
@@ -139,21 +141,40 @@ const getVideoData = useCallback(async() => {
 
             <MainPreformanceTracker
               videoId={videoId}
-              leftPlayer={playerOne}
-              rightPlayer={playerTwo}
+              playerOne={playerOne}
+              playerTwo={playerTwo}
               matchTime={currentVideoTime}
               />
           </div>
 
             {/* performance panel below / right */}
             <div className="w-full flex flex-row gap-4 max-md:flex-col">
-              <MainTagManager
-                videoId={videoId}
-                timeStamp={currentVideoTime}
-                onAddTag={handleAddTag}
-              />
-              <AnalyticsCard matchId={params.id}/>
+
+              { mode ? (
+                  <>
+                    <MainTagManager
+                      videoId={videoId}
+                      timeStamp={currentVideoTime}
+                      onAddTag={handleAddTag}
+                    />
+                    <AnalyticsCard/>
+                  </>
+                ) : (
+                  <GameTimelineEditor
+                    playerOne={playerOne}
+                    playerTwo={playerTwo}
+                    videoSections={videoSections}
+                    onSeekVideo={(timeSeconds) => setCurrentVideoTime(timeSeconds)}
+                  />
+                )
+              }
             </div>
+              <button
+                onClick={() => setMode((prev) => !prev)}
+                className="py-2 px-4 rounded-lg center-align bg-gray-900 text-white text-sm shadow hover:bg-gray-800 transition-all"
+              >
+                {mode ? "X" : "Y"}
+              </button>
         </div>
       </div>
   );

@@ -10,8 +10,8 @@ import {Msg} from '@/components/UI/ToastTypes';
 
 export default function MainPreformanceTracker({
   videoId,
-  leftPlayer,
-  rightPlayer,
+  playerOne,
+  playerTwo,
   matchTime,
 }: MainPerformanceTrackerProps) {
     const [eventTime, setEventTime] = useState<string>("00:00");
@@ -57,8 +57,8 @@ return (
       <TennisScoreBoard
         events={scorePoints}
         eventTime={matchTime}
-        rightPlayer={rightPlayer}
-        leftPlayer={leftPlayer}
+        playerOne={playerOne}
+        playerTwo={playerTwo}
       />
 
       {/* Stats grow to fill the rest */}
