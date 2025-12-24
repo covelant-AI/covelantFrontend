@@ -6,7 +6,7 @@ import Image from 'next/image';
 export default function AISummary({
   ballSpeeds,
   playerSpeeds,
-  longestRallies,
+  rallyCounts,
   strikesEff,
   eventTime,
 }: AISummaryProps) {
@@ -17,7 +17,7 @@ export default function AISummary({
 
   const rawBallSpeed = useMemo(() => pickLatest(ballSpeeds), [ballSpeeds, eventTime]);
   const rawPlayerSpeed = useMemo(() => pickLatest(playerSpeeds), [playerSpeeds, eventTime]);
-  const rawLongestRally = useMemo(() => pickLatest(longestRallies), [longestRallies, eventTime]);
+  const rawLongestRally = useMemo(() => pickLatest(rallyCounts), [rallyCounts, eventTime]);
   const rawStrikesEff = useMemo(() => pickLatest(strikesEff), [strikesEff, eventTime]);
 
   const currentBallSpeed = useAnimatedNumber(rawBallSpeed);
@@ -75,18 +75,18 @@ return (
       className="flex-1 flex flex-col justify-between px-4 py-3"
       style={{
         background:
-          "radial-gradient(80% 80% at 100% 100%, rgba(66,182,177,0.18) 0%, rgba(66,182,177,0.10) 34%, rgba(66,182,177,0) 60%), #f1f1f1ff",
+          "radial-gradient(80% 80% at 100% 100%, rgba(66,182,177,0.18) 0%, rgba(66,182,177,0.10) 34%, rgba(66,182,177,0) 60%), #FFFFFF",
       }}
     >
       <div className="flex items-center gap-3">
         <div className="bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center ring-1 ring-gray-200">
-          <Image src="/images/lables/lable-time.png" alt="time" width={16} height={16} className="w-4 h-4" />
+          <Image src="/images/lables/lable-check.png" alt="person" width={24} height={24} className="w-6 h-6" />
         </div>
-        <p className="text-sm font-medium text-gray-700">Longest Rally</p>
+        <p className="text-sm font-medium text-gray-700">Rally Count</p>
       </div>
       <div className="text-right text-3xl md:text-4xl font-bold text-gray-900">
-        {/* {Math.round(currentLongestRally)} */}
-        <span className="ml-1 text-base md:text-lg font-normal text-gray-500">Coming Soon</span>
+        {currentLongestRally}
+        <span className="ml-1 text-base md:text-lg font-normal text-gray-500"></span>
       </div>
     </div>
     <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />

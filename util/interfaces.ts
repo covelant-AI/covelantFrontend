@@ -61,11 +61,6 @@ export interface UploadVideoProps {
   onVideoUpload: (videoURL: string, videoThumbnail: string) => void;
 }
 
-export interface MetricPoint {
-  eventTimeSeconds: number;
-  value: number;
-}
-
 export interface FirebaseError{
   code : string,
   message: string
@@ -75,13 +70,20 @@ export interface PayloadGraph{
   value: string;
 }
 
+export interface MetricPoint {
+  eventTimeSeconds: number;
+  value: number;
+}
+
+
 export interface AISummaryProps {
   ballSpeeds: MetricPoint[];
   playerSpeeds: MetricPoint[];
-  longestRallies: MetricPoint[];
+  rallyCounts: MetricPoint[];   // 🔥 updated — no longer MetricPoint
   strikesEff: MetricPoint[];
   eventTime: number;
 }
+
 
 export interface MainTagManagerProps {
   videoId: number;
@@ -110,8 +112,8 @@ export interface TennisScoreBoardProps {
   events: EventRecord[] | { [key: string]: EventRecord };
   eventTime: number;
   rounds?: number[];
-  leftPlayer?: { avatar?: string; firstName?: string };
-  rightPlayer?: { avatar?: string; firstName?: string };
+  playerTwo?: { avatar?: string; firstName?: string };
+  playerOne?: { avatar?: string; firstName?: string };
 }
 
 export interface PlayerData {  // use in ListAllThletes
@@ -126,9 +128,56 @@ export interface PlayerData {  // use in ListAllThletes
 
 export interface MainPerformanceTrackerProps {
   videoId: number;
-  leftPlayer: PlayerData;
-  rightPlayer: PlayerData;
+  playerOne: PlayerData;
+  playerTwo: PlayerData;
   matchTime: number;
+  videoSections: VideoSection[];
+}
+
+
+export type PlayerPosition = [number, number] | null;  
+// Represents (x,y) or null if coordinate not available
+
+export interface StrokeBounce {
+  location: PlayerPosition;   // point where the ball bounced
+  state: "valid" | "out_of_bounds" | "net_hit";  
+  start?: {
+    index: number;
+    time: number;
+  } | null;
+}
+
+export interface StrokeRecord {
+  start: {
+    index: number;
+    time: number;
+  };
+  player_hit: "top" | "bottom";
+  top_player_location: PlayerPosition;
+  bottom_player_location: PlayerPosition;
+  bounce?: StrokeBounce | null; 
+  ball_speed: number | null;
+}
+
+export interface SectionSummary {
+  player_won_point: "top" | "bottom" | null;
+  rally_size: number;          // # of strokes in rally
+  valid_rally: boolean;        // whether rally counts or was invalid
+}
+
+export interface VideoSection {
+  id?: number;                 // present in DB, not always from AI POST  
+  matchId?: number;            // DB link — optional for AI input
+  start: {
+    index: number;
+    time: number;
+  };
+  end: {
+    index: number;
+    time: number;
+  };
+  summary: SectionSummary;
+  strokes: StrokeRecord[];
 }
 
 export interface RadialBlurBgProps {

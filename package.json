@@ -30,7 +30,7 @@
     "framer-motion": "^12.12.2",
     "heroicons": "^2.2.0",
     "lucide-react": "^0.513.0",
-    "motion": "^12.18.1",
+    "motion": "^12.23.24",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -40,8 +40,9 @@
     "react-toastify": "^11.0.5",
     "recharts": "^2.15.3",
     "runpod-sdk": "^1.1.1",
+    "simplex-noise": "^4.0.3",
     "stripe": "^18.3.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

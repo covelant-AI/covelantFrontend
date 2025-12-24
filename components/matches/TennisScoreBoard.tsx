@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { TennisScoreBoardProps, Scorer, EventRecord } from "@/util/interfaces";
 import Image from "next/image";
 
@@ -6,12 +6,12 @@ export default function TennisScoreBoard({
   events,
   eventTime,
   rounds = [1, 2, 3],
-  leftPlayer,
-  rightPlayer,
+  playerOne,
+  playerTwo,
 }: TennisScoreBoardProps) {
   const defaultAvatar = "/images/default-avatar.png";
-  const topAvatar = rightPlayer?.avatar || defaultAvatar; // top row matches your screenshot
-  const bottomAvatar = leftPlayer?.avatar || defaultAvatar;
+  const topAvatar = playerOne?.avatar || defaultAvatar; 
+  const bottomAvatar = playerTwo?.avatar || defaultAvatar;
 
   // 1) normalize into a real array
   const allEvents: EventRecord[] = Array.isArray(events)
@@ -78,7 +78,7 @@ export default function TennisScoreBoard({
               <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-gray-100">
                 <Image
                   src={topAvatar}
-                  alt={rightPlayer?.firstName || "Player One"}
+                  alt={playerOne?.firstName || "Player One"}
                   width={28}
                   height={28}
                   className="w-full h-full object-cover"
@@ -115,7 +115,7 @@ export default function TennisScoreBoard({
               <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-gray-100">
                 <Image
                   src={bottomAvatar}
-                  alt={leftPlayer?.firstName || "Player Two"}
+                  alt={playerTwo?.firstName || "Player Two"}
                   width={28}
                   height={28}
                   className="w-full h-full object-cover"

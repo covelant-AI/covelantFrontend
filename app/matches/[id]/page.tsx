@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback  } from "react";
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "@/app/firebase/config";
+import GameTimelineEditor from "@/components/game-timeline/GameTimelineEditor";
 import CustomVideoPlayer from "@/components/matches/CustomVideoPlayer"
 import MainTagManager from "@/components/matches/TagManager/MainTagManager"
 import MainPreformanceTracker from "@/components/matches/MainPreformanceTracker"
@@ -9,11 +10,13 @@ import {Player, MatchEventData} from "@/util/interfaces"
 import {defaultPlayer} from "@/util/default"
 import AnalyticsCard from "@/components/matches/AnalyticsCard";
 import Loading from "../loading"
-import { useParams,useRouter,usePathname  } from 'next/navigation'
+import { useParams,useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
 import {Msg} from '@/components/UI/ToastTypes';
 import Image from "next/image";
+import { Tags, Film } from "lucide-react";
 import * as Sentry from "@sentry/nextjs";
+
 
 export default function Matches() {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -25,6 +28,7 @@ export default function Matches() {
   const [playerTwo, setPlayerTwo] = useState<Player>(defaultPlayer)
   const [markers, setMarkers] = useState<MatchEventData[]>([]);
   const [videoSections, setVideoSections] = useState([]);
+  const [mode , setMode] = useState<boolean>(false);
   const params = useParams<{ id: string }>()
   const router = useRouter();
   
@@ -40,6 +44,7 @@ const getVideoData = useCallback(async() => {
     const response = await fetch(`/api/getMatchSections?id=${encodeURIComponent(matchId)}`);
     const data = await response.json();
     setVideoSections(data.data);
+    console.log("Fetched video sections:", data.data);
     setPlayerOne(vid.playerMatches[0].player)
     setPlayerTwo(vid.playerMatches[0].playerTwo)
     setVideoId(vid.id);
@@ -139,21 +144,50 @@ const getVideoData = useCallback(async() => {
 
             <MainPreformanceTracker
               videoId={videoId}
-              leftPlayer={playerOne}
-              rightPlayer={playerTwo}
+              playerOne={playerOne}
+              playerTwo={playerTwo}
               matchTime={currentVideoTime}
+              videoSections={videoSections}
               />
           </div>
 
             {/* performance panel below / right */}
-            <div className="w-full flex flex-row gap-4 max-md:flex-col">
-              <MainTagManager
-                videoId={videoId}
-                timeStamp={currentVideoTime}
-                onAddTag={handleAddTag}
-              />
-              <AnalyticsCard/>
+            <div className="w-full flex flex-row gap-4 max-md:flex-col relative">
+              {/* Toggle button (top-left, inside container) */}
+              <button
+                onClick={() => setMode((prev) => !prev)}
+                className="
+                  absolute top-3 left-3 z-50
+                  flex items-center justify-center
+                  h-10 w-10 rounded-xl bg-white
+                  bg-gray-900 text-black
+                  shadow-lg hover:bg-gray-200
+                  transition-all
+                "
+                aria-label="Switch mode"
+              >
+                {mode ? <Film size={18} /> : <Tags size={18} />}
+              </button>
+
+              {mode ? (
+                <>
+                  <MainTagManager
+                    videoId={videoId}
+                    timeStamp={currentVideoTime}
+                    onAddTag={handleAddTag}
+                  />
+                  <AnalyticsCard />
+                </>
+              ) : (
+                <GameTimelineEditor
+                  playerOne={playerOne}
+                  playerTwo={playerTwo}
+                  videoSections={videoSections}
+                  onSeekVideo={(timeSeconds) => setCurrentVideoTime(timeSeconds)}
+                />
+              )}
             </div>
+
         </div>
       </div>
   );
