@@ -1,4 +1,4 @@
-// components/game-timeline/GameTimelineEditor.tsx
+// ✅ GameTimelineEditor.tsx (update the selection handler to use the helper)
 "use client";
 
 import React, { useState } from "react";
@@ -7,6 +7,7 @@ import DraggableTimeline from "./DraggableTimeline";
 import TimeInputs from "./TimeInputs";
 import ScoreDisplay from "./ScoreDisplay";
 import { GameTimelineEditorProps, VideoSection } from "./types";
+import { computeTennisGameScoreAtSection } from "./tennisScoring"; // ✅ NEW
 
 const formatSecondsToTime = (seconds: number): string => {
   const total = Math.max(0, Math.floor(seconds));
@@ -21,10 +22,6 @@ const timeToSeconds = (time: string): number => {
   const [m, s] = time.split(":").map(Number);
   return (m || 0) * 60 + (s || 0);
 };
-
-// convert raw point count → tennis 0/15/30/40
-const pointsToTennisScore = (points: number): number =>
-  points === 0 ? 0 : points === 1 ? 15 : points === 2 ? 30 : 40;
 
 export default function GameTimelineEditor({
   playerOne,
@@ -46,8 +43,8 @@ export default function GameTimelineEditor({
     lastSection ? formatSecondsToTime(lastSection.endTime) : "00:00"
   );
 
-  const [scoreP1, setScoreP1] = useState<number>(0);
-  const [scoreP2, setScoreP2] = useState<number>(0);
+  const [scoreP1, setScoreP1] = useState<number | "AD">(0);
+  const [scoreP2, setScoreP2] = useState<number | "AD">(0);
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -85,22 +82,15 @@ export default function GameTimelineEditor({
 
     onSeekVideo?.(section.startTime);
 
-    let topPoints = 0;
-    let bottomPoints = 0;
+    // ✅ Use tennis scoring helper (handles deuce + game reset)
+    const score = computeTennisGameScoreAtSection(videoSections, sectionId, {
+      defaultWinner: "top",
+    });
 
-    for (const s of videoSections) {
-      const winner = s.summary?.player_won_point ?? "top"; // default = top always
-
-      if (winner === "top") topPoints++;
-      else if (winner === "bottom") bottomPoints++;
-
-      if (s.id === sectionId) break;
-    }
-
-    setScoreP1(pointsToTennisScore(topPoints));
-    setScoreP2(pointsToTennisScore(bottomPoints));
+    // top -> P1, bottom -> P2
+    setScoreP1(score.top);
+    setScoreP2(score.bottom);
   };
-
 
   /* ------------------------------------------------------------
      🔥 SAVE UPDATED SECTION TIME → /api/updateSection
@@ -125,31 +115,25 @@ export default function GameTimelineEditor({
       .then((data) => {
         if (!data.success) return alert("Failed to update section");
 
-        // 🔥 Update UI instantly
         setVideoSections((prev) =>
-          prev.map((s) =>
-            s.id === payload.id ? { ...s, ...payload } : s
-          )
+          prev.map((s) => (s.id === payload.id ? { ...s, ...payload } : s))
         );
       })
       .catch(() => alert("Server update failed"))
       .finally(() => setIsSaving(false));
   };
 
-
   return (
-    <div className="w-full rounded-3xl bg-white shadow-lg md:p-6 ">
-      <div className="flex flex-col gap-4">
-
+    <div className="w-full rounded-3xl bg-white shadow-lg md:p-6 mb-6">
+      <div className="flex flex-col mx-8 gap-4">
         <DraggableTimeline
           videoSections={videoSections}
           players={players}
-          title="Game 1"
+          title="Game Timeline"
           onSectionSelect={handleSectionSelect}
         />
 
-        <div className="mt-2 flex flex-col items-stretch justify-between gap-4 border-t border-slate-100 pt-4 md:flex-row">
-
+        <div className=" flex flex-col items-stretch justify-between md:flex-row">
           <TimeInputs
             startTime={startTime}
             endTime={endTime}
@@ -159,7 +143,7 @@ export default function GameTimelineEditor({
             isSaving={isSaving}
           />
 
-          <ScoreDisplay players={players} scoreP1={scoreP1} scoreP2={scoreP2} />
+          <ScoreDisplay players={players} scoreP1={scoreP1 as any} scoreP2={scoreP2 as any} />
         </div>
       </div>
     </div>

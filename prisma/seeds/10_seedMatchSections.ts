@@ -2,66 +2,107 @@ import { PrismaClient } from "../../generated/prisma";
 
 const prisma = new PrismaClient();
 
-// Utility function to generate random float values within a range (for start and end time)
-const getRandomFloat = (min: number, max: number) => (Math.random() * (max - min) + min).toFixed(2);
+const rand = (min: number, max: number) =>
+  Number((Math.random() * (max - min) + min).toFixed(2));
 
-const generateRandomSections = (matchId: number, totalTime: number = 300) => {
-  const numSections = Math.floor(Math.random() * 6) + 5; // Random number of sections between 5 and 10 
-  let sections = [];
-  let lastEndTime = 0;  // Track the end time of the last section
-  
-  // Calculate the gap between the start times to evenly distribute sections across the total time
-  const availableTimeForSections = totalTime - (numSections - 1) * 20;  // Subtracting 20 seconds for each section's gap
-  const timeInterval = availableTimeForSections / numSections;
+const randPick = <T,>(arr: T[]): T =>
+  arr[Math.floor(Math.random() * arr.length)];
 
-  for (let i = 0; i < numSections; i++) {
-    // Ensure there is at least 20 seconds between sections, and spread sections evenly
-    const startTime = parseFloat(getRandomFloat(i * timeInterval, (i + 1) * timeInterval - 20));  
-    const sectionDuration = Math.min(20, totalTime - startTime);  // Limit section length to 20 seconds
-    const endTime = startTime + sectionDuration;  // Ensure no section exceeds 20 seconds
+const randBool = () => Math.random() > 0.5;
+
+function generateAIFormattedSections(matchId: number, totalTime: number = 300) {
+  const num = Math.floor(Math.random() * 6) + 5; // 5–10 sections
+  const sections: Array<{
+    matchId: number;
+    startIndex: number;
+    startTime: number;
+    endIndex: number;
+    endTime: number;
+    summary: any;
+    strokes: any;
+  }> = [];
+
+  const interval = totalTime / num;
+
+  for (let i = 0; i < num; i++) {
+    const startT = rand(i * interval, (i + 1) * interval - 5);
+    const endT = startT + rand(4, 12);
+
+    const summary = {
+      player_won_point: randPick(["top", "bottom", null]),
+      rally_size: Math.floor(Math.random() * 8) + 1,
+      valid_rally: randBool(),
+    };
+
+    const strokeCount = Math.floor(Math.random() * 3) + 1;
+    const strokes = Array.from({ length: strokeCount }, () => {
+      const st = rand(startT, endT - 1);
+      const bounceEnabled = randBool();
+      return {
+        start: {
+          index: Math.floor(st * 100),
+          time: st,
+        },
+        player_hit: randPick(["top", "bottom"]),
+        top_player_location: randBool()
+          ? [rand(-10, 10), rand(5, 12)]
+          : null,
+        bottom_player_location: randBool()
+          ? [rand(-10, 10), rand(-14, -5)]
+          : null,
+        bounce: bounceEnabled
+          ? {
+              location: [rand(-8, 8), rand(-12, 12)],
+              state: randPick(["valid", "out_of_bounds", "net_hit"]),
+              start: {
+                index: Math.floor(st * 100 + 20),
+                time: st + 0.4,
+              },
+            }
+          : null,
+        ball_speed: randBool() ? rand(40, 130) : null,
+      };
+    });
 
     sections.push({
       matchId,
       startIndex: i,
-      startTime,
+      startTime: startT,
       endIndex: i,
-      endTime,
+      endTime: endT,
+      summary,
+      strokes,
     });
-
-    lastEndTime = endTime;  // Update lastEndTime for the next iteration
   }
 
   return sections;
-};
-
-
+}
 
 export async function seedMatchSections() {
   try {
-    // Generate sections for matchId 1, 2, and 3
     const matchIds = [1, 2, 3];
+
     for (const matchId of matchIds) {
-      const sections = generateRandomSections(matchId);
+      const sections = generateAIFormattedSections(matchId);
 
-      // Insert each generated section into the database
       for (const section of sections) {
-        console.log('Inserting:', section); // Log data to see what's being inserted
-
         await prisma.videoSection.create({
           data: {
             matchId: section.matchId,
             startIndex: section.startIndex,
-            startTime: section.startTime, // Make sure this is a float
+            startTime: section.startTime,
             endIndex: section.endIndex,
-            endTime: section.endTime,     // Make sure this is a float
+            endTime: section.endTime,
+            summary: section.summary, // Json
+            strokes: section.strokes, // Json
           },
         });
       }
     }
 
-    console.log('Seed data generated successfully.');
-  } catch (error) {
-    console.error('Error seeding data:', error);
+    console.log("🔥 VideoSection AI-format seed generation complete");
+  } catch (err) {
+    console.error("❌ Seed error:", err);
   } finally {
     await prisma.$disconnect();
   }

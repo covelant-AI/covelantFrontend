@@ -10,11 +10,13 @@ import {Player, MatchEventData} from "@/util/interfaces"
 import {defaultPlayer} from "@/util/default"
 import AnalyticsCard from "@/components/matches/AnalyticsCard";
 import Loading from "../loading"
-import { useParams,useRouter,usePathname  } from 'next/navigation'
+import { useParams,useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
 import {Msg} from '@/components/UI/ToastTypes';
 import Image from "next/image";
+import { Tags, Film } from "lucide-react";
 import * as Sentry from "@sentry/nextjs";
+
 
 export default function Matches() {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -42,6 +44,7 @@ const getVideoData = useCallback(async() => {
     const response = await fetch(`/api/getMatchSections?id=${encodeURIComponent(matchId)}`);
     const data = await response.json();
     setVideoSections(data.data);
+    console.log("Fetched video sections:", data.data);
     setPlayerOne(vid.playerMatches[0].player)
     setPlayerTwo(vid.playerMatches[0].playerTwo)
     setVideoId(vid.id);
@@ -144,37 +147,47 @@ const getVideoData = useCallback(async() => {
               playerOne={playerOne}
               playerTwo={playerTwo}
               matchTime={currentVideoTime}
+              videoSections={videoSections}
               />
           </div>
 
             {/* performance panel below / right */}
-            <div className="w-full flex flex-row gap-4 max-md:flex-col">
-
-              { mode ? (
-                  <>
-                    <MainTagManager
-                      videoId={videoId}
-                      timeStamp={currentVideoTime}
-                      onAddTag={handleAddTag}
-                    />
-                    <AnalyticsCard/>
-                  </>
-                ) : (
-                  <GameTimelineEditor
-                    playerOne={playerOne}
-                    playerTwo={playerTwo}
-                    videoSections={videoSections}
-                    onSeekVideo={(timeSeconds) => setCurrentVideoTime(timeSeconds)}
-                  />
-                )
-              }
-            </div>
+            <div className="w-full flex flex-row gap-4 max-md:flex-col relative">
+              {/* Toggle button (top-left, inside container) */}
               <button
                 onClick={() => setMode((prev) => !prev)}
-                className="py-2 px-4 rounded-lg center-align bg-gray-900 text-white text-sm shadow hover:bg-gray-800 transition-all"
+                className="
+                  absolute top-3 left-3 z-50
+                  flex items-center justify-center
+                  h-10 w-10 rounded-xl bg-white
+                  bg-gray-900 text-black
+                  shadow-lg hover:bg-gray-200
+                  transition-all
+                "
+                aria-label="Switch mode"
               >
-                {mode ? "X" : "Y"}
+                {mode ? <Film size={18} /> : <Tags size={18} />}
               </button>
+
+              {mode ? (
+                <>
+                  <MainTagManager
+                    videoId={videoId}
+                    timeStamp={currentVideoTime}
+                    onAddTag={handleAddTag}
+                  />
+                  <AnalyticsCard />
+                </>
+              ) : (
+                <GameTimelineEditor
+                  playerOne={playerOne}
+                  playerTwo={playerTwo}
+                  videoSections={videoSections}
+                  onSeekVideo={(timeSeconds) => setCurrentVideoTime(timeSeconds)}
+                />
+              )}
+            </div>
+
         </div>
       </div>
   );

@@ -35,17 +35,22 @@ export type DomainPlayer = {
   matchMetrics: unknown[];
 };
 
-/** VideoSection type based on your example */
+export type PlayerWonPoint = "top" | "bottom" | null;
+
+export type SectionSummary = {
+  player_won_point: PlayerWonPoint;
+  rally_size: number;
+  valid_rally: boolean;
+} | null;
+
 export type VideoSection = {
   id: number;
   matchId: number;
   startIndex: number;
   endIndex: number;
-  startTime: number; // seconds
-  endTime: number; 
-  summary: {
-    player_won_point: "top" | "bottom";
-  }  // seconds
+  startTime: number;
+  endTime: number;
+  summary?: SectionSummary; // ✅ updated
 };
 
 export interface GameTimelineEditorProps {

@@ -16,7 +16,7 @@ export default function TimeInputs({
 
       {/* START */}
       <div>
-        <label className="text-xs font-medium text-slate-500">Start</label>
+        <label className="text-xs font-medium text-slate-500 mr-2">Start</label>
         <input
           type="text"
           value={startTime}
@@ -28,7 +28,7 @@ export default function TimeInputs({
 
       {/* END */}
       <div>
-        <label className="text-xs font-medium text-slate-500">End</label>
+        <label className="text-xs font-medium text-slate-500 mr-2">End</label>
         <input
           type="text"
           value={endTime}
@@ -43,8 +43,8 @@ export default function TimeInputs({
         onClick={onSave}
         disabled={isSaving}
         className="
-          px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold
-          hover:bg-blue-700 active:scale-95 transition disabled:bg-gray-400
+          px-4 py-2 rounded-lg bg-teal-500 text-white text-sm font-semibold
+          hover:bg-teal-700 active:scale-95 transition disabled:bg-gray-400
         "
       >
         {isSaving ? "Saving..." : "Save"}
