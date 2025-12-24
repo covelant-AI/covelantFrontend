@@ -6,6 +6,8 @@ import { Trash2, Check } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link'
 import * as Sentry from "@sentry/nextjs";
+import { useMatchesStatusUpdater } from '@/hooks/useMatchesStatusUpdater';
+import StatusTag from '@/components/StatusTag';
 
 export default function VideoDashboard({ activePlayer, setActivePlayer }: Props) {
   const { profile } = useAuth();
@@ -150,6 +152,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
             id: m.id,
             title: `${activePlayer.firstName} ${activePlayer.lastName} vs ${opponentName}`,
             imageUrl: m.imageUrl,
+            analysisStatus: m.analysisStatus,
           };
         });
         setMatches(live);
@@ -158,6 +161,9 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
       }
     })();
   }, [activePlayer]);
+
+  // Auto-update status for matches that are in progress
+  useMatchesStatusUpdater({ matches, enabled: matches.length > 0 });
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | MouseEvent & { target: Node }) {
@@ -326,6 +332,11 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                 <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-black to-transparent pointer-events-none" />
                 <div className="absolute bottom-2 left-2 text-gray-300 text-xs font-semibold px-2 py-1 rounded">
                   {m.title}
+                </div>
+
+                {/* Status tag */}
+                <div className="absolute top-2 left-2 z-10">
+                  <StatusTag analysisStatus={m.analysisStatus} />
                 </div>
 
                 {/* Selection checkbox */}

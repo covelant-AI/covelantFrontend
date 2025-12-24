@@ -75,7 +75,7 @@ return (
       className="flex-1 flex flex-col justify-between px-4 py-3"
       style={{
         background:
-          "radial-gradient(80% 80% at 100% 100%, rgba(66,182,177,0.18) 0%, rgba(66,182,177,0.10) 34%, rgba(66,182,177,0) 60%), #FFFFFF",
+          "radial-gradient(80% 80% at 100% 100%, rgba(66,182,177,0.18) 0%, rgba(66,182,177,0.10) 34%, rgba(66,182,177,0) 60%), #f1f1f1ff",
       }}
     >
       <div className="flex items-center gap-3">
@@ -84,9 +84,9 @@ return (
         </div>
         <p className="text-sm font-medium text-gray-700">Rally Count</p>
       </div>
-      <div className="text-right text-3xl md:text-4xl font-bold text-gray-900">
-        {currentLongestRally}
-        <span className="ml-1 text-base md:text-lg font-normal text-gray-500"></span>
+      <div className="text-right text-3xl md:text-4xl font-extrabold text-gray-900">
+        {/* {currentLongestRally} */}
+        <span className="ml-1 text-base md:text-lg font-normal text-gray-500">Coming Soon</span>
       </div>
     </div>
     <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />

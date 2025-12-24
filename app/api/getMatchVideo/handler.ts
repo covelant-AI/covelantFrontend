@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
             playerTwo: true,
           },
         },
+        analysisStatus: true,
       },
     })
 
