@@ -113,9 +113,16 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      if (rp.status === 'IN_QUEUE') {
-        return NextResponse.json({ success: true, message: 'Match and data analysis created successfully' });
-      }
+      // Create AnalysisStatus record
+      await prisma.analysisStatus.create({
+        data: {
+          matchId: resultPayload.matchId,
+          server: 'runpod',
+          serverId: process.env.ENDPOINT_ID || 'unknown',
+          requestId: rp.id,
+          status: rp.status as 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED',
+        },
+      });
     }
 
     return NextResponse.json({ success: true, message: 'Match and player matches created successfully' });

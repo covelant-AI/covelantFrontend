@@ -34,10 +34,24 @@ export interface AuthContextType {
   logOut: () => Promise<void>;
 }
 
+export interface AnalysisStatus {
+  id: number;
+  matchId: number;
+  status: 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+  server: string;
+  serverId: string;
+  requestId: string;
+  delayTime: number | null;
+  executionTime: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface MatchDisplay {   // Displayed matches on Dashboard
   id: number;
   title: string;
   imageUrl: string;
+  analysisStatus?: AnalysisStatus | null;
 }
 
 export interface AuthProviderProps {
@@ -384,6 +398,7 @@ export interface Match {
   events: MatchEvent[];
   scorePoints: ScorePoint[];
   matchMetrics: MatchMetric[];
+  analysisStatus?: AnalysisStatus | null;
 }
 
 export interface StatMatch {

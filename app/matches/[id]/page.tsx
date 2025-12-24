@@ -16,6 +16,9 @@ import {Msg} from '@/components/UI/ToastTypes';
 import Image from "next/image";
 import { Tags, Film } from "lucide-react";
 import * as Sentry from "@sentry/nextjs";
+import { useMatchStatusUpdater } from "@/hooks/useMatchStatusUpdater";
+import StatusTag from "@/components/StatusTag";
+import { AnalysisStatus } from "@/util/interfaces";
 
 
 export default function Matches() {
@@ -29,8 +32,18 @@ export default function Matches() {
   const [markers, setMarkers] = useState<MatchEventData[]>([]);
   const [videoSections, setVideoSections] = useState([]);
   const [mode , setMode] = useState<boolean>(false);
+  const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus | null>(null);
   const params = useParams<{ id: string }>()
   const router = useRouter();
+  
+  // Auto-update match status every 5 minutes
+  useMatchStatusUpdater({ 
+    matchId: videoId, 
+    enabled: videoId !== 0,
+    onStatusUpdate: (updatedStatus) => {
+      setAnalysisStatus(updatedStatus);
+    }
+  });
   
 // 1) Fetch video metadata & download URL
 const getVideoData = useCallback(async() => {
@@ -49,6 +62,7 @@ const getVideoData = useCallback(async() => {
     setPlayerTwo(vid.playerMatches[0].playerTwo)
     setVideoId(vid.id);
     setVideoStart(vid.date);
+    setAnalysisStatus(vid.analysisStatus || null);
     const url = await getDownloadURL(ref(storage, vid.videoUrl));
     setVideoUrl(url);
     setLoading(false);
@@ -128,6 +142,11 @@ const getVideoData = useCallback(async() => {
           >
           <Image src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FBackArrow.svg?alt=media&token=f4695bb5-dfd2-4733-9755-32748dbc86b8" alt="Back" width={20} height={20} />
           </button>
+          
+          {/* Status tag */}
+          <div className="absolute top-4 right-4 z-10">
+            <StatusTag analysisStatus={analysisStatus} />
+          </div>
 
             
           {/* video + tags on top / left */}

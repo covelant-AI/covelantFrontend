@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
         playerMatches: {
           where: { playerId },
           include: {
-            // include only the “other” slots
+            // include only the "other" slots
             playerTwo: {
               select: { firstName: true, lastName: true },
             },
@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
             },
           },
         },
+        analysisStatus: true,
       },
     });
 
