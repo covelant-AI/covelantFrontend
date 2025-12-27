@@ -39,10 +39,7 @@ function generateAIFormattedSections(matchId: number, totalTime: number = 300) {
       const st = rand(startT, endT - 1);
       const bounceEnabled = randBool();
       return {
-        start: {
-          index: Math.floor(st * 100),
-          time: st,
-        },
+        start: st, // float, not an object
         player_hit: randPick(["top", "bottom"]),
         top_player_location: randBool()
           ? [rand(-10, 10), rand(5, 12)]
@@ -86,17 +83,82 @@ export async function seedMatchSections() {
       const sections = generateAIFormattedSections(matchId);
 
       for (const section of sections) {
-        await prisma.videoSection.create({
+        // Create VideoSection
+        const videoSection = await prisma.videoSection.create({
           data: {
             matchId: section.matchId,
             startIndex: section.startIndex,
             startTime: section.startTime,
             endIndex: section.endIndex,
             endTime: section.endTime,
-            summary: section.summary, // Json
-            strokes: section.strokes, // Json
           },
         });
+
+        // Create SectionSummary if summary exists
+        if (section.summary) {
+          const playerWonPoint =
+            section.summary.player_won_point === "top"
+              ? "TOP"
+              : section.summary.player_won_point === "bottom"
+              ? "BOTTOM"
+              : null;
+
+          await prisma.sectionSummary.create({
+            data: {
+              videoSectionId: videoSection.id,
+              playerWonPoint,
+              rallySize: section.summary.rally_size,
+              validRally: section.summary.valid_rally,
+            },
+          });
+        }
+
+        // Create Stroke records if strokes exist
+        if (section.strokes && section.strokes.length > 0) {
+          const strokeRecords = section.strokes.map((stroke: any) => {
+            const playerHit = stroke.player_hit === "top" ? "TOP" : "BOTTOM";
+            const bounceState =
+              stroke.bounce?.state === "valid"
+                ? "VALID"
+                : stroke.bounce?.state === "out_of_bounds"
+                ? "OUT_OF_BOUNDS"
+                : stroke.bounce?.state === "net_hit"
+                ? "NET_HIT"
+                : null;
+
+            return {
+              videoSectionId: videoSection.id,
+              start: stroke.start,
+              playerHit,
+              topPlayerLocationX: Array.isArray(stroke.top_player_location) && stroke.top_player_location.length >= 1
+                ? stroke.top_player_location[0]
+                : null,
+              topPlayerLocationY: Array.isArray(stroke.top_player_location) && stroke.top_player_location.length >= 2
+                ? stroke.top_player_location[1]
+                : null,
+              bottomPlayerLocationX: Array.isArray(stroke.bottom_player_location) && stroke.bottom_player_location.length >= 1
+                ? stroke.bottom_player_location[0]
+                : null,
+              bottomPlayerLocationY: Array.isArray(stroke.bottom_player_location) && stroke.bottom_player_location.length >= 2
+                ? stroke.bottom_player_location[1]
+                : null,
+              bounceLocationX: Array.isArray(stroke.bounce?.location) && stroke.bounce.location.length >= 1
+                ? stroke.bounce.location[0]
+                : null,
+              bounceLocationY: Array.isArray(stroke.bounce?.location) && stroke.bounce.location.length >= 2
+                ? stroke.bounce.location[1]
+                : null,
+              bounceState,
+              bounceStartIndex: stroke.bounce?.start?.index ?? null,
+              bounceStartTime: stroke.bounce?.start?.time ?? null,
+              ballSpeed: stroke.ball_speed ?? null,
+            };
+          });
+
+          await prisma.stroke.createMany({
+            data: strokeRecords,
+          });
+        }
       }
     }
 

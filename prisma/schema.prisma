@@ -30,6 +30,8 @@ model Player {
 
   scorePoints  ScorePoint[]
   matchMetrics MatchMetric[]
+  topPlayerSideSwitches    PlayerSideSwitch[] @relation("TopPlayerSideSwitches")
+  bottomPlayerSideSwitches  PlayerSideSwitch[] @relation("BottomPlayerSideSwitches")
 }
 
 model Coach {
@@ -91,22 +93,10 @@ model Match {
   scorePoints   ScorePoint[]
   matchMetrics  MatchMetric[]
   videoSections VideoSection[]
-  ballDetections BallDetection[]
-  playerDetection PlayerDetection[]
   courtKeypoint  CourtKeypoint[]
   analysisStatus AnalysisStatus?
+  playerSideSwitches PlayerSideSwitch[]
 }
-
-model PlayerDetection {
-  id        Int      @id @default(autoincrement())
-  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  matchId   Int
-  payload   Json
-  createdAt DateTime @default(now())
-
-  @@index([matchId])
-}
-
 
 model CourtKeypoint {
   id        Int      @id @default(autoincrement())
@@ -120,34 +110,66 @@ model CourtKeypoint {
 
 
 
-model BallDetection {
-  id        Int      @id @default(autoincrement())
-  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  matchId   Int
-  payload   Json
-  createdAt DateTime @default(now())
-
-  @@index([matchId])
-}
-
 model VideoSection {
-  id         Int    @id @default(autoincrement())
-  match      Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  matchId    Int
-
-  startIndex Int
-  startTime  Float
-  endIndex   Int
-  endTime    Float
-
-  summary    Json?    
-  strokes    Json?     
+  id               Int       @id @default(autoincrement())
+  match            Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId          Int
+  startIndex       Int
+  startTime        Float
+  endIndex         Int
+  endTime          Float
+  playerWonPoint   String?
+  rallySize        Int
+  validRally       Boolean
+  strokes          Stroke[]
 
   @@index([matchId])
-  @@unique([matchId, startIndex, endIndex], name: "unique_section_per_match")
 }
 
+model Stroke {
+  id               Int       @id @default(autoincrement())
+  videoSection     VideoSection @relation(fields: [videoSectionId], references: [id], onDelete: Cascade)
+  videoSectionId   Int
+  strokeOrder      Int
+  startTime        Float?
+  playerHit        String
+  topPlayerX       Float?
+  topPlayerY       Float?
+  bottomPlayerX    Float?
+  bottomPlayerY    Float?
+  ballSpeed        Float?
+  bounces          Bounce[]
 
+  @@unique([videoSectionId, strokeOrder])
+  @@index([videoSectionId])
+}
+
+model Bounce {
+  id               Int       @id @default(autoincrement())
+  stroke           Stroke    @relation(fields: [strokeId], references: [id], onDelete: Cascade)
+  strokeId         Int
+  locationX        Float?
+  locationY        Float?
+  state            String?
+  startTime        Float?
+
+  @@index([strokeId])
+}
+
+model PlayerSideSwitch {
+  id              Int     @id @default(autoincrement())
+  match           Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId         Int
+  time            Float
+  topPlayer       Player  @relation("TopPlayerSideSwitches", fields: [topPlayerId], references: [id])
+  topPlayerId     Int
+  bottomPlayer    Player  @relation("BottomPlayerSideSwitches", fields: [bottomPlayerId], references: [id])
+  bottomPlayerId  Int
+
+  @@index([matchId])
+  @@index([topPlayerId])
+  @@index([bottomPlayerId])
+}
 
 model StatMatch {
   id        Int    @id @default(autoincrement())
