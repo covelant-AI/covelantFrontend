@@ -14,7 +14,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
 import { Msg } from '@/components/UI/ToastTypes';
 import Image from "next/image";
-// import { Tags, Film } from "lucide-react";
+import { Tags, Film } from "lucide-react";
 import * as Sentry from "@sentry/nextjs";
 import { useMatchStatusUpdater } from "@/hooks/useMatchStatusUpdater";
 import StatusTag from "@/components/StatusTag";
@@ -31,7 +31,7 @@ export default function Matches() {
   const [playerTwo, setPlayerTwo] = useState<Player>(defaultPlayer)
   const [markers, setMarkers] = useState<MatchEventData[]>([]);
   const [videoSections, setVideoSections] = useState([]);
-  // const [mode, setMode] = useState<boolean>(false);
+  const [mode, setMode] = useState<boolean>(true);
   const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus | null>(null);
   const params = useParams<{ id: string }>()
   const router = useRouter();
@@ -183,7 +183,7 @@ export default function Matches() {
         {/* performance panel below / right */}
         <div className="w-full flex flex-row gap-4 max-md:flex-col relative">
           {/* Toggle button (top-left, inside container) */}
-          {/* <button
+          <button
             onClick={() => setMode((prev) => !prev)}
             className="
                   absolute top-3 left-3 z-50
@@ -196,9 +196,9 @@ export default function Matches() {
             aria-label="Switch mode"
           >
             {mode ? <Film size={18} /> : <Tags size={18} />}
-          </button> */}
+          </button>
 
-          {/* {mode ? (
+          {mode ? (
                 <>
                   <MainTagManager
                     videoId={videoId}
@@ -214,16 +214,7 @@ export default function Matches() {
                   videoSections={videoSections}
                   onSeekVideo={(timeSeconds) => setCurrentVideoTime(timeSeconds)}
                 />
-              )} */}
-
-          <>
-            <MainTagManager
-              videoId={videoId}
-              timeStamp={currentVideoTime}
-              onAddTag={handleAddTag}
-            />
-            <AnalyticsCard />
-          </>
+              )}
         </div>
 
       </div>
