@@ -8,6 +8,9 @@ import Link from 'next/link'
 import * as Sentry from "@sentry/nextjs";
 import { useMatchesStatusUpdater } from '@/hooks/useMatchesStatusUpdater';
 import StatusTag from '@/components/StatusTag';
+import VideoPreviewModal from './VideoPreviewModal';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/app/firebase/config';
 
 export default function VideoDashboard({ activePlayer, setActivePlayer }: Props) {
   const { profile } = useAuth();
@@ -20,6 +23,12 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
   const [deleteBtnVisible, setDeleteBtnVisible] = useState<boolean>(false);
   const [fadingIds, setFadingIds] = useState<string[]>([]); // cards fading out
   const [showDeletePill, setShowDeletePill] = useState(false); // keep mounted for exit anim
+  const [selectedMatch, setSelectedMatch] = useState<MatchDisplay | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [matchDate, setMatchDate] = useState<string | undefined>(undefined);
+  const [matchDuration, setMatchDuration] = useState<string | undefined>(undefined);
+  const [playerOneName, setPlayerOneName] = useState<string | undefined>(undefined);
+  const [playerTwoName, setPlayerTwoName] = useState<string | undefined>(undefined);
 
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -95,6 +104,109 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
     );
   };
 
+  const handleVideoClick = async (match: MatchDisplay) => {
+    if (selectionMode) return;
+    
+    setSelectedMatch(match);
+    setIsModalOpen(true);
+    
+    // Use date from match object if available
+    if (match.date) {
+      const dateStr = typeof match.date === 'string' ? match.date : match.date.toISOString();
+      setMatchDate(dateStr);
+    }
+    
+    // Fetch match details for duration and additional info
+    try {
+      const res = await fetch(`/api/getMatchVideo?id=${encodeURIComponent(match.id)}`);
+      const data = await res.json();
+      if (data.success && data.data) {
+        const matchData = data.data;
+        
+        // Set date if not already set
+        if (!match.date && matchData.date) {
+          const dateStr = typeof matchData.date === 'string' ? matchData.date : matchData.date.toISOString();
+          setMatchDate(dateStr);
+        }
+        
+        // Extract player names
+        if (matchData.playerMatches && matchData.playerMatches.length > 0) {
+          const pm = matchData.playerMatches[0];
+          if (pm.player) {
+            setPlayerOneName(`${pm.player.firstName} ${pm.player.lastName}`);
+          }
+          if (pm.playerTwo) {
+            setPlayerTwoName(`${pm.playerTwo.firstName} ${pm.playerTwo.lastName}`);
+          } else if (pm.opponent) {
+            setPlayerTwoName(`${pm.opponent.firstName} ${pm.opponent.lastName}`);
+          }
+        }
+        
+        // Use stored duration first, then calculate from metadata, then fallback to video element
+        if (matchData.duration) {
+          // Use stored duration from database
+          const durationSeconds = matchData.duration;
+          const hours = Math.floor(durationSeconds / 3600);
+          const minutes = Math.floor((durationSeconds % 3600) / 60);
+          if (hours > 0) {
+            setMatchDuration(`${hours}h ${minutes}min`);
+          } else {
+            setMatchDuration(`${minutes}min`);
+          }
+        } else if (matchData.totalFrames && matchData.fps) {
+          // Fallback 1: Calculate from video metadata
+          const durationSeconds = matchData.totalFrames / matchData.fps;
+          const hours = Math.floor(durationSeconds / 3600);
+          const minutes = Math.floor((durationSeconds % 3600) / 60);
+          if (hours > 0) {
+            setMatchDuration(`${hours}h ${minutes}min`);
+          } else {
+            setMatchDuration(`${minutes}min`);
+          }
+        } else if (matchData.videoUrl) {
+          // Fallback 2: Get duration from video element metadata (legacy videos)
+          try {
+            const videoDownloadUrl = await getDownloadURL(ref(storage, matchData.videoUrl));
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.src = videoDownloadUrl;
+            
+            video.onloadedmetadata = () => {
+              const durationSeconds = video.duration;
+              if (durationSeconds && !isNaN(durationSeconds) && isFinite(durationSeconds)) {
+                const hours = Math.floor(durationSeconds / 3600);
+                const minutes = Math.floor((durationSeconds % 3600) / 60);
+                if (hours > 0) {
+                  setMatchDuration(`${hours}h ${minutes}min`);
+                } else {
+                  setMatchDuration(`${minutes}min`);
+                }
+              }
+            };
+            
+            video.onerror = () => {
+              console.warn('Failed to load video metadata for duration');
+            };
+          } catch (err) {
+            console.error('Error fetching video URL for duration:', err);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching match details:', err);
+      Sentry.captureException(err);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMatch(null);
+    setMatchDate(undefined);
+    setMatchDuration(undefined);
+    setPlayerOneName(undefined);
+    setPlayerTwoName(undefined);
+  };
+
   useEffect(() => {
     const storedPlayer = sessionStorage.getItem("selectedPlayer");
     if (storedPlayer) {
@@ -153,6 +265,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
             title: `${activePlayer.firstName} ${activePlayer.lastName} vs ${opponentName}`,
             imageUrl: m.imageUrl,
             analysisStatus: m.analysisStatus,
+            date: m.date ? (typeof m.date === 'string' ? m.date : m.date.toISOString()) : undefined,
           };
         });
         setMatches(live);
@@ -308,7 +421,10 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                   role={selectionMode ? "button" : undefined}
                 >
                 {!selectionMode ? (
-                  <Link href={`/matches/${m.id}`} className="block w-full h-full">
+                  <div 
+                    className="block w-full h-full cursor-pointer"
+                    onClick={() => handleVideoClick(m)}
+                  >
                     <Image
                       src={m.imageUrl}
                       alt={m.title}
@@ -316,7 +432,7 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
                       height={300}
                       className="w-full h-full object-cover"
                     />
-                  </Link>
+                  </div>
                 ) : (
                   <div className="w-full h-full">
                     <Image
@@ -379,6 +495,18 @@ export default function VideoDashboard({ activePlayer, setActivePlayer }: Props)
         )}
 
       </div>
+
+      {/* Video Preview Modal */}
+      <VideoPreviewModal
+        match={selectedMatch}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        backgroundImageUrl={selectedMatch?.imageUrl}
+        matchDate={matchDate}
+        matchDuration={matchDuration}
+        playerOneName={playerOneName}
+        playerTwoName={playerTwoName}
+      />
     </div>
   )
 }

@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
-  const { playerOne, playerTwo, date, fieldType, matchType, videoURL, thumbnail, winnerId, features } = data;
+  const { playerOne, playerTwo, date, fieldType, matchType, videoURL, thumbnail, duration, winnerId, features } = data;
 
   try {
     if (!playerOne || !playerTwo || !date || !fieldType || !matchType || winnerId === undefined) {
@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
           videoUrl: videoURL,
           imageUrl: thumbnail,
           videoType: 'mp4',
+          duration: duration ? Number(duration) : null,
         },
       });
 

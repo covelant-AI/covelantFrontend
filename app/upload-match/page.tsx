@@ -35,6 +35,7 @@ export default function UploadMatchPage() {
 
   const [videoURL, setVideoURL] = useState<string | null>(null);
   const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null);
+  const [videoDuration, setVideoDuration] = useState<number | undefined>(undefined);
   const [playerOne, setPlayerOne] = useState<Player | null>(null)
   const [playerTwo, setPlayerTwo] = useState<Player | null>(null)
   const [features, setFeatures] = useState<string[]>([]);
@@ -157,6 +158,7 @@ const handleSubmit = (selectedFeatures: string[]) => {
     playerTwo: apiPlayerTwo, // override with API shape
     videoURL,
     thumbnail: videoThumbnail,
+    duration: videoDuration,
     features: selectedFeatures,
     winnerId,
   };
@@ -221,9 +223,10 @@ const handleSubmit = (selectedFeatures: string[]) => {
         return (
           <>
             <UploadVideo
-              onVideoUpload={(url, thumbnail) => {
+              onVideoUpload={(url, thumbnail, duration) => {
                 setVideoURL(url);
                 setVideoThumbnail(thumbnail);
+                setVideoDuration(duration);
               }}
               uploadedThumbnail={videoThumbnail}
               profileEmail={profile?.email || ''}

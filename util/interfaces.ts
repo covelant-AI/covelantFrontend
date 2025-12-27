@@ -52,6 +52,7 @@ export interface MatchDisplay {   // Displayed matches on Dashboard
   title: string;
   imageUrl: string;
   analysisStatus?: AnalysisStatus | null;
+  date?: string | Date;
 }
 
 export interface AuthProviderProps {

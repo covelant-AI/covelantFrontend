@@ -4,7 +4,7 @@ import Image from "next/image";
 import { storage, ref, uploadBytesResumable, getDownloadURL } from "@/app/firebase/config";
 
 interface UploadVideoProps {
-  onVideoUpload: (videoURL: string, videoThumbnail: string) => void,
+  onVideoUpload: (videoURL: string, videoThumbnail: string, duration?: number) => void,
   uploadedURL?: string | null,
   uploadedThumbnail?: string | null
   profileEmail?: string;
@@ -35,15 +35,17 @@ export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbn
 }, [profileEmail]);
 
 
-  const extractThumbnail = (videoFile: File, url: string): Promise<string> => {
+  const extractThumbnail = (videoFile: File, url: string): Promise<{ thumbnail: string; duration: number }> => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
       video.src = url;
       video.crossOrigin = "anonymous";
       video.muted = true;
       video.playsInline = true;
+      let duration = 0;
     
       video.addEventListener("loadedmetadata", () => {
+        duration = video.duration;
         video.currentTime = 0.1;
       });
     
@@ -55,9 +57,9 @@ export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbn
         if (ctx) {
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           const imageUrl = canvas.toDataURL("image/jpeg"); // Get the base64 image
-          resolve(imageUrl);
+          resolve({ thumbnail: imageUrl, duration });
         } else {
-          resolve("");
+          resolve({ thumbnail: "", duration });
         }
       });
     });
@@ -69,8 +71,8 @@ export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbn
 
       setUploadProgress(0);
     
-      // Extract thumbnail first
-      const thumbnailDataUrl = await extractThumbnail(file, localUrl);
+      // Extract thumbnail and duration
+      const { thumbnail: thumbnailDataUrl, duration } = await extractThumbnail(file, localUrl);
       setThumbnail(thumbnailDataUrl);
     
       // Convert the thumbnail from base64 (dataURL) to a Blob
@@ -98,8 +100,8 @@ export default function UploadVideo({ onVideoUpload, uploadedURL, uploadedThumbn
           const downloadVideoURL = await getDownloadURL(uploadTask2.snapshot.ref);
           const downloadThumbnailURL = await getDownloadURL(uploadTask1.snapshot.ref);
         
-          // Call onVideoUpload once both are ready
-          onVideoUpload(downloadVideoURL, downloadThumbnailURL);
+          // Call onVideoUpload once both are ready, including duration
+          onVideoUpload(downloadVideoURL, downloadThumbnailURL, duration);
         }
       );
     } else {

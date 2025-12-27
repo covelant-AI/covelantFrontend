@@ -81,6 +81,7 @@ model Match {
   width         Int?
   height        Int?
   totalFrames   Int? 
+  duration      Float?
   result        String?
   fieldType     String?
   status        String?
