@@ -46,8 +46,6 @@ export type SectionSummary = {
 export type VideoSection = {
   id: number;
   matchId: number;
-  startIndex: number;
-  endIndex: number;
   startTime: number;
   endTime: number;
   summary?: SectionSummary; // ✅ updated

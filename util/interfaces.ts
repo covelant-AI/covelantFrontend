@@ -183,11 +183,9 @@ export interface VideoSection {
   id?: number;                 // present in DB, not always from AI POST  
   matchId?: number;            // DB link — optional for AI input
   start: {
-    index: number;
     time: number;
   };
   end: {
-    index: number;
     time: number;
   };
   summary: SectionSummary;

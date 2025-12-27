@@ -56,81 +56,93 @@ export async function POST(req: NextRequest) {
         }
 
         const {
-          start: { index: startIndex, time: startTime },
-          end: { index: endIndex, time: endTime },
+          start: { time: startTime },
+          end: { time: endTime },
           summary,
           strokes,
         } = sec;
 
         if (
-          typeof startIndex !== "number" ||
           typeof startTime !== "number" ||
-          typeof endIndex !== "number" ||
           typeof endTime !== "number"
         ) {
           throw new Error(`Invalid start/end format in section`);
         }
 
-        // Create VideoSection
+        // Extract summary data (fields are directly on VideoSection, not a separate model)
+        const playerWonPoint = summary && typeof summary === "object" 
+          ? mapPlayerWonPoint(summary.player_won_point) 
+          : null;
+        const rallySize = summary && typeof summary === "object" && typeof summary.rally_size === "number" 
+          ? summary.rally_size 
+          : 0;
+        const validRally = summary && typeof summary === "object" && typeof summary.valid_rally === "boolean" 
+          ? summary.valid_rally 
+          : false;
+
+        // Create VideoSection with summary fields directly on it
         const videoSection = await tx.videoSection.create({
           data: {
             matchId,
-            startIndex,
             startTime,
-            endIndex,
             endTime,
+            playerWonPoint,
+            rallySize,
+            validRally,
           },
         });
 
-        // Create SectionSummary if provided
-        if (summary && typeof summary === "object") {
-          const playerWonPoint = mapPlayerWonPoint(summary.player_won_point);
-          const rallySize = typeof summary.rally_size === "number" ? summary.rally_size : 0;
-          const validRally = typeof summary.valid_rally === "boolean" ? summary.valid_rally : false;
-
-          await tx.sectionSummary.create({
-            data: {
-              videoSectionId: videoSection.id,
-              playerWonPoint,
-              rallySize,
-              validRally: validRally,
-            },
-          });
-        }
-
         // Create Stroke records if provided
         if (Array.isArray(strokes)) {
-          const strokeRecords = strokes.map((stroke: any) => {
-            const start = typeof stroke.start === "number" ? stroke.start : 0;
+          for (let order = 0; order < strokes.length; order++) {
+            const stroke = strokes[order];
+            
+            // Extract start time (can be a number or an object with time property)
+            let startTime: number | null = null;
+            if (typeof stroke.start === "number") {
+              startTime = stroke.start;
+            } else if (stroke.start && typeof stroke.start === "object" && typeof stroke.start.time === "number") {
+              startTime = stroke.start.time;
+            }
+
             const playerHit = mapPlayerHit(stroke.player_hit);
 
-            // Extract coordinates from arrays or objects
+            // Extract coordinates from arrays
             const topPlayerLocation = stroke.top_player_location;
             const bottomPlayerLocation = stroke.bottom_player_location;
-            const bounceLocation = stroke.bounce?.location;
-            const bounceStart = stroke.bounce?.start;
 
-            return {
-              videoSectionId: videoSection.id,
-              start,
-              playerHit,
-              topPlayerLocationX: Array.isArray(topPlayerLocation) && topPlayerLocation.length >= 1 ? topPlayerLocation[0] : null,
-              topPlayerLocationY: Array.isArray(topPlayerLocation) && topPlayerLocation.length >= 2 ? topPlayerLocation[1] : null,
-              bottomPlayerLocationX: Array.isArray(bottomPlayerLocation) && bottomPlayerLocation.length >= 1 ? bottomPlayerLocation[0] : null,
-              bottomPlayerLocationY: Array.isArray(bottomPlayerLocation) && bottomPlayerLocation.length >= 2 ? bottomPlayerLocation[1] : null,
-              bounceLocationX: Array.isArray(bounceLocation) && bounceLocation.length >= 1 ? bounceLocation[0] : null,
-              bounceLocationY: Array.isArray(bounceLocation) && bounceLocation.length >= 2 ? bounceLocation[1] : null,
-              bounceState: stroke.bounce?.state ? mapBounceState(stroke.bounce.state) : null,
-              bounceStartIndex: bounceStart?.index ?? null,
-              bounceStartTime: bounceStart?.time ?? null,
-              ballSpeed: typeof stroke.ball_speed === "number" ? stroke.ball_speed : null,
-            };
-          });
-
-          if (strokeRecords.length > 0) {
-            await tx.stroke.createMany({
-              data: strokeRecords,
+            // Create Stroke record
+            const strokeRecord = await tx.stroke.create({
+              data: {
+                videoSectionId: videoSection.id,
+                strokeOrder: order,
+                startTime,
+                playerHit,
+                topPlayerX: Array.isArray(topPlayerLocation) && topPlayerLocation.length >= 1 ? topPlayerLocation[0] : null,
+                topPlayerY: Array.isArray(topPlayerLocation) && topPlayerLocation.length >= 2 ? topPlayerLocation[1] : null,
+                bottomPlayerX: Array.isArray(bottomPlayerLocation) && bottomPlayerLocation.length >= 1 ? bottomPlayerLocation[0] : null,
+                bottomPlayerY: Array.isArray(bottomPlayerLocation) && bottomPlayerLocation.length >= 2 ? bottomPlayerLocation[1] : null,
+                ballSpeed: typeof stroke.ball_speed === "number" ? stroke.ball_speed : null,
+              },
             });
+
+            // Create Bounce record if bounce data exists
+            if (stroke.bounce && stroke.bounce !== null) {
+              const bounceLocation = stroke.bounce.location;
+              const bounceStart = stroke.bounce.start;
+              
+              await tx.bounce.create({
+                data: {
+                  strokeId: strokeRecord.id,
+                  locationX: Array.isArray(bounceLocation) && bounceLocation.length >= 1 ? bounceLocation[0] : null,
+                  locationY: Array.isArray(bounceLocation) && bounceLocation.length >= 2 ? bounceLocation[1] : null,
+                  state: stroke.bounce.state ? mapBounceState(stroke.bounce.state) : null,
+                  startTime: bounceStart && typeof bounceStart === "object" && typeof bounceStart.time === "number" 
+                    ? bounceStart.time 
+                    : (typeof bounceStart === "number" ? bounceStart : null),
+                },
+              });
+            }
           }
         }
       }

@@ -30,6 +30,10 @@ export function useMatchStatusUpdater({
       const data = await response.json();
       
       if (!response.ok) {
+        // If AnalysisStatus doesn't exist (404), silently skip - this is expected
+        if (response.status === 404) {
+          return;
+        }
         console.error('Failed to update match status:', data.message);
         return;
       }

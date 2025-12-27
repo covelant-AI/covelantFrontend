@@ -32,10 +32,10 @@ export async function POST(req: NextRequest) {
     // Prepare and create video sections
     const sections = data.map((section: any) => ({
       matchId,
-      startIndex: section.start.index,
       startTime: section.start.time,
-      endIndex: section.end.index,
       endTime: section.end.time,
+      rallySize: 0, // Default value required by schema
+      validRally: false, // Default value required by schema
     }));
 
     await prisma.videoSection.createMany({

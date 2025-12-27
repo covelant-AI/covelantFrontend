@@ -131,7 +131,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
         />
 
         {/* Render each red bar */}
-        {videoSections.map((section, index) => (
+        {videoSections?.map((section, index) => (
           <WhiteBar
             key={index}
             section={section}

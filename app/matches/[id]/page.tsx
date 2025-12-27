@@ -36,10 +36,10 @@ export default function Matches() {
   const params = useParams<{ id: string }>()
   const router = useRouter();
 
-  // Auto-update match status every 5 minutes
+  // Auto-update match status every 5 minutes (only if analysisStatus exists)
   useMatchStatusUpdater({
     matchId: videoId,
-    enabled: videoId !== 0,
+    enabled: videoId !== 0 && analysisStatus !== null,
     onStatusUpdate: (updatedStatus) => {
       setAnalysisStatus(updatedStatus);
     }
@@ -56,8 +56,19 @@ export default function Matches() {
       });
     const response = await fetch(`/api/getMatchSections?id=${encodeURIComponent(matchId)}`);
     const data = await response.json();
-    setVideoSections(data.data);
-    console.log("Fetched video sections:", data.data);
+    if (data.success && data.data) {
+      // Transform the data to match what components expect (startTime/endTime instead of start.time/end.time)
+      const transformedSections = data.data.map((section: any) => ({
+        ...section,
+        startTime: section.start.time,
+        endTime: section.end.time,
+      }));
+      setVideoSections(transformedSections);
+      console.log("Fetched video sections:", transformedSections);
+    } else {
+      console.warn("Failed to fetch video sections or no data:", data);
+      setVideoSections([]);
+    }
     setPlayerOne(vid.playerMatches[0].player)
     setPlayerTwo(vid.playerMatches[0].playerTwo)
     setVideoId(vid.id);

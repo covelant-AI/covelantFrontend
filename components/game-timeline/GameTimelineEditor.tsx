@@ -29,10 +29,10 @@ export default function GameTimelineEditor({
   videoSections: initialSections,
   onSeekVideo,
 }: GameTimelineEditorProps) {
-  const [videoSections, setVideoSections] = useState<VideoSection[]>(initialSections);
+  const [videoSections, setVideoSections] = useState<VideoSection[]>(initialSections || []);
 
   const firstSection = videoSections[0];
-  const lastSection = videoSections[videoSections.length - 1];
+  const lastSection = videoSections.length > 0 ? videoSections[videoSections.length - 1] : undefined;
 
   const [selectedSection, setSelectedSection] = useState<VideoSection | null>(null);
 
@@ -72,6 +72,7 @@ export default function GameTimelineEditor({
      🟢 WHEN USER SELECTS A TIMELINE SECTION
   ------------------------------------------------------------ */
   const handleSectionSelect = (sectionId: number) => {
+    if (!videoSections || videoSections.length === 0) return;
     const section = videoSections.find((s) => s.id === sectionId);
     if (!section) return;
 

@@ -83,7 +83,11 @@ export async function seedMatchSections() {
       const sections = generateAIFormattedSections(matchId);
 
       for (const section of sections) {
-        // Create VideoSection
+        // Create VideoSection with required fields
+        const playerWonPoint = section.summary?.player_won_point || null;
+        const rallySize = section.summary?.rally_size || 1;
+        const validRally = section.summary?.valid_rally ?? true;
+
         const videoSection = await prisma.videoSection.create({
           data: {
             matchId: section.matchId,
@@ -91,73 +95,58 @@ export async function seedMatchSections() {
             startTime: section.startTime,
             endIndex: section.endIndex,
             endTime: section.endTime,
+            playerWonPoint,
+            rallySize,
+            validRally,
           },
         });
 
-        // Create SectionSummary if summary exists
-        if (section.summary) {
-          const playerWonPoint =
-            section.summary.player_won_point === "top"
-              ? "TOP"
-              : section.summary.player_won_point === "bottom"
-              ? "BOTTOM"
-              : null;
-
-          await prisma.sectionSummary.create({
-            data: {
-              videoSectionId: videoSection.id,
-              playerWonPoint,
-              rallySize: section.summary.rally_size,
-              validRally: section.summary.valid_rally,
-            },
-          });
-        }
-
         // Create Stroke records if strokes exist
         if (section.strokes && section.strokes.length > 0) {
-          const strokeRecords = section.strokes.map((stroke: any) => {
-            const playerHit = stroke.player_hit === "top" ? "TOP" : "BOTTOM";
-            const bounceState =
-              stroke.bounce?.state === "valid"
-                ? "VALID"
-                : stroke.bounce?.state === "out_of_bounds"
-                ? "OUT_OF_BOUNDS"
-                : stroke.bounce?.state === "net_hit"
-                ? "NET_HIT"
-                : null;
+          for (let i = 0; i < section.strokes.length; i++) {
+            const stroke = section.strokes[i];
+            const playerHit = stroke.player_hit || "top";
 
-            return {
-              videoSectionId: videoSection.id,
-              start: stroke.start,
-              playerHit,
-              topPlayerLocationX: Array.isArray(stroke.top_player_location) && stroke.top_player_location.length >= 1
-                ? stroke.top_player_location[0]
-                : null,
-              topPlayerLocationY: Array.isArray(stroke.top_player_location) && stroke.top_player_location.length >= 2
-                ? stroke.top_player_location[1]
-                : null,
-              bottomPlayerLocationX: Array.isArray(stroke.bottom_player_location) && stroke.bottom_player_location.length >= 1
-                ? stroke.bottom_player_location[0]
-                : null,
-              bottomPlayerLocationY: Array.isArray(stroke.bottom_player_location) && stroke.bottom_player_location.length >= 2
-                ? stroke.bottom_player_location[1]
-                : null,
-              bounceLocationX: Array.isArray(stroke.bounce?.location) && stroke.bounce.location.length >= 1
-                ? stroke.bounce.location[0]
-                : null,
-              bounceLocationY: Array.isArray(stroke.bounce?.location) && stroke.bounce.location.length >= 2
-                ? stroke.bounce.location[1]
-                : null,
-              bounceState,
-              bounceStartIndex: stroke.bounce?.start?.index ?? null,
-              bounceStartTime: stroke.bounce?.start?.time ?? null,
-              ballSpeed: stroke.ball_speed ?? null,
-            };
-          });
+            // Create Stroke
+            const strokeRecord = await prisma.stroke.create({
+              data: {
+                videoSectionId: videoSection.id,
+                strokeOrder: i + 1,
+                startTime: stroke.start ?? null,
+                playerHit,
+                topPlayerX: Array.isArray(stroke.top_player_location) && stroke.top_player_location.length >= 1
+                  ? stroke.top_player_location[0]
+                  : null,
+                topPlayerY: Array.isArray(stroke.top_player_location) && stroke.top_player_location.length >= 2
+                  ? stroke.top_player_location[1]
+                  : null,
+                bottomPlayerX: Array.isArray(stroke.bottom_player_location) && stroke.bottom_player_location.length >= 1
+                  ? stroke.bottom_player_location[0]
+                  : null,
+                bottomPlayerY: Array.isArray(stroke.bottom_player_location) && stroke.bottom_player_location.length >= 2
+                  ? stroke.bottom_player_location[1]
+                  : null,
+                ballSpeed: stroke.ball_speed ?? null,
+              },
+            });
 
-          await prisma.stroke.createMany({
-            data: strokeRecords,
-          });
+            // Create Bounce if it exists
+            if (stroke.bounce) {
+              await prisma.bounce.create({
+                data: {
+                  strokeId: strokeRecord.id,
+                  locationX: Array.isArray(stroke.bounce.location) && stroke.bounce.location.length >= 1
+                    ? stroke.bounce.location[0]
+                    : null,
+                  locationY: Array.isArray(stroke.bounce.location) && stroke.bounce.location.length >= 2
+                    ? stroke.bounce.location[1]
+                    : null,
+                  state: stroke.bounce.state || null,
+                  startTime: stroke.bounce.start?.time ?? null,
+                },
+              });
+            }
+          }
         }
       }
     }

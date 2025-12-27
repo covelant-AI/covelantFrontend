@@ -41,9 +41,11 @@ export async function GET(req: NextRequest) {
     const videoSections = await prisma.videoSection.findMany({
       where: { matchId },
       include: {
-        summary: true,
         strokes: {
-          orderBy: { start: "asc" },
+          include: {
+            bounces: true,
+          },
+          orderBy: { strokeOrder: "asc" },
         },
       },
       orderBy: { startTime: "asc" },
@@ -51,48 +53,47 @@ export async function GET(req: NextRequest) {
 
     // Transform the data to match the expected format
     const data = videoSections.map((s) => {
-      // Transform summary
-      const summary: SectionSummary = s.summary
-        ? {
-            player_won_point: mapPlayerWonPoint(s.summary.playerWonPoint),
-            rally_size: s.summary.rallySize,
-            valid_rally: s.summary.validRally,
-          }
-        : null;
+      // Transform summary (fields are directly on VideoSection, not a relation)
+      const summary: SectionSummary = {
+        player_won_point: mapPlayerWonPoint(s.playerWonPoint as "TOP" | "BOTTOM" | null),
+        rally_size: s.rallySize,
+        valid_rally: s.validRally,
+      };
 
       // Transform strokes
       const strokes = s.strokes.map((stroke) => {
         const topPlayerLocation: [number, number] | null =
-          stroke.topPlayerLocationX !== null && stroke.topPlayerLocationY !== null
-            ? [stroke.topPlayerLocationX, stroke.topPlayerLocationY]
+          stroke.topPlayerX !== null && stroke.topPlayerY !== null
+            ? [stroke.topPlayerX, stroke.topPlayerY]
             : null;
 
         const bottomPlayerLocation: [number, number] | null =
-          stroke.bottomPlayerLocationX !== null && stroke.bottomPlayerLocationY !== null
-            ? [stroke.bottomPlayerLocationX, stroke.bottomPlayerLocationY]
+          stroke.bottomPlayerX !== null && stroke.bottomPlayerY !== null
+            ? [stroke.bottomPlayerX, stroke.bottomPlayerY]
             : null;
 
+        // Get bounce data from the bounces relation (take first bounce if exists)
+        const firstBounce = stroke.bounces && stroke.bounces.length > 0 ? stroke.bounces[0] : null;
         const bounceLocation: [number, number] | null =
-          stroke.bounceLocationX !== null && stroke.bounceLocationY !== null
-            ? [stroke.bounceLocationX, stroke.bounceLocationY]
+          firstBounce && firstBounce.locationX !== null && firstBounce.locationY !== null
+            ? [firstBounce.locationX, firstBounce.locationY]
             : null;
 
         const bounceStart =
-          stroke.bounceStartIndex !== null && stroke.bounceStartTime !== null
+          firstBounce && firstBounce.startTime !== null
             ? {
-                index: stroke.bounceStartIndex,
-                time: stroke.bounceStartTime,
+                time: firstBounce.startTime,
               }
             : null;
 
         return {
-          start: stroke.start,
-          player_hit: mapPlayerHit(stroke.playerHit),
+          start: stroke.startTime ?? 0,
+          player_hit: mapPlayerHit(stroke.playerHit as "TOP" | "BOTTOM"),
           top_player_location: topPlayerLocation,
           bottom_player_location: bottomPlayerLocation,
           bounce: {
             location: bounceLocation,
-            state: mapBounceState(stroke.bounceState),
+            state: mapBounceState(firstBounce?.state as "VALID" | "OUT_OF_BOUNDS" | "NET_HIT" | null),
             start: bounceStart,
           },
           ball_speed: stroke.ballSpeed,
@@ -103,11 +104,9 @@ export async function GET(req: NextRequest) {
         id: s.id,
         matchId: s.matchId,
         start: {
-          index: s.startIndex,
           time: s.startTime,
         },
         end: {
-          index: s.endIndex,
           time: s.endTime,
         },
         summary,
@@ -119,7 +118,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Error fetching video sections:", error);
     return NextResponse.json(
-      { message: "Internal server error" },
+      { success: false, message: "Internal server error", data: [] },
       { status: 500 }
     );
   }

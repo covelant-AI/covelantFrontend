@@ -143,7 +143,7 @@ const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
 
   const [playerOne, playerTwo] = players;
 
-  const eventsFromSections: TimelineEvent[] = videoSections.map((section) => {
+  const eventsFromSections: TimelineEvent[] = (videoSections || []).map((section) => {
     const won = section.summary?.player_won_point ?? null;
 
     const playerId =

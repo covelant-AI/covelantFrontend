@@ -250,7 +250,7 @@ const onSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
   };
 
 useEffect(() => {
-  if (!autoSkipEnabled) return;
+  if (!autoSkipEnabled || !videoSections || videoSections.length === 0) return;
 
   let isSkipping = false; // Guard flag to prevent re-entrancy during skipping
 
