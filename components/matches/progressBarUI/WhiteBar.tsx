@@ -1,58 +1,48 @@
-import React, { useEffect, useState } from 'react';
+"use client";
 
-interface RedBarProps {
-  section: {
-    startTime: number;
-    endTime: number;
-  };
+import React, { useEffect, useMemo, useState } from "react";
+import type { FlatVideoSection } from "@/components/matches/types/flatVideoSection";
+import { readHorizontalPadding, type ContainerOffsets } from "@/components/matches/utils/dom";
+
+interface WhiteBarProps {
+  section: FlatVideoSection;
   duration: number;
   progressContainerRef: React.RefObject<HTMLDivElement>;
 }
 
-export default function WhiteBar({
-  section,
-  duration,
-  progressContainerRef,
-}: RedBarProps) {
-  const [containerOffsets, setContainerOffsets] = useState({ left: 0, right: 0 });
+export default function WhiteBar({ section, duration, progressContainerRef }: WhiteBarProps) {
+  const [padding, setPadding] = useState<ContainerOffsets>({ left: 0, right: 0 });
 
   useEffect(() => {
-    if (progressContainerRef.current) {
-      const container = progressContainerRef.current;
-      const styles = window.getComputedStyle(container);
-
-      // Read the padding/margin from the parent container
-      const leftPadding = parseInt(styles.paddingLeft, 10);
-      const rightPadding = parseInt(styles.paddingRight, 10);
-      setContainerOffsets({
-        left: leftPadding,
-        right: rightPadding,
-      });
-    }
+    const container = progressContainerRef.current;
+    if (!container) return;
+    setPadding(readHorizontalPadding(container));
   }, [progressContainerRef]);
 
+  const containerWidth = progressContainerRef.current?.getBoundingClientRect().width ?? 0;
+
+  const { leftPx, widthPx } = useMemo(() => {
+    if (duration <= 0 || containerWidth <= 0) return { leftPx: 0, widthPx: 0 };
+
+    const effectiveWidth = containerWidth - padding.left - padding.right;
+
+    const startPx = (section.startTime / duration) * effectiveWidth;
+    const wPx = ((section.endTime - section.startTime) / duration) * effectiveWidth;
+
+    return { leftPx: padding.left + startPx, widthPx: wPx };
+  }, [containerWidth, duration, padding.left, padding.right, section.startTime, section.endTime]);
+
   if (duration <= 0 || !progressContainerRef.current) return null;
-
-  // Get the container dimensions
-  const containerRect = progressContainerRef.current.getBoundingClientRect();
-  const containerWidth = containerRect.width;
-
-  const effectiveBarWidth = containerWidth - containerOffsets.left - containerOffsets.right;
-
-  // Calculate the position of the red bar relative to the container width
-  const startPx = (section.startTime / duration) * effectiveBarWidth;
-  const widthPx = ((section.endTime - section.startTime) / duration) * effectiveBarWidth;
 
   return (
     <div
       className="absolute bg-white rounded-lg"
       style={{
-        left: `${containerOffsets.left + startPx}px`,  
-        width: `${widthPx}px`,                         
-        height: '15%',                                 
-        pointerEvents: 'none', // This ensures that the red bar doesn't block interactions
+        left: `${leftPx}px`,
+        width: `${widthPx}px`,
+        height: "15%",
+        pointerEvents: "none",
       }}
     />
   );
 }
-

@@ -173,15 +173,17 @@ export interface StrokeRecord {
   ball_speed: number | null;
 }
 
+
 export interface SectionSummary {
   player_won_point: "top" | "bottom" | null;
   rally_size: number;          // # of strokes in rally
   valid_rally: boolean;        // whether rally counts or was invalid
 }
 
+
 export interface VideoSection {
-  id?: number;                 // present in DB, not always from AI POST  
-  matchId?: number;            // DB link — optional for AI input
+  id: number;                 // present in DB, not always from AI POST  
+  matchId: number;            // DB link — optional for AI input
   start: {
     index: number;
     time: number;
