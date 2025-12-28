@@ -1,154 +1,143 @@
-'use client';
-import { useEffect, useState, useCallback } from "react";
-import { ref, getDownloadURL } from "firebase/storage";
-import { storage } from "@/app/firebase/config";
-import GameTimelineEditor from "@/components/game-timeline/GameTimelineEditor";
-import CustomVideoPlayer from "@/components/matches/CustomVideoPlayer"
-import MainTagManager from "@/components/matches/TagManager/MainTagManager"
-import MainPreformanceTracker from "@/components/matches/MainPreformanceTracker"
-import { Player, MatchEventData } from "@/util/interfaces"
-import { defaultPlayer } from "@/util/default"
-import AnalyticsCard from "@/components/matches/AnalyticsCard";
-import Loading from "../loading"
-import { useParams, useRouter } from 'next/navigation'
-import { toast } from 'react-toastify';
-import { Msg } from '@/components/UI/ToastTypes';
-import Image from "next/image";
-// import { Tags, Film } from "lucide-react";
-import * as Sentry from "@sentry/nextjs";
-import { useMatchStatusUpdater } from "@/hooks/useMatchStatusUpdater";
-import StatusTag from "@/components/StatusTag";
-import { AnalysisStatus } from "@/util/interfaces";
+"use client";
 
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
+import * as Sentry from "@sentry/nextjs";
+import { toast } from "react-toastify";
+import { Msg } from "@/components/UI/ToastTypes";
+
+import Loading from "../loading";
+
+import CustomVideoPlayer from "@/components/matches/CustomVideoPlayer";
+import MainPreformanceTracker from "@/components/matches/MainPreformanceTracker";
+import GameTimelineEditor from "@/components/matches/game-timeline/GameTimelineEditor";
+import MainTagManager from "@/components/matches/TagManager/MainTagManager";
+import AnalyticsCard from "@/components/matches/AnalyticsCard";
+import StatusTag from "@/components/StatusTag";
+
+import { useMatchStatusUpdater } from "@/hooks/useMatchStatusUpdater";
+import type { MatchEventData, Player, AnalysisStatus } from "@/util/interfaces";
+import type { VideoSection as InterfaceVideoSection } from "@/util/interfaces";
+import { toTimelineVideoSections } from "@/components/matches/utils/sectionMapper";
+import { defaultPlayer } from "@/util/default";
+
+import { fetchMatchMeta, fetchMatchSections, fetchTags, deleteTag as deleteTagApi } from "@/components/matches/services/matchApi";
+import { getFirebaseDownloadUrl } from "@/components/matches/services/videoUrl";
+import { appendTag, removeTagById } from "@/components/matches/utils/tags";
+import { BackButton } from "@/components/matches/BackButton";
+import { ModeToggleButton } from "@/components/matches/ModeToggleButton";
 
 export default function Matches() {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoStart, setVideoStart] = useState<string | null>(null);
   const [videoId, setVideoId] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentVideoTime, setCurrentVideoTime] = useState<number>(0);
-  const [playerOne, setPlayerOne] = useState<Player>(defaultPlayer)
-  const [playerTwo, setPlayerTwo] = useState<Player>(defaultPlayer)
-  const [markers, setMarkers] = useState<MatchEventData[]>([]);
-  const [videoSections, setVideoSections] = useState([]);
-  // const [mode, setMode] = useState<boolean>(false);
-  const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus | null>(null);
-  const params = useParams<{ id: string }>()
-  const router = useRouter();
 
-  // Auto-update match status every 5 minutes
+  const [currentVideoTime, setCurrentVideoTime] = useState<number>(0);
+
+  const [playerOne, setPlayerOne] = useState<Player>(defaultPlayer);
+  const [playerTwo, setPlayerTwo] = useState<Player>(defaultPlayer);
+
+  const [markers, setMarkers] = useState<MatchEventData[]>([]);
+  const [videoSections, setVideoSections] = useState<InterfaceVideoSection[]>([]);
+
+
+
+  const [mode, setMode] = useState<boolean>(false);
+  const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus | null>(null);
+
+  // Auto-update match status every 5 minutes (same behavior)
   useMatchStatusUpdater({
     matchId: videoId,
     enabled: videoId !== 0,
-    onStatusUpdate: (updatedStatus) => {
-      setAnalysisStatus(updatedStatus);
-    }
+    onStatusUpdate: (updatedStatus) => setAnalysisStatus(updatedStatus),
   });
 
-  // 1) Fetch video metadata & download URL
-  const getVideoData = useCallback(async () => {
-    const matchId = Number(params.id)
-    const vid = await fetch(`/api/getMatchVideo?id=${encodeURIComponent(matchId)}`)
-      .then((r) => r.json())
-      .then((res) => {
-        if (res.success) return res.data;
-        Sentry.captureException(res);
-      });
-    const response = await fetch(`/api/getMatchSections?id=${encodeURIComponent(matchId)}`);
-    const data = await response.json();
-    setVideoSections(data.data);
-    console.log("Fetched video sections:", data.data);
-    setPlayerOne(vid.playerMatches[0].player)
-    setPlayerTwo(vid.playerMatches[0].playerTwo)
-    setVideoId(vid.id);
-    setVideoStart(vid.date);
-    setAnalysisStatus(vid.analysisStatus || null);
-    const url = await getDownloadURL(ref(storage, vid.videoUrl));
+  const matchId = Number(params.id);
+
+  // 1) Load video metadata + sections + download URL
+  const loadMatch = useCallback(async () => {
+    const meta = await fetchMatchMeta(matchId);
+    if (!meta) return;
+
+    const sections = await fetchMatchSections(matchId);
+    setVideoSections(sections);
+
+    setPlayerOne(meta.playerOne);
+    setPlayerTwo(meta.playerTwo);
+
+    setVideoId(meta.id);
+    setVideoStart(meta.date);
+    setAnalysisStatus(meta.analysisStatus);
+
+    const url = await getFirebaseDownloadUrl(meta.videoUrlPath);
     setVideoUrl(url);
+
     setLoading(false);
+  }, [matchId]);
+
+  // 2) Load tags once we have videoId (same behavior)
+  const loadMatchTags = useCallback(async () => {
+    const tags = await fetchTags(videoId);
+    if (tags.length !== 0) {
+      setMarkers(tags);
+    } else {
+      setMarkers([]);
+    }
+  }, [videoId]);
+
+  const handleTimeUpdate = useCallback((t: number) => setCurrentVideoTime(t), []);
+
+  const handleAddTag = useCallback((newTag: MatchEventData) => {
+    setMarkers((prev) => appendTag(prev, newTag));
   }, []);
 
-
-  // 2) Fetch existing tags for this match
-  async function loadTags() {
-    const res = await fetch(`/api/getTags?id=${videoId}`);
-    const json = await res.json();
-    if (json.data.length !== 0) {
-      setMarkers(json.data)
-    } else {
-      setMarkers([])
-    }
-  }
-
-
-  const handleTimeUpdate = (t: number) => setCurrentVideoTime(t);
-
-  // 3) When a single new tag is added via the form
-  const handleAddTag = (newTag: MatchEventData) => {
-    setMarkers((prev: MatchEventData[]) => [...prev, newTag]);
-  };
-
-  // delete tag
-  const handleDeleteTag = async (id: number) => {
+  const handleDeleteTag = useCallback(async (id: number) => {
     try {
-      const res = await fetch("/api/deleteTag", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
+      const res = await deleteTagApi(id);
       if (!res.ok) {
-        toast.error("Something went wrong while deleting the tag", {
-          position: 'bottom-right',
-        })
+        toast.error("Something went wrong while deleting the tag", { position: "bottom-right" });
       }
-      setMarkers(prev => prev.filter(m => m.id !== id));
+      setMarkers((prev) => removeTagById(prev, id));
     } catch (err) {
       toast.error(Msg, {
         data: {
-          title: 'Error deleting tag',
-          message: 'There was a problem with our servers while deleting the tag. Please try again later.',
+          title: "Error deleting tag",
+          message: "There was a problem with our servers while deleting the tag. Please try again later.",
         },
-        position: 'bottom-right',
-      })
+        position: "bottom-right",
+      });
       Sentry.captureException(err);
     }
-  };
-
-  // On mount, load video → then tags once we have videoId
-  useEffect(() => {
-    getVideoData();
   }, []);
 
-  // once videoId is known, fetch tags
+  // On mount, load match
+  useEffect(() => {
+    loadMatch().catch((err) => Sentry.captureException(err));
+  }, [loadMatch]);
+
+  // Once videoId is known, fetch tags
   useEffect(() => {
     if (videoId !== 0) {
-      loadTags();
+      loadMatchTags().catch((err) => Sentry.captureException(err));
     }
-  }, [videoId]);
+  }, [videoId, loadMatchTags]);
 
   if (loading) return <Loading />;
 
   return (
     <div className="bg-white h-screen overflow-x-hidden pt-5 max-md:pt-10">
       <div className="px-10 2xl:px-30 2xl:px-50 space-y-4 bg-white">
-        <button
-          onClick={() => router.back()}
-          className="absolute top-4 left-4 z-10
-              px-4 py-4 rounded-xl bg-white shadow-md 
-              hover:bg-gray-100 transition-colors duration-100 
-              hover:scale-105 active:scale-95
-            "
-        >
-          <Image src="https://firebasestorage.googleapis.com/v0/b/fir-auth-f8ffb.firebasestorage.app/o/images%2Ficons%2FBackArrow.svg?alt=media&token=f4695bb5-dfd2-4733-9755-32748dbc86b8" alt="Back" width={20} height={20} />
-        </button>
+        <BackButton onClick={() => router.back()} />
 
-        {/* Status tag */}
         <div className="absolute top-4 right-4 z-10">
           <StatusTag analysisStatus={analysisStatus} />
         </div>
 
-
-        {/* video + tags on top / left */}
+        {/* video + performance top */}
         <div className="w-full space-x-4 gap-4 flex flex-row items-stretch">
           <CustomVideoPlayer
             src={videoUrl || ""}
@@ -169,54 +158,25 @@ export default function Matches() {
           />
         </div>
 
-        {/* performance panel below / right */}
+        {/* lower panel */}
         <div className="w-full flex flex-row gap-4 max-md:flex-col relative">
-          {/* Toggle button (top-left, inside container) */}
-          {/* <button
-            onClick={() => setMode((prev) => !prev)}
-            className="
-                  absolute top-3 left-3 z-50
-                  flex items-center justify-center
-                  h-10 w-10 rounded-xl bg-white
-                  bg-gray-900 text-black
-                  shadow-lg hover:bg-gray-200
-                  transition-all
-                "
-            aria-label="Switch mode"
-          >
-            {mode ? <Film size={18} /> : <Tags size={18} />}
-          </button> */}
+          <ModeToggleButton mode={mode} onToggle={() => setMode((prev) => !prev)} />
 
-          {/* {mode ? (
-                <>
-                  <MainTagManager
-                    videoId={videoId}
-                    timeStamp={currentVideoTime}
-                    onAddTag={handleAddTag}
-                  />
-                  <AnalyticsCard />
-                </>
-              ) : (
-                <GameTimelineEditor
-                  playerOne={playerOne}
-                  playerTwo={playerTwo}
-                  videoSections={videoSections}
-                  onSeekVideo={(timeSeconds) => setCurrentVideoTime(timeSeconds)}
-                />
-              )} */}
-
-          <>
-            <MainTagManager
-              videoId={videoId}
-              timeStamp={currentVideoTime}
-              onAddTag={handleAddTag}
+          {mode ? (
+            <>
+              <MainTagManager videoId={videoId} timeStamp={currentVideoTime} onAddTag={handleAddTag} />
+              <AnalyticsCard />
+            </>
+          ) : (
+            <GameTimelineEditor
+              playerOne={playerOne}
+              playerTwo={playerTwo}
+              videoSections={toTimelineVideoSections(videoSections, matchId)}
+              onSeekVideo={(timeSeconds) => setCurrentVideoTime(timeSeconds)}
             />
-            <AnalyticsCard />
-          </>
+          )}
         </div>
-
       </div>
     </div>
   );
-};
-
+}
